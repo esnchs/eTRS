@@ -887,7 +887,8 @@
                                      (item.name || '').toLowerCase().includes(query) || 
                                      (item.office || '').toLowerCase().includes(query) || 
                                      (item.doc || '').toLowerCase().includes(query) ||
-                                     (item.dest || '').toLowerCase().includes(query);
+                                     (item.dest || '').toLowerCase().includes(query) ||
+                                     (item.barcode || '').toLowerCase().includes(query);
                 const matchesStatus = activeStatus === "ALL" || (item.status || '').toLowerCase() === activeStatus.toLowerCase();
                 return matchesQuery && matchesStatus;
             });
