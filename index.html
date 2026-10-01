@@ -1213,31 +1213,35 @@
             document.getElementById("modalDoc").innerText = item.doc || '—';
             document.getElementById("modalBarcode").innerText = item.barcode || "";
 
-            // Pipeline: Submitted -> (District or Division Office) -> current status
+            // Pipeline: Submitted -> (District/Division Office while pending) -> current status
             document.getElementById("step1Date").innerText = item.date || "—";
-            document.getElementById("step2Label").innerText = level + " Office";
 
+            const step2Label = document.getElementById("step2Label");
             const step2Icon = document.getElementById("step2Icon");
             const step3Icon = document.getElementById("step3Icon");
             const step3Label = document.getElementById("step3Label");
             const step3Date = document.getElementById("step3Date");
 
             if (st === "released") {
+                step2Label.innerText = "Principal's Office";
                 step2Icon.className = stepClass("green");
                 step3Icon.className = stepClass("green");
                 step3Label.innerText = "Released";
                 step3Date.innerText = item.returned || "—";
             } else if (st === "returned") {
+                step2Label.innerText = "Principal's Office";
                 step2Icon.className = stepClass("green");
                 step3Icon.className = stepClass("rose");
                 step3Label.innerText = "Returned";
                 step3Date.innerText = item.returned || "—";
             } else if (st === "pending") {
+                step2Label.innerText = level + " Office";
                 step2Icon.className = stepClass("amber");
                 step3Icon.className = stepClass("gray");
                 step3Label.innerText = "Pending";
                 step3Date.innerText = item.date || "—";   // same date as when it was submitted
             } else {
+                step2Label.innerText = level + " Office";
                 step2Icon.className = stepClass("gray");
                 step3Icon.className = stepClass("gray");
                 step3Label.innerText = item.status || "—";
