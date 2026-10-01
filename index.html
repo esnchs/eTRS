@@ -189,7 +189,7 @@
                 <!-- Center: Search Input Bar -->
                 <div class="relative w-full lg:max-w-md flex-1">
                     <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-2.5 text-slate-400 dark:text-slate-500 text-xs"></i>
-                    <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Search TRF, Source, or Name..."
+                    <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Search TRF, Source, Destination, or Barcode..."
                         class="w-full pl-9 pr-4 py-1.5 text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                 </div>
 
@@ -247,8 +247,11 @@
                             <th scope="col" class="py-3.5 px-4 whitespace-nowrap">
                                 <span class="flex items-center gap-1.5"><i class="fa-solid fa-location-dot text-slate-400 text-[10px]"></i> Destination</span>
                             </th>
-                            <th scope="col" class="py-3.5 px-4 rounded-tr-lg whitespace-nowrap">
+                            <th scope="col" class="py-3.5 px-4 whitespace-nowrap">
                                 <span class="flex items-center gap-1.5"><i class="fa-solid fa-list-check text-slate-400 text-[10px]"></i> Remarks</span>
+                            </th>
+                            <th scope="col" class="py-3.5 px-4 text-center rounded-tr-lg whitespace-nowrap">
+                                <span class="flex items-center justify-center gap-1.5"><i class="fa-solid fa-eye text-slate-400 text-[10px]"></i> View</span>
                             </th>
                         </tr>
                     </thead>
@@ -385,8 +388,8 @@
                     <i class="fa-brands fa-facebook text-sm"></i> Official Facebook
                 </a>
                 <span class="text-slate-700">•</span>
-                <a href="#" class="hover:text-white transition">Privacy Policy</a>
-                <a href="#" class="hover:text-white transition">Terms of Service</a>
+                <a href="#" onclick="openPolicyModal('privacy'); return false;" class="hover:text-white transition">Privacy Policy</a>
+                <a href="#" onclick="openPolicyModal('terms'); return false;" class="hover:text-white transition">Terms of Service</a>
             </div>
         </div>
     </footer>
@@ -481,6 +484,25 @@
                     <button type="submit" class="w-2/3 py-2.5 bg-[#6B1111] text-white rounded-xl text-xs font-semibold hover:bg-red-900 transition shadow-sm active:scale-95">Secure Login</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- PRIVACY POLICY / TERMS OF SERVICE MODAL -->
+    <div id="policyModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4 z-50">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden border border-slate-100 dark:border-slate-800 max-h-[85vh] flex flex-col transition-colors">
+            <div class="bg-[#6B1111] text-white px-5 py-3.5 flex items-center justify-between shrink-0">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-shield-halved text-amber-400"></i>
+                    <h3 id="policyModalTitle" class="font-bold text-sm">Privacy Policy</h3>
+                </div>
+                <button onclick="closePolicyModal()" class="text-amber-200 hover:text-white text-xl p-1">&times;</button>
+            </div>
+            <div id="policyModalBody" class="p-4 sm:p-5 space-y-3 text-xs sm:text-sm text-slate-700 dark:text-slate-200 bg-slate-50 dark:bg-slate-950 overflow-y-auto leading-relaxed">
+                <!-- filled in by JS -->
+            </div>
+            <div class="p-3.5 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 shrink-0">
+                <button onclick="closePolicyModal()" class="w-full py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl text-xs font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition">Close</button>
+            </div>
         </div>
     </div>
 
@@ -600,13 +622,63 @@
             modal.classList.remove('flex');
         }
 
-        function handleLogin(e) {
+        const POLICY_CONTENT = {
+            privacy: {
+                title: "Privacy Policy",
+                body: `
+                    <p>This portal displays transmittal records (TRF number, document source, report name, destination, and status) so that staff and requestors can track submissions without visiting the office in person.</p>
+                    <p><strong class="text-slate-900 dark:text-slate-100">Current data visibility:</strong> the records shown here are currently accessible to anyone who has the link to this page. There is no per-user login required to view transmittal records.</p>
+                    <p><strong class="text-slate-900 dark:text-slate-100">Where the data comes from:</strong> the information originates from the school's official Record Book. The connected Google Sheet is a synced copy used to power this website; it is not a separate, independent record.</p>
+                    <p>If you believe a record shown here contains an error or should not be public, please contact the Principal's Office directly so it can be corrected at the source.</p>
+                `
+            },
+            terms: {
+                title: "Terms of Service",
+                body: `
+                    <p>This eTransmittal Record System is provided by Eastern Samar National Comprehensive High School (ESNCHS) as an informational tracking tool for official document transmittals.</p>
+                    <p>Information shown here is for reference only and does not replace the official Record Book maintained by the school. In case of any discrepancy, the school's official records take precedence.</p>
+                    <p>Do not use this system to submit, alter, or request changes to records — all such actions must go through the Principal's Office directly.</p>
+                    <p>The "Admin" login on this page only shows or hides certain links for staff convenience. It does not encrypt or restrict access to the underlying data.</p>
+                `
+            }
+        };
+
+        function openPolicyModal(kind) {
+            const content = POLICY_CONTENT[kind] || POLICY_CONTENT.privacy;
+            document.getElementById('policyModalTitle').innerText = content.title;
+            document.getElementById('policyModalBody').innerHTML = content.body;
+            const modal = document.getElementById('policyModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closePolicyModal() {
+            const modal = document.getElementById('policyModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // Admin credentials: username is checked in plain text (it's not a secret),
+        // but the password is compared as a SHA-256 hash so the real password does
+        // not sit in plain, searchable text inside the page's source code.
+        // NOTE: this is still not real security for a static, client-side page -
+        // someone with the browser console could bypass this entirely by running
+        // isAdminLoggedIn = true directly. It only stops casual password reading.
+        const ADMIN_USER = 'esnchs etrs';
+        const ADMIN_PASS_HASH = '01d478a2cffc870ff964378b3de0631f466d858442e14d0a25417fb2e24b0f86';
+
+        async function sha256Hex(text) {
+            const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+            return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        async function handleLogin(e) {
             e.preventDefault();
             const user = document.getElementById('loginUsername').value;
             const pass = document.getElementById('loginPassword').value;
+            const passHash = await sha256Hex(pass);
 
-            // Admin credentials (username is not case-sensitive; password is)
-            if (user.trim().toLowerCase() === 'esnchs etrs' && pass === 'Compre_1969') {
+            if (user.trim().toLowerCase() === ADMIN_USER && passHash === ADMIN_PASS_HASH) {
                 isAdminLoggedIn = true;
                 closeLoginModal();
                 showToast("Admin access granted.");
@@ -754,7 +826,7 @@
             const tbody = document.getElementById("tableBody");
             const mobileContainer = document.getElementById("mobileCards");
             
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-xs text-slate-500 dark:text-slate-400"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Syncing eTransmittal records...</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-xs text-slate-500 dark:text-slate-400"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Syncing eTransmittal records...</td></tr>`;
             mobileContainer.innerHTML = `<div class="text-center text-slate-500 dark:text-slate-400 text-xs py-8"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Syncing eTransmittal records...</div>`;
         }
 
@@ -769,7 +841,7 @@
 
             if (totalItems === 0) {
                 const emptyState = `<p class="text-center text-xs text-slate-400 dark:text-slate-500 py-6">No matching records found.</p>`;
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-xs text-slate-400 dark:text-slate-500">No matching records found.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-xs text-slate-400 dark:text-slate-500">No matching records found.</td></tr>`;
                 mobileContainer.innerHTML = emptyState;
                 updatePaginationControls(0, 0, 0, 1, 1);
                 updateMetrics();
@@ -812,8 +884,14 @@
                     <td class="py-3.5 px-4 font-semibold text-slate-800 dark:text-slate-100">${esc(item.doc) || 'N/A'}</td>
                     <td class="py-3.5 px-4 text-slate-600 dark:text-slate-300">${esc(destination)}</td>
                     <td class="py-3.5 px-4">${statusBadge}</td>
+                    <td class="py-3.5 px-4 text-center">
+                        <button class="view-icon-btn w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-400 border border-amber-200 dark:border-amber-800/40 hover:bg-amber-100 dark:hover:bg-amber-900/50 transition inline-flex items-center justify-center" title="View receipt">
+                            <i class="fa-solid fa-eye text-xs"></i>
+                        </button>
+                    </td>
                 `;
                 tr.querySelector(".copy-btn").onclick = (e) => { e.stopPropagation(); copyToClipboard(item.trf); };
+                tr.querySelector(".view-icon-btn").onclick = (e) => { e.stopPropagation(); openModal(item); };
                 tbody.appendChild(tr);
 
                 // Mobile Card View Item
@@ -884,7 +962,6 @@
 
             filteredData = sheetData.filter(item => {
                 const matchesQuery = (item.trf || '').toLowerCase().includes(query) || 
-                                     (item.name || '').toLowerCase().includes(query) || 
                                      (item.office || '').toLowerCase().includes(query) || 
                                      (item.doc || '').toLowerCase().includes(query) ||
                                      (item.dest || '').toLowerCase().includes(query) ||
