@@ -94,9 +94,51 @@
                     <button id="authBtn" onclick="openLoginModal()" class="px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs sm:text-sm font-semibold rounded-xl transition border border-slate-200 dark:border-slate-700 flex items-center gap-1.5" title="Admin Login">
                         <i id="authBtnIcon" class="fa-solid fa-user-lock text-xs"></i> <span id="authBtnText" class="hidden sm:inline">Admin</span>
                     </button>
-                    <!-- Sync Button -->
-                    <button onclick="fetchSheetData()" class="px-3 py-2 bg-amber-500/10 hover:bg-amber-500/20 text-[#6B1111] dark:text-amber-400 text-xs sm:text-sm font-semibold rounded-xl transition border border-amber-500/30 flex items-center gap-1.5">
-                        <i id="refreshIcon" class="fa-solid fa-rotate-right text-xs"></i> <span>Sync</span>
+
+                    <!-- Live Clock Button (click to open calendar + time popover) -->
+                    <div class="relative">
+                        <button id="clockBtn" onclick="toggleClockPopover(event)" class="px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs sm:text-sm font-semibold rounded-xl transition border border-slate-200 dark:border-slate-700 flex items-center gap-1.5" title="Date & Time" aria-label="Show date and time">
+                            <i class="fa-regular fa-clock text-xs"></i>
+                            <span id="navClockTime" class="font-mono">--:--</span>
+                        </button>
+                        <!-- Calendar + Time Popover -->
+                        <div id="clockPopover" class="hidden absolute right-0 mt-2 w-64 bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-800 p-3 z-50">
+                            <div class="text-center pb-2 border-b border-slate-100 dark:border-slate-800 mb-2">
+                                <p id="popoverTime" class="text-xl font-bold text-slate-800 dark:text-slate-100 font-mono tracking-wide">--:--:--</p>
+                                <p id="popoverDate" class="text-xs text-slate-500 dark:text-slate-400 font-medium">—</p>
+                            </div>
+                            <!-- Calendar grid view -->
+                            <div id="calendarMainView">
+                                <div class="flex items-center justify-between mb-1.5">
+                                    <button onclick="changeCalendarMonth(-1)" class="w-5 h-5 flex items-center justify-center rounded text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="Previous month"><i class="fa-solid fa-chevron-left text-[10px]"></i></button>
+                                    <span id="calMonthLabel" class="text-xs font-bold text-slate-700 dark:text-slate-200">—</span>
+                                    <button onclick="changeCalendarMonth(1)" class="w-5 h-5 flex items-center justify-center rounded text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="Next month"><i class="fa-solid fa-chevron-right text-[10px]"></i></button>
+                                </div>
+                                <p class="text-[10px] text-center text-slate-400 dark:text-slate-500 mb-1.5">
+                                    <span class="inline-block w-1.5 h-1.5 rounded-full bg-amber-500 align-middle"></span> = day with submissions
+                                </p>
+                                <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-slate-400 dark:text-slate-500 mb-1">
+                                    <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+                                </div>
+                                <div id="calGrid" class="grid grid-cols-7 gap-y-1 text-center text-[11px]"></div>
+                            </div>
+
+                            <!-- TRF list view for a clicked date (swaps in place of the calendar grid) -->
+                            <div id="trfListView" class="hidden">
+                                <div class="flex items-center justify-between mb-2">
+                                    <button onclick="backToCalendar()" class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 hover:text-amber-700 dark:hover:text-amber-400 flex items-center gap-1 transition">
+                                        <i class="fa-solid fa-chevron-left text-[9px]"></i> Back
+                                    </button>
+                                    <span id="trfListDateLabel" class="text-[11px] font-bold text-slate-700 dark:text-slate-200">—</span>
+                                </div>
+                                <div id="trfListItems" class="space-y-1.5 max-h-44 overflow-y-auto pr-0.5"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sync Button (icon only) -->
+                    <button onclick="fetchSheetData()" class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center bg-amber-500/10 hover:bg-amber-500/20 text-[#6B1111] dark:text-amber-400 rounded-xl transition border border-amber-500/30 shrink-0" title="Sync records" aria-label="Sync records">
+                        <i id="refreshIcon" class="fa-solid fa-rotate-right text-sm"></i>
                     </button>
                 </div>
             </div>
@@ -532,6 +574,7 @@
         ];
 
         let activeStatus = "ALL";
+        let activeDateFilter = null; // { y, m (0-indexed), d } - set when a calendar day is clicked
         let currentModalTRF = "";
 
         // ADMIN AUTH STATE
@@ -595,6 +638,146 @@
                 if (icon) icon.className = "fa-solid fa-moon text-xs sm:text-sm";
             }
         }
+
+        // LIVE CLOCK + MINI CALENDAR
+        function updateClock() {
+            const now = new Date();
+            const navTime = document.getElementById('navClockTime');
+            const navDate = document.getElementById('navClockDate');
+            if (navTime) navTime.innerText = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+            if (navDate) navDate.innerText = now.toLocaleDateString('en-US', { month: 'short', day: '2-digit' });
+
+            const popTime = document.getElementById('popoverTime');
+            const popDate = document.getElementById('popoverDate');
+            if (popTime) popTime.innerText = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true });
+            if (popDate) popDate.innerText = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        // Builds a count of how many TRFs were submitted on each day, keyed "Y-M-D"
+        // (month is 0-indexed to match JS Date), based on each record's submitted date.
+        function getSubmissionCountsByDay() {
+            const counts = {};
+            sheetData.forEach(item => {
+                const d = item.date ? new Date(item.date) : null;
+                if (!d || isNaN(d)) return;
+                const key = d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate();
+                counts[key] = (counts[key] || 0) + 1;
+            });
+            return counts;
+        }
+
+        let calViewYear = null, calViewMonth = null;
+
+        // Shared day-grid builder used by both the small nav popover and the full-year view.
+        function buildMonthCellsHTML(year, month, now) {
+            const isCurrentMonth = (year === now.getFullYear() && month === now.getMonth());
+            const today = now.getDate();
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const submissionCounts = getSubmissionCountsByDay();
+
+            let cells = '';
+            for (let i = 0; i < firstDay; i++) cells += '<span></span>';
+            for (let d = 1; d <= daysInMonth; d++) {
+                const isToday = isCurrentMonth && d === today;
+                const key = year + "-" + month + "-" + d;
+                const hasSubmissions = !!submissionCounts[key];
+                const isSelected = activeDateFilter && activeDateFilter.y === year && activeDateFilter.m === month && activeDateFilter.d === d;
+
+                let cls = 'relative py-1 rounded-lg cursor-pointer transition ';
+                if (isSelected) cls += 'bg-amber-500 text-white font-bold';
+                else if (isToday) cls += 'bg-[#6B1111] text-white font-bold';
+                else if (hasSubmissions) cls += 'text-slate-700 dark:text-slate-200 font-semibold hover:bg-amber-50 dark:hover:bg-amber-950/40';
+                else cls += 'text-slate-400 dark:text-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800';
+
+                const dot = hasSubmissions && !isSelected ? '<span class="absolute left-1/2 -translate-x-1/2 bottom-0.5 w-1 h-1 rounded-full bg-amber-500"></span>' : '';
+                cells += `<span class="${cls}" onclick="selectCalendarDate(event, ${year}, ${month}, ${d})" title="${hasSubmissions ? submissionCounts[key] + ' submission(s)' : 'No submissions'}">${d}${dot}</span>`;
+            }
+            return cells;
+        }
+
+        function renderMiniCalendar() {
+            const now = new Date();
+            if (calViewYear === null) { calViewYear = now.getFullYear(); calViewMonth = now.getMonth(); }
+            const year = calViewYear, month = calViewMonth;
+
+            const label = document.getElementById('calMonthLabel');
+            if (label) label.innerText = new Date(year, month, 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+            const grid = document.getElementById('calGrid');
+            if (grid) grid.innerHTML = buildMonthCellsHTML(year, month, now);
+        }
+
+        function changeCalendarMonth(delta) {
+            const d = new Date(calViewYear, calViewMonth + delta, 1);
+            calViewYear = d.getFullYear();
+            calViewMonth = d.getMonth();
+            renderMiniCalendar();
+        }
+
+        // Clicking a day with submissions swaps the calendar for a small list of
+        // just that day's TRF numbers - it does NOT filter the main table.
+        function selectCalendarDate(e, y, m, d) {
+            e.stopPropagation(); // don't let this bubble to the outside-click listener
+
+            const counts = getSubmissionCountsByDay();
+            const key = y + "-" + m + "-" + d;
+            if (!counts[key]) return; // nothing submitted that day - ignore the click
+
+            activeDateFilter = { y, m, d }; // used only to highlight the picked day when we come back
+
+            const dateObj = new Date(y, m, d);
+            document.getElementById('trfListDateLabel').innerText = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+            const matches = sheetData.filter(item => {
+                const dd = item.date ? new Date(item.date) : null;
+                return dd && !isNaN(dd) && dd.getFullYear() === y && dd.getMonth() === m && dd.getDate() === d;
+            });
+
+            // De-duplicate - if the same TRF number appears more than once that day, show it only once
+            const uniqueTrfs = [...new Set(matches.map(item => item.trf || 'N/A'))];
+
+            const list = document.getElementById('trfListItems');
+            if (uniqueTrfs.length === 0) {
+                list.innerHTML = `<p class="text-[11px] text-slate-400 dark:text-slate-500 text-center py-2">No TRFs found.</p>`;
+            } else {
+                list.innerHTML = uniqueTrfs.map(trf => `
+                    <span class="inline-block px-2.5 py-1 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono font-bold text-[11px] text-slate-800 dark:text-slate-100">${esc(trf)}</span>
+                `).join(' ');
+            }
+
+            document.getElementById('calendarMainView').classList.add('hidden');
+            document.getElementById('trfListView').classList.remove('hidden');
+        }
+
+        function backToCalendar() {
+            activeDateFilter = null;
+            document.getElementById('trfListView').classList.add('hidden');
+            document.getElementById('calendarMainView').classList.remove('hidden');
+            renderMiniCalendar();
+        }
+
+        function toggleClockPopover(e) {
+            e.stopPropagation();
+            const pop = document.getElementById('clockPopover');
+            const willShow = pop.classList.contains('hidden');
+            pop.classList.toggle('hidden');
+            if (willShow) {
+                // Always open fresh on the calendar, never on a leftover TRF list
+                document.getElementById('trfListView').classList.add('hidden');
+                document.getElementById('calendarMainView').classList.remove('hidden');
+                activeDateFilter = null;
+                renderMiniCalendar();
+            }
+        }
+
+        document.addEventListener('click', (e) => {
+            const pop = document.getElementById('clockPopover');
+            const btn = document.getElementById('clockBtn');
+            if (pop && !pop.classList.contains('hidden') && !pop.contains(e.target) && !btn.contains(e.target)) {
+                pop.classList.add('hidden');
+            }
+        });
 
         function showToast(msg) {
             const toast = document.getElementById("toast");
@@ -866,9 +1049,7 @@
 
                 // Desktop Table Row
                 const tr = document.createElement("tr");
-                tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/50 transition cursor-pointer";
-                tr.title = "Click to view receipt";
-                tr.onclick = () => openModal(item);
+                tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/50 transition";
                 tr.innerHTML = `
                     <td class="py-3.5 px-4 font-bold text-slate-800 dark:text-slate-100 font-mono">
                         <div class="flex flex-col items-start gap-1">
@@ -1078,6 +1259,8 @@
         window.onload = () => {
             initTheme();
             fetchSheetData();
+            updateClock();
+            setInterval(updateClock, 1000);
         };
     </script>
 </body>
