@@ -553,6 +553,9 @@
         const SHEET_ID = "1Eu204mywqGj5ih3eCbpJOhTEaoaTP2du3i8hNPWUcCU";
         const SHEET_TAB = "Sheet1";
         const RECORD_BOOK_URL = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/edit?usp=sharing";
+        // Backend endpoint (Google Apps Script) - the website now talks to this instead of
+        // reading the sheet directly, so the sheet itself can be set fully private.
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyCnoFrZrOw2J21iYpKo1aAL5X_WLCvjjw6seqkmYlOC1s4J1hwl4McrsphehfVZNmm1w/exec";
 
         function openRecordBook(e) {
             if (e) e.preventDefault();
@@ -928,39 +931,18 @@
             return rows;
         }
 
-        // Loads the sheet with a <script> tag (works even when the page is opened from a local file,
-        // where fetch() is blocked by the browser's CORS rules).
-        function loadSheetScript() {
-            return new Promise((resolve, reject) => {
-                const cb = "sheetCb_" + Date.now();
-                const script = document.createElement("script");
-                let done = false;
-                const finish = (fn, val) => {
-                    if (done) return; done = true;
-                    clearTimeout(timer); delete window[cb]; script.remove(); fn(val);
-                };
-                const timer = setTimeout(() => finish(reject, new Error("timeout")), 15000);
-                window[cb] = (resp) => finish(resolve, resp);
-                script.onerror = () => finish(reject, new Error("blocked or offline"));
-                script.src = "https://docs.google.com/spreadsheets/d/" + SHEET_ID +
-                    "/gviz/tq?tqx=out:json;responseHandler:" + cb + "&headers=1&sheet=" + encodeURIComponent(SHEET_TAB) + "&_=" + Date.now();
-                document.head.appendChild(script);
-            });
-        }
+        // Maps the plain [[header...], [row...], ...] array the Apps Script backend
+        // returns into the record objects the rest of the app expects.
+        function mapSheetValues(values) {
+            if (!values || !values.length) throw new Error("empty response from backend");
 
-        function mapSheetTable(table) {
             const cell = (row, i) => {
-                const c = row.c && row.c[i];
-                if (!c) return "";
-                const v = (c.f != null && c.f !== "") ? c.f : c.v;
+                if (i < 0 || i >= row.length) return "";
+                const v = row[i];
                 return v == null ? "" : String(v).replace(/\s*[\r\n]+\s*/g, " ").trim();
             };
-            let head = table.cols.map(c => (c.label || "").trim().toLowerCase());
-            let rows = table.rows;
-            if (!head.some(Boolean)) { // header row was read as data
-                head = rows[0].c.map(c => (c && c.v != null ? String(c.v) : "").trim().toLowerCase());
-                rows = rows.slice(1);
-            }
+            const head = values[0].map(h => String(h || "").trim().toLowerCase());
+            const rows = values.slice(1);
             const col = name => head.indexOf(name);
             const c = {
                 trf: col("trf no."), date: col("date"), office: col("document source"),
@@ -986,17 +968,40 @@
             })).filter(d => d.office || d.doc);
         }
 
-        // Reads the Google Sheet (must be shared as "Anyone with the link can view")
+        // Loads the Apps Script backend via a <script> tag (JSONP) instead of fetch().
+        // Apps Script web apps don't send CORS headers for plain fetch() requests from
+        // another origin (like this GitHub Pages site), so a direct fetch gets silently
+        // blocked by the browser even though the URL works fine when visited directly.
+        // A <script> tag isn't subject to that same-origin restriction, which is why this
+        // works reliably. The Apps Script code must accept a "callback" parameter (see doGet).
+        function loadAppsScript() {
+            return new Promise((resolve, reject) => {
+                const cb = "appsScriptCb_" + Date.now();
+                const script = document.createElement("script");
+                let done = false;
+                const finish = (fn, val) => {
+                    if (done) return; done = true;
+                    clearTimeout(timer); delete window[cb]; script.remove(); fn(val);
+                };
+                const timer = setTimeout(() => finish(reject, new Error("timeout - backend did not respond")), 15000);
+                window[cb] = (resp) => finish(resolve, resp);
+                script.onerror = () => finish(reject, new Error("could not reach backend"));
+                script.src = APPS_SCRIPT_URL + "?callback=" + cb + "&_=" + Date.now();
+                document.head.appendChild(script);
+            });
+        }
+
+        // Reads data through the Apps Script backend - the actual Google Sheet can now be
+        // fully private, since only the backend (running with its own permission) touches it.
         async function fetchSheetData() {
             const refreshIcon = document.getElementById("refreshIcon");
             if (refreshIcon) refreshIcon.classList.add("fa-spin");
             showLoadingState();
 
             try {
-                const resp = await loadSheetScript();
-                if (resp.status === "error") throw new Error((resp.errors && resp.errors[0] && (resp.errors[0].detailed_message || resp.errors[0].message)) || "sheet error");
-                sheetData = mapSheetTable(resp.table);
-                showToast("Synced " + sheetData.length + " records from Google Sheet.");
+                const json = await loadAppsScript();
+                sheetData = mapSheetValues(json.values);
+                showToast("Synced " + sheetData.length + " records.");
             } catch (err) {
                 console.error("Sheet sync failed:", err);
                 showToast("Sheet not loaded: " + err.message);
