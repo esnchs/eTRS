@@ -38,6 +38,20 @@
             #printableReceipt, #printableReceipt * { visibility: visible; }
             #printableReceipt { position: absolute; left: 0; top: 0; width: 100%; }
         }
+
+        /* Flip cards - System Capabilities section */
+        .flip-card { perspective: 1200px; cursor: pointer; min-height: 240px; }
+        .flip-card-inner {
+            position: relative; width: 100%; height: 100%; min-height: 240px;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        .flip-card-front, .flip-card-back {
+            position: absolute; inset: 0; backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .flip-card-back { transform: rotateY(180deg); }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans antialiased selection:bg-amber-200 transition-colors duration-200">
@@ -163,13 +177,13 @@
     <section id="hero" class="scroll-mt-20 bg-gradient-to-b from-[#4A0B0B] to-[#6B1111] text-white py-12 sm:py-16 md:py-20 px-4">
         <div class="max-w-4xl mx-auto text-center space-y-4 sm:space-y-6">
             <span class="inline-block px-3 py-1 bg-amber-500/20 text-amber-300 text-[11px] sm:text-xs font-semibold rounded-full border border-amber-400/30">
-                Computerized Transmittal & Document Verification Portal
+                Official eTransmittal Tracking System
             </span>
             <h1 class="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-tight">
-                Fast, Transparent & Reliable <span class="text-amber-400 block sm:inline">eTransmittal Tracking</span>
+                Know Exactly <span class="text-amber-400 block sm:inline">Where Your Documents Stand</span>
             </h1>
             <p class="text-xs sm:text-base md:text-lg text-slate-200 max-w-2xl mx-auto font-normal leading-relaxed">
-                Streamlining submitted documents between the School, District, and Division Office with automated transmittals and real-time digital record logging.
+                Every transmittal, wherever it's headed, is tracked in real time, from submission to release.
             </p>
             <div class="pt-2 flex flex-col sm:flex-row justify-center items-center gap-3 w-full max-w-sm sm:max-w-none mx-auto">
                 <a href="#tracker" class="w-full sm:w-auto px-8 py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm sm:text-base rounded-xl shadow-lg transition flex items-center justify-center gap-2 active:scale-95">
@@ -342,7 +356,7 @@
             </div>
             
             <p class="text-xs sm:text-sm md:text-base text-slate-600 dark:text-slate-300 max-w-4xl mx-auto text-center leading-relaxed">
-                This website is the central online platform of the <strong class="text-slate-900 dark:text-white">eTransmittal Record System</strong>, built to fast-track document routing between the School, District, and Division Office. Through this web portal, users can track real-time processing statuses and view published digital record entries online—ensuring complete <span class="text-[#6B1111] dark:text-amber-400 font-semibold">efficiency, transparency, and accountability</span> across every office level.
+                This portal is the online home of the <strong class="text-slate-900 dark:text-white">eTransmittal Record System</strong>, built to make document routing between the School and its receiving offices fast and easy to follow. Check a transmittal's real-time status, view its full digital record, and see exactly where it stands in the process, <span class="text-[#6B1111] dark:text-amber-400 font-semibold">from submission to release</span>.
             </p>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2 max-w-5xl mx-auto">
@@ -382,26 +396,64 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-                <div class="p-5 sm:p-6 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-2.5 transition-colors">
-                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 flex items-center justify-center text-lg sm:text-xl font-bold">⚡</div>
-                    <h3 class="font-bold text-slate-800 dark:text-slate-100 text-base sm:text-lg">Automated Transmittals</h3>
-                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                        Instantly generates standardized official document transmittals between School, District, and Division offices.
-                    </p>
+                <!-- Card 1: Automated Transmittals -->
+                <div class="flip-card" tabindex="0" role="button" aria-label="Automated Transmittals - tap to flip for more detail" onclick="this.classList.toggle('flipped')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.classList.toggle('flipped');}">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front p-5 sm:p-6 pt-6 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 transition-colors flex flex-col items-center text-center gap-2 justify-start">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 flex items-center justify-center text-lg sm:text-xl font-bold">⚡</div>
+                            <h3 class="font-bold text-slate-800 dark:text-slate-100 text-base sm:text-lg">Automated Transmittals</h3>
+                            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                                Creates an official transmittal slip for every document you submit, with its own tracking number.
+                            </p>
+                        </div>
+                        <div class="flip-card-back p-5 sm:p-6 pt-0 sm:pt-0 bg-amber-50 dark:bg-amber-950/30 rounded-2xl border border-amber-200/80 dark:border-amber-800/40 transition-colors flex flex-col items-center text-center gap-1.5 justify-start">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 -mt-5 sm:-mt-6 rounded-xl bg-amber-400 dark:bg-amber-500 text-white border-4 border-white dark:border-slate-950 shadow-md flex items-center justify-center text-lg sm:text-xl font-bold shrink-0">⚡</div>
+                            <span class="inline-block mt-1 px-3 py-1 rounded-xl bg-amber-100 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300 text-xs sm:text-sm font-bold">Automated Transmittals</span>
+                            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed pt-1">
+                                Each document gets its own TRF number ("d-" means District, no "d-" means Division). You can follow it every step of the way: Submitted, then the office it's routed to, then Released or Returned, with the date for each step. A barcode and printable slip are included too.
+                            </p>
+                        </div>
+                    </div>
                 </div>
-                <div class="p-5 sm:p-6 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-2.5 transition-colors">
-                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#6B1111] text-[#D97706] flex items-center justify-center text-lg sm:text-xl font-bold">📖</div>
-                    <h3 class="font-bold text-slate-800 dark:text-slate-100 text-base sm:text-lg">Digital Record Book</h3>
-                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                        Replaces manual logbooks with a secure, searchable digital ledger for real-time submission tracking.
-                    </p>
+
+                <!-- Card 2: Digital Record Book -->
+                <div class="flip-card" tabindex="0" role="button" aria-label="Digital Record Book - tap to flip for more detail" onclick="this.classList.toggle('flipped')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.classList.toggle('flipped');}">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front p-5 sm:p-6 pt-6 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 transition-colors flex flex-col items-center text-center gap-2 justify-start">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#6B1111] text-[#D97706] flex items-center justify-center text-lg sm:text-xl font-bold">📖</div>
+                            <h3 class="font-bold text-slate-800 dark:text-slate-100 text-base sm:text-lg">Digital Record Book</h3>
+                            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                                Keeps every record in one safe, searchable place instead of a paper logbook.
+                            </p>
+                        </div>
+                        <div class="flip-card-back p-5 sm:p-6 pt-0 sm:pt-0 bg-red-50 dark:bg-red-950/20 rounded-2xl border border-red-200/80 dark:border-red-900/40 transition-colors flex flex-col items-center text-center gap-1.5 justify-start">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 -mt-5 sm:-mt-6 rounded-xl bg-[#6B1111] text-[#D97706] border-4 border-white dark:border-slate-950 shadow-md flex items-center justify-center text-lg sm:text-xl font-bold shrink-0">📖</div>
+                            <span class="inline-block mt-1 px-3 py-1 rounded-xl bg-red-100 dark:bg-red-950/40 text-[#6B1111] dark:text-amber-400 text-xs sm:text-sm font-bold">Digital Record Book</span>
+                            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed pt-1">
+                                Find any document by its TRF number, sender, destination, or barcode. Filter by status (Pending, Released, or Returned), or tap a date on the calendar to see everything submitted that day.
+                            </p>
+                        </div>
+                    </div>
                 </div>
-                <div class="p-5 sm:p-6 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-2.5 transition-colors">
-                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 flex items-center justify-center text-lg sm:text-xl font-bold">🔒</div>
-                    <h3 class="font-bold text-slate-800 dark:text-slate-100 text-base sm:text-lg">Web Stream & Transparency</h3>
-                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                        Publishes real-time submission updates online to ensure total accountability across administrative channels.
-                    </p>
+
+                <!-- Card 3: Web Stream & Transparency -->
+                <div class="flip-card" tabindex="0" role="button" aria-label="Web Stream and Transparency - tap to flip for more detail" onclick="this.classList.toggle('flipped')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.classList.toggle('flipped');}">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front p-5 sm:p-6 pt-6 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 transition-colors flex flex-col items-center text-center gap-2 justify-start">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 flex items-center justify-center text-lg sm:text-xl font-bold">📡</div>
+                            <h3 class="font-bold text-slate-800 dark:text-slate-100 text-base sm:text-lg">Web Stream & Transparency</h3>
+                            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                                See a document's status online anytime, no need to call or visit the office.
+                            </p>
+                        </div>
+                        <div class="flip-card-back p-5 sm:p-6 pt-0 sm:pt-0 bg-emerald-50 dark:bg-emerald-950/20 rounded-2xl border border-emerald-200/80 dark:border-emerald-900/40 transition-colors flex flex-col items-center text-center gap-1.5 justify-start">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 -mt-5 sm:-mt-6 rounded-xl bg-emerald-500 text-white border-4 border-white dark:border-slate-950 shadow-md flex items-center justify-center text-lg sm:text-xl font-bold shrink-0">📡</div>
+                            <span class="inline-block mt-1 px-3 py-1 rounded-xl bg-emerald-100 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 text-xs sm:text-sm font-bold">Web Stream & Transparency</span>
+                            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed pt-1">
+                                Tap Sync to get the newest updates. Anyone with the link can check a document, no account needed. It also works well on phones and in dark mode.
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -827,7 +879,7 @@
                 body: `
                     <p>This eTransmittal Record System is provided by Eastern Samar National Comprehensive High School (ESNCHS) as an informational tracking tool for official document transmittals.</p>
                     <p>Information shown here is for reference only and does not replace the official Record Book maintained by the school. In case of any discrepancy, the school's official records take precedence.</p>
-                    <p>Do not use this system to submit, alter, or request changes to records — all such actions must go through the Principal's Office directly.</p>
+                    <p>Do not use this system to submit, alter, or request changes to records. All such actions must go through the Principal's Office directly.</p>
                     <p>The "Admin" login on this page only shows or hides certain links for staff convenience. It does not encrypt or restrict access to the underlying data.</p>
                 `
             }
