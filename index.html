@@ -73,9 +73,15 @@
         @keyframes sealShine { 0% { left: -60%; opacity: 1; } 100% { left: 140%; opacity: 1; } }
 
         /* Letter walker (hero banner): a man carrying a letter walks ESNCHS -> District -> Division -> Other offices.
-           The resting look is the finished walk (every stop lit). It walks on arrival, while syncing, and when you return to Home. */
-        .journey { position: relative; height: 130px; --d: 6s; }
-        .jr-trk { position: absolute; left: 12%; right: 12%; top: 72px; height: 0; }
+           The resting look is the finished walk (every stop lit, the man standing at the last stop). It walks on arrival, while syncing, and when you return to Home. */
+
+        /* The walker block opens when it plays and closes (space and all) when it is done */
+        #journeyWrap { overflow: hidden; max-height: 130px; opacity: 1; margin-top: 1rem; transition: max-height .5s ease, opacity .5s ease, margin-top .5s ease, visibility 0s; }
+        @media (min-width: 640px) { #journeyWrap { margin-top: 1.5rem; } }
+        #journeyWrap.jr-collapsed { max-height: 0; opacity: 0; margin-top: 0; visibility: hidden; transition: max-height .5s ease, opacity .4s ease, margin-top .5s ease, visibility 0s linear .5s; }
+        @media (prefers-reduced-motion: reduce) { #journeyWrap { display: none; } }
+        .journey { position: relative; height: 114px; --d: 6s; }
+        .jr-trk { position: absolute; left: 12%; right: 12%; top: 58px; height: 0; }
         .jr-ln { position: absolute; top: 0; left: 0; right: 0; height: 3px; border-radius: 2px; background: rgba(255,255,255,.25); }
         .jr-pg { position: absolute; top: 0; left: 0; width: 100%; height: 3px; border-radius: 2px; background: #fbbf24; }
         .jr-nd { position: absolute; top: -9px; width: 21px; height: 21px; margin-left: -10.5px; border-radius: 9999px; background: #fbbf24; border: 2px solid #fbbf24; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #4A0B0B; }
@@ -83,7 +89,7 @@
         .jr-ic { display: block; width: 24px; height: 24px; }
         .jr-ic svg { display: block; width: 100%; height: 100%; }
         .jr-lb { position: absolute; top: 28px; width: 76px; margin-left: -38px; text-align: center; font-size: 12px; font-weight: 600; line-height: 1.25; color: #e2e8f0; }
-        .jr-man { position: absolute; top: -52px; left: 0; width: 44px; height: 52px; margin-left: -18px; z-index: 2; opacity: 0; }
+        .jr-man { position: absolute; top: -52px; left: 100%; width: 44px; height: 52px; margin-left: -18px; z-index: 2; opacity: 1; }
         .jr-man svg { display: block; width: 100%; height: 100%; }
         .journey.go .jr-man { animation: jrWalk var(--d) linear; }
         .journey.go .jr-pg { animation: jrPg var(--d) linear; }
@@ -97,7 +103,7 @@
         @keyframes jrBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-1.6px); } }
         @keyframes jrLeg { from { transform: rotate(-26deg); } to { transform: rotate(26deg); } }
         @keyframes jrArm { from { transform: rotate(-24deg); } to { transform: rotate(24deg); } }
-        @keyframes jrWalk { 0% { left: 0; opacity: 0; } 6% { left: 0; opacity: 1; } 88% { left: 100%; opacity: 1; } 100% { left: 100%; opacity: 0; } }
+        @keyframes jrWalk { 0% { left: 0; opacity: 0; } 6% { left: 0; opacity: 1; } 88%, 100% { left: 100%; opacity: 1; } }
         @keyframes jrPg { 0%, 6% { width: 0; } 88%, 100% { width: 100%; } }
         @keyframes jrN2 { 0%, 31% { background: #4A0B0B; border-color: rgba(255,255,255,.45); color: transparent; } 36%, 100% { background: #fbbf24; border-color: #fbbf24; color: #4A0B0B; } }
         @keyframes jrN3 { 0%, 58% { background: #4A0B0B; border-color: rgba(255,255,255,.45); color: transparent; } 63%, 100% { background: #fbbf24; border-color: #fbbf24; color: #4A0B0B; } }
@@ -168,9 +174,9 @@
                     var el = document.getElementById("splash");
                     document.body.style.overflow = "";
                     window.__introStart = Date.now();
-                    var seal = document.getElementById("sealAnim"), jr = document.getElementById("journey");
+                    var seal = document.getElementById("sealAnim");
                     if (seal) seal.classList.add("go");
-                    if (jr) jr.classList.add("go");
+                    if (typeof window.playJourney === "function") window.playJourney(true);
                     if (el) {
                         el.classList.add("splash-hide");
                         setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 700);
@@ -311,6 +317,7 @@
                 Every transmittal, wherever it's headed, is tracked in real time, from submission to release.
             </p>
 
+            <div id="journeyWrap" class="jr-collapsed" aria-hidden="true">
             <div id="journey" role="img" aria-label="A man carrying a letter walks from ESNCHS, to the District, to the Division, to other offices." onclick="playJourney()" class="journey cursor-pointer w-full max-w-md mx-auto">
                 <div class="jr-trk">
                     <div class="jr-ln"></div><div class="jr-pg"></div>
@@ -324,6 +331,7 @@
                     <span class="jr-lb" style="left:100%">Other offices</span>
                     <div class="jr-man"><svg viewBox="0 0 44 52" aria-hidden="true"><g class="jr-bob"><g class="jr-lbk"><rect x="13" y="34" width="5" height="15" rx="2.5" fill="#cbd5e1"/><rect x="12" y="47" width="8" height="4" rx="2" fill="#1a0505"/></g><g class="jr-ab"><rect x="16" y="16" width="4" height="14" rx="2" fill="#f0a30a"/></g><rect x="11" y="15" width="14" height="20" rx="5" fill="#fbbf24"/><g class="jr-lf"><rect x="17" y="34" width="5" height="15" rx="2.5" fill="#e2e8f0"/><rect x="17" y="47" width="8" height="4" rx="2" fill="#1a0505"/></g><circle cx="18" cy="9" r="6" fill="#E8B98A"/><path d="M12 8.5C12 4.5 15 2.5 18 2.5C21 2.5 24 4.5 24 8.5C22 6.5 20 6 18 6C16 6 14 6.5 12 8.5Z" fill="#1a0505"/><rect x="21" y="17" width="4" height="11" rx="2" fill="#f0a30a" transform="rotate(-70 22 18)"/><rect x="30" y="15" width="12" height="8" rx="1" fill="#fff"/><path d="M30 15L36 19.5L42 15" fill="none" stroke="#cbbfae" stroke-width="1"/></g></svg></div>
                 </div>
+            </div>
             </div>
             <div class="pt-2 flex flex-col sm:flex-row justify-center items-center gap-3 w-full max-w-sm sm:max-w-none mx-auto">
                 <a href="#tracker" class="w-full sm:w-auto px-8 py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm sm:text-base rounded-xl shadow-lg transition flex items-center justify-center gap-2 active:scale-95">
@@ -1532,18 +1540,36 @@
 
         let journeySyncing = false;
         let lastJourneyPlay = 0;
+        let journeyCollapseTimer = null;
+        let lastJourneyChange = 0;
 
+        function setJourneyOpen(open) {
+            const wrap = document.getElementById("journeyWrap");
+            if (!wrap) return;
+            clearTimeout(journeyCollapseTimer);
+            lastJourneyChange = Date.now();
+            if (open) {
+                wrap.classList.remove("jr-collapsed");
+                wrap.removeAttribute("aria-hidden");
+            } else {
+                wrap.classList.add("jr-collapsed");
+                wrap.setAttribute("aria-hidden", "true");
+            }
+        }
+
+        // Opens the walker block and plays one walk
         function playJourney(force) {
             const el = document.getElementById("journey");
             if (!el) return;
             if (!force && Date.now() - lastJourneyPlay < 1200) return;
             lastJourneyPlay = Date.now();
+            setJourneyOpen(true);
             el.classList.remove("go");
             void el.offsetWidth;
             el.classList.add("go");
         }
 
-        // While the site syncs the walker keeps walking, then finishes its current walk and rests.
+        // While the site syncs the walker keeps walking; when the sync is over it finishes its walk and closes.
         function journeyOnSyncStart() {
             journeySyncing = true;
             if (window.__introStart) playJourney(true);
@@ -1555,6 +1581,8 @@
             if (journeySyncing) { playJourney(true); return; }
             const el = document.getElementById("journey");
             if (el) el.classList.remove("go");
+            clearTimeout(journeyCollapseTimer);
+            journeyCollapseTimer = setTimeout(function () { if (!journeySyncing) setJourneyOpen(false); }, 1200);
         });
 
         // Walk again when someone comes back to the hero banner (Home link, or scrolling up to it)
@@ -1563,16 +1591,22 @@
             if (a) setTimeout(function () { if (!journeySyncing) playJourney(); }, 300);
         });
         (function () {
-            const el = document.getElementById("journey");
-            if (!el || !("IntersectionObserver" in window)) return;
+            const hero = document.getElementById("hero");
+            if (!hero || !("IntersectionObserver" in window)) return;
             let seen = false;
             new IntersectionObserver(function (entries) {
                 entries.forEach(function (en) {
                     if (en.isIntersecting) {
-                        if (!seen) { seen = true; if (window.__introStart && !journeySyncing) playJourney(); }
+                        if (!seen) {
+                            seen = true;
+                            // Only a real return to the hero replays it - not the hero resizing because the walker opened or closed
+                            const wrap = document.getElementById("journeyWrap");
+                            const closed = !wrap || wrap.classList.contains("jr-collapsed");
+                            if (window.__introStart && !journeySyncing && closed && Date.now() - lastJourneyChange > 2000) playJourney();
+                        }
                     } else { seen = false; }
                 });
-            }, { threshold: 0.6 }).observe(el);
+            }, { threshold: 0.35 }).observe(hero);
         })();
 
         window.onload = () => {
