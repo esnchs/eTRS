@@ -1492,6 +1492,7 @@
                 green: "bg-emerald-500 text-white",
                 amber: "bg-amber-500 text-white",
                 rose: "bg-rose-500 text-white",
+                sky: "bg-sky-500 text-white",
                 gray: "bg-slate-200 dark:bg-slate-700 text-slate-500"
             };
             return "w-6 h-6 mx-auto rounded-full flex items-center justify-center text-[10px] " + colors[color];
@@ -1526,8 +1527,10 @@
             } else if (st === "returned") {
                 step2Label.innerText = "Principal's Office";
                 step2Icon.className = stepClass("green");
-                step3Icon.className = stepClass("rose");
-                step3Label.innerText = "Returned";
+                // "Returned" in the record book means the document is ready FOR RELEASE
+                // (not yet released), so the slip shows it as "For Release".
+                step3Icon.className = stepClass("sky");
+                step3Label.innerText = "For Release";
                 step3Date.innerText = item.returned || "—";
             } else if (st === "pending") {
                 step2Label.innerText = level + " Office";
