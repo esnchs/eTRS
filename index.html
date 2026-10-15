@@ -220,6 +220,17 @@
         })();
     </script>
 
+    <!-- Weak signal / offline mode banner -->
+    <div id="netBanner" class="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 hidden w-[calc(100%-1.5rem)] max-w-md bg-slate-900 text-white rounded-2xl shadow-2xl border border-amber-400/40 px-4 py-3" role="status" aria-live="polite">
+        <div class="flex items-start gap-3">
+            <i id="netBannerIcon" class="fa-solid fa-signal text-amber-400 mt-0.5"></i>
+            <div class="flex-1 min-w-0">
+                <p id="netBannerMsg" class="text-xs sm:text-sm font-semibold leading-snug"></p>
+                <div id="netBannerBtns" class="flex flex-wrap gap-2 mt-2"></div>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Notification Container -->
     <div id="toast" class="fixed bottom-5 right-5 z-50 bg-slate-900 dark:bg-slate-800 text-white text-xs font-semibold px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none border border-slate-700">
         <i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i>
@@ -1278,6 +1289,113 @@
 
         // Reads data through the Apps Script backend - the actual Google Sheet can be
         // fully private, since only the backend (running with its own permission) touches it.
+        // ---------- Weak signal notice & offline mode ----------
+        let offlineMode = false;
+        try { offlineMode = localStorage.getItem("etrs_offline_mode") === "1"; } catch (e) {}
+        let weakDismissed = false;      // user chose "Keep waiting" this session
+        let activeCtrl = null;          // the request currently in flight (so offline mode can stop it)
+        let netBannerKind = "";
+
+        function hasSavedRecords() {
+            try { const c = JSON.parse(localStorage.getItem("etrs_cache") || "null"); return !!(c && c.values && c.values.length); }
+            catch (e) { return false; }
+        }
+        function loadSavedRecords() {
+            try {
+                const c = JSON.parse(localStorage.getItem("etrs_cache") || "null");
+                if (c && c.values) { sheetData = mapSheetValues(c.values); lastSyncedAt = new Date(c.t); updateLastUpdated(); return true; }
+            } catch (e) {}
+            return false;
+        }
+        function isWeakSignal() {
+            const c = navigator.connection;
+            if (!c) return false;
+            return !!c.saveData || /(^|-)2g$/.test(c.effectiveType || "") ||
+                   (c.rtt && c.rtt > 1500) || (c.downlink && c.downlink < 0.4);
+        }
+        function hideNetBanner(onlyKind) {
+            if (onlyKind && netBannerKind !== onlyKind) return;
+            const b = document.getElementById("netBanner");
+            if (b) b.classList.add("hidden");
+            netBannerKind = "";
+        }
+        function showNetBanner(kind, msg, icon, buttons) {
+            const b = document.getElementById("netBanner");
+            if (!b) return;
+            netBannerKind = kind;
+            document.getElementById("netBannerMsg").textContent = msg;
+            document.getElementById("netBannerIcon").className = "fa-solid " + icon + " text-amber-400 mt-0.5";
+            const box = document.getElementById("netBannerBtns");
+            box.innerHTML = "";
+            buttons.forEach((bt) => {
+                const el = document.createElement("button");
+                el.type = "button";
+                el.textContent = bt.label;
+                el.className = bt.primary
+                    ? "px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold transition"
+                    : "px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition";
+                el.onclick = bt.onClick;
+                box.appendChild(el);
+            });
+            b.classList.remove("hidden");
+        }
+        function showWeakSignalBanner() {
+            if (offlineMode || weakDismissed || netBannerKind === "offline") return;
+            const canGoOffline = hasSavedRecords();
+            const buttons = [];
+            if (canGoOffline) buttons.push({ label: "Use offline mode", primary: true, onClick: enterOfflineMode });
+            buttons.push({ label: canGoOffline ? "Keep waiting" : "Dismiss", onClick: () => { weakDismissed = true; hideNetBanner("weak"); } });
+            showNetBanner("weak",
+                canGoOffline ? "Weak signal detected. Loading may be slow. You can use your last saved records instead."
+                             : "Weak signal detected. Loading may be slow.",
+                "fa-signal", buttons);
+        }
+        function showOfflineBanner() {
+            const when = lastSyncedAt ? lastSyncedAt.toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "earlier";
+            showNetBanner("offline", "Offline mode: showing records saved on " + when + ".", "fa-cloud-arrow-down",
+                [{ label: "Go online", primary: true, onClick: () => { exitOfflineMode(); fetchSheetData(); } }]);
+        }
+        function enterOfflineMode() {
+            if (!hasSavedRecords()) { showToast("No saved records yet. Connect once to save them."); return; }
+            offlineMode = true;
+            try { localStorage.setItem("etrs_offline_mode", "1"); } catch (e) {}
+            if (activeCtrl) { try { activeCtrl.abort(); } catch (e) {} }
+            if (!sheetData.length) loadSavedRecords();
+            clearSyncError();
+            applyFilters();
+            showOfflineBanner();
+        }
+        function exitOfflineMode() {
+            offlineMode = false;
+            try { localStorage.removeItem("etrs_offline_mode"); } catch (e) {}
+            hideNetBanner("offline");
+        }
+        if (navigator.connection && navigator.connection.addEventListener) {
+            navigator.connection.addEventListener("change", () => { if (isWeakSignal()) showWeakSignalBanner(); else hideNetBanner("weak"); });
+        }
+
+        // Slow-connection friendly request: gives up on a stuck request instead of waiting forever,
+        // and tries once more with a longer allowance before reporting a problem.
+        async function fetchRecordsWithRetry() {
+            const allowances = [25000, 45000];
+            let lastErr;
+            for (let i = 0; i < allowances.length; i++) {
+                const ctrl = new AbortController();
+                activeCtrl = ctrl;
+                const timer = setTimeout(() => ctrl.abort(), allowances[i]);
+                try {
+                    const r = await fetch(APPS_SCRIPT_URL + "?_=" + Date.now(), { signal: ctrl.signal });
+                    clearTimeout(timer);
+                    return r;
+                } catch (e) {
+                    clearTimeout(timer);
+                    lastErr = e;
+                    if (navigator.onLine === false || offlineMode) break;
+                }
+            }
+            throw lastErr;
+        }
+
         async function fetchSheetDataInner(silent) {
             const refreshIcon = document.getElementById("refreshIcon");
             if (refreshIcon) refreshIcon.classList.add("fa-spin");
@@ -1300,8 +1418,11 @@
             if (!shownFromCache && !silent) showLoadingState();
             if (!silent && typeof journeyOnSyncStart === "function") journeyOnSyncStart();
 
+            // Tell the user when the connection is slow, instead of leaving them guessing
+            const slowTimer = setTimeout(() => { if (!silent) { showToast("Slow connection - still updating..."); showWeakSignalBanner(); } }, 6000);
             try {
-                const resp = await fetch(APPS_SCRIPT_URL + "?_=" + Date.now());
+                const resp = await fetchRecordsWithRetry();
+                clearTimeout(slowTimer);
                 if (!resp.ok) throw new Error("The backend answered with an error (HTTP " + resp.status + ").");
                 let json;
                 try { json = await resp.json(); }
@@ -1311,9 +1432,20 @@
                 lastSyncedAt = new Date();
                 try { localStorage.setItem("etrs_cache", JSON.stringify({ t: lastSyncedAt.getTime(), values: json.values })); } catch (e) {}
                 clearSyncError();
+                hideNetBanner("weak");
                 updateLastUpdated();
                 if (!silent) showToast("Synced " + sheetData.length + " records.");
             } catch (err) {
+                clearTimeout(slowTimer);
+                if (offlineMode) {
+                    // The user switched to offline mode while waiting: keep the saved records, no error
+                    if (refreshIcon) refreshIcon.classList.remove("fa-spin");
+                    if (!sheetData.length) loadSavedRecords();
+                    applyFilters();
+                    if (!silent && typeof journeyOnSyncEnd === "function") journeyOnSyncEnd();
+                    if (window.hideSplash) window.hideSplash();
+                    return;
+                }
                 console.error("Sheet sync failed:", err);
                 if (silent) {
                     // Background refresh failed: keep what is on screen, say nothing
@@ -1331,7 +1463,12 @@
                         }
                     } catch (e) {}
                 }
-                showSyncError(noConnection ? "You appear to be offline." : err.message);
+                const tooSlow = err && err.name === "AbortError";
+                showSyncError(
+                    tooSlow ? "The connection is too slow right now. Showing your last saved records - tap the sync button to try again."
+                    : noConnection ? "You appear to be offline."
+                    : err.message
+                );
                 showToast("Sync failed. See the message above the table.");
             }
             applyFilters();
@@ -1344,6 +1481,17 @@
         let syncInProgress = false;
         async function fetchSheetData(silent) {
             if (syncInProgress) return;
+            if (offlineMode) {
+                if (silent === "open" && hasSavedRecords()) {
+                    // Opening the page in offline mode: just show the saved records, no network
+                    if (!sheetData.length) loadSavedRecords();
+                    applyFilters();
+                    showOfflineBanner();
+                    if (window.hideSplash) window.hideSplash();
+                    return;
+                }
+                exitOfflineMode();   // the sync button means "go online and update"
+            }
             syncInProgress = true;
             try { await fetchSheetDataInner(silent === true); }
             finally { syncInProgress = false; }
@@ -1726,7 +1874,8 @@
 
         window.onload = () => {
             initTheme();
-            fetchSheetData();
+            if (isWeakSignal() && !offlineMode) showWeakSignalBanner();
+            fetchSheetData("open");
             updateClock();
             setInterval(updateClock, 1000);
         };
