@@ -7,6 +7,13 @@
     <title>eTransmittal Record System - Eastern Samar National Comprehensive High School</title>
     <meta name="description" content="Track the status of documents transmitted by Eastern Samar National Comprehensive High School. Search a TRF number to see where a document stands, from submission to release.">
     <meta name="theme-color" content="#6B1111">
+    <!-- Installable app (PWA) -->
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="eTRS">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="eTransmittal Record System">
     <meta property="og:title" content="eTransmittal Record System - ESNCHS">
@@ -1661,6 +1668,14 @@
             updateClock();
             setInterval(updateClock, 1000);
         };
+    </script>
+    <script>
+        // Register the service worker so the site can be installed as an app
+        if ("serviceWorker" in navigator) {
+            window.addEventListener("load", () => {
+                navigator.serviceWorker.register("sw.js").catch(() => {});
+            });
+        }
     </script>
 </body>
 </html>
