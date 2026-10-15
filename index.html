@@ -252,6 +252,9 @@
                     <a href="#tracker" class="hover:text-[#6B1111] dark:hover:text-amber-400 transition">Track Document</a>
                     <a href="#features" class="hover:text-[#6B1111] dark:hover:text-amber-400 transition">Services</a>
                     <a href="#contact" class="hover:text-[#6B1111] dark:hover:text-amber-400 transition">Contact</a>
+                    <button type="button" onclick="installApp()" class="installAppBtn hidden items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#6B1111] hover:bg-[#4A0B0B] text-white text-xs font-bold transition">
+                        <i class="fa-solid fa-download text-[11px]"></i> Get the App
+                    </button>
                 </div>
 
                 <div class="h-6 w-px bg-slate-200 dark:bg-slate-700 hidden lg:block"></div>
@@ -330,6 +333,9 @@
             <a href="#tracker" onclick="closeMobileMenu()" class="block py-2 px-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition">🔍 Track Document</a>
             <a href="#features" onclick="closeMobileMenu()" class="block py-2 px-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition">⚙️ Services & Capabilities</a>
             <a href="#contact" onclick="closeMobileMenu()" class="block py-2 px-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition">📞 Contact Support</a>
+            <button type="button" onclick="installApp(); closeMobileMenu();" class="installAppBtn hidden w-full text-left py-2 px-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                📲 Install App
+            </button>
             <div class="h-px bg-slate-200 dark:bg-slate-800 my-1.5"></div>
             <button id="authBtnMobile" onclick="openLoginModal(); closeMobileMenu();" class="w-full text-left block py-2 px-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition">
                 <span id="authBtnIconMobile">🔒</span> <span id="authBtnTextMobile">Admin Login</span>
@@ -370,6 +376,9 @@
                 <a href="#tracker" class="w-full sm:w-auto px-8 py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm sm:text-base rounded-xl shadow-lg transition flex items-center justify-center gap-2 active:scale-95">
                     <i class="fa-solid fa-magnifying-glass"></i> Track a Document
                 </a>
+                <button type="button" onclick="installApp()" class="installAppBtn hidden w-full sm:w-auto px-8 py-3.5 bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold text-sm sm:text-base rounded-xl shadow-lg transition items-center justify-center gap-2 active:scale-95">
+                    <i class="fa-solid fa-mobile-screen-button"></i> Get the App
+                </button>
                 <!-- Hero Record Book Button: Hidden by default until Admin logs in -->
                 <a href="#" onclick="openRecordBook(event)" id="heroRecordBookBtn" class="hidden w-full sm:w-auto px-8 py-3.5 bg-[#4A0B0B] hover:bg-[#380808] text-amber-400 font-bold text-sm sm:text-base rounded-xl shadow-lg transition items-center justify-center gap-2 active:scale-95 border border-amber-500/20">
                     <i class="fa-solid fa-book-open"></i> Record Book
@@ -750,6 +759,24 @@
     </div>
 
     <!-- ADMIN LOGIN MODAL -->
+    <!-- Install App help window -->
+    <div id="installModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50" onclick="if(event.target===this)closeInstallModal()">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden border border-slate-100 dark:border-slate-800">
+            <div class="bg-[#6B1111] text-white px-5 py-4 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-mobile-screen-button text-amber-400"></i>
+                    <h3 class="font-bold text-sm">Install eTRS on your device</h3>
+                </div>
+                <button onclick="closeInstallModal()" aria-label="Close" class="text-amber-200 hover:text-white text-xl p-1">&times;</button>
+            </div>
+            <div class="p-5 space-y-3 text-xs sm:text-sm text-slate-700 dark:text-slate-200">
+                <p id="installModalIntro" class="font-semibold"></p>
+                <ol id="installModalSteps" class="list-decimal pl-5 space-y-1.5"></ol>
+                <button onclick="closeInstallModal()" class="w-full mt-2 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl transition">Got it</button>
+            </div>
+        </div>
+    </div>
+
     <div id="loginModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
         <div class="bg-white dark:bg-slate-900 w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden border border-slate-100 dark:border-slate-800 transition-colors">
             <div class="bg-[#6B1111] text-white px-5 py-4 flex items-center justify-between">
@@ -1272,13 +1299,24 @@
                 if (json && json.error) throw new Error(json.error);
                 sheetData = mapSheetValues(json && json.values);
                 lastSyncedAt = new Date();
+                try { localStorage.setItem("etrs_cache", JSON.stringify({ t: lastSyncedAt.getTime(), values: json.values })); } catch (e) {}
                 clearSyncError();
                 updateLastUpdated();
                 showToast("Synced " + sheetData.length + " records.");
             } catch (err) {
                 console.error("Sheet sync failed:", err);
                 const noConnection = (err instanceof TypeError) || (typeof navigator !== "undefined" && navigator.onLine === false);
-                showSyncError(noConnection ? "Could not reach the server. Please check your internet connection." : err.message);
+                if (!sheetData.length) {
+                    try {
+                        const saved = JSON.parse(localStorage.getItem("etrs_cache") || "null");
+                        if (saved && saved.values) {
+                            sheetData = mapSheetValues(saved.values);
+                            lastSyncedAt = new Date(saved.t);
+                            updateLastUpdated();
+                        }
+                    } catch (e) {}
+                }
+                showSyncError(noConnection ? "You appear to be offline." : err.message);
                 showToast("Sync failed. See the message above the table.");
             }
             applyFilters();
@@ -1668,6 +1706,57 @@
             updateClock();
             setInterval(updateClock, 1000);
         };
+    </script>
+    <script>
+        // ---------- Install App button ----------
+        let deferredInstallPrompt = null;
+        const isStandalone = () => window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+
+        function setInstallButtons(show) {
+            document.querySelectorAll(".installAppBtn").forEach((b) => {
+                b.classList.toggle("hidden", !show);
+                if (show) b.classList.add("flex");
+                else b.classList.remove("flex");
+            });
+        }
+        if (!isStandalone()) setInstallButtons(true);
+
+        window.addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); deferredInstallPrompt = e; });
+        window.addEventListener("appinstalled", () => { deferredInstallPrompt = null; setInstallButtons(false); closeInstallModal(); });
+
+        async function installApp() {
+            if (deferredInstallPrompt) {
+                deferredInstallPrompt.prompt();
+                try { await deferredInstallPrompt.userChoice; } catch (e) {}
+                deferredInstallPrompt = null;
+                return;
+            }
+            const ua = navigator.userAgent || "";
+            const inApp = /FBAN|FBAV|FB_IAB|Messenger|Instagram|Line\/|; wv\)/i.test(ua);
+            const isIOS = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+            let intro, steps;
+            if (inApp) {
+                intro = "You're inside Messenger/Facebook's browser, which can't install apps.";
+                steps = isIOS
+                    ? ["Tap the \u22EF or Share icon on this page.", "Choose \"Open in Safari\".", "In Safari, tap Share, then \"Add to Home Screen\"."]
+                    : ["Tap the \u22EE or \u22EF menu at the top right.", "Choose \"Open in browser\" (or \"Open in Chrome\").", "In Chrome, tap the \u22EE menu, then \"Install app\" or \"Add to Home Screen\"."];
+            } else if (isIOS) {
+                intro = "On iPhone/iPad, install it from Safari:";
+                steps = ["Tap the Share button (the square with an arrow).", "Scroll down and tap \"Add to Home Screen\".", "Tap \"Add\"."];
+            } else {
+                intro = "Install it from your browser menu:";
+                steps = ["Open the browser menu (\u22EE at the top right).", "Tap \"Install app\" or \"Add to Home Screen\".", "On a computer, you can also click the install icon at the right end of the address bar."];
+            }
+            document.getElementById("installModalIntro").textContent = intro;
+            document.getElementById("installModalSteps").innerHTML = steps.map((t) => "<li>" + t + "</li>").join("");
+            const m = document.getElementById("installModal");
+            m.classList.remove("hidden"); m.classList.add("flex");
+        }
+        function closeInstallModal() {
+            const m = document.getElementById("installModal");
+            if (!m) return;
+            m.classList.add("hidden"); m.classList.remove("flex");
+        }
     </script>
     <script>
         // Register the service worker so the site can be installed as an app
