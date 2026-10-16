@@ -220,17 +220,6 @@
         })();
     </script>
 
-    <!-- Weak signal / offline mode banner -->
-    <div id="netBanner" class="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 hidden w-[calc(100%-1.5rem)] max-w-md bg-slate-900 text-white rounded-2xl shadow-2xl border border-amber-400/40 px-4 py-3" role="status" aria-live="polite">
-        <div class="flex items-start gap-3">
-            <i id="netBannerIcon" class="fa-solid fa-signal text-amber-400 mt-0.5"></i>
-            <div class="flex-1 min-w-0">
-                <p id="netBannerMsg" class="text-xs sm:text-sm font-semibold leading-snug"></p>
-                <div id="netBannerBtns" class="flex flex-wrap gap-2 mt-2"></div>
-            </div>
-        </div>
-    </div>
-
     <!-- Toast Notification Container -->
     <div id="toast" class="fixed bottom-5 right-5 z-50 bg-slate-900 dark:bg-slate-800 text-white text-xs font-semibold px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none border border-slate-700">
         <i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i>
@@ -322,6 +311,17 @@
                                 </div>
                                 <div id="trfListItems" class="space-y-1.5 max-h-44 overflow-y-auto pr-0.5"></div>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Connection status icon (only visible on weak signal / offline mode) -->
+                    <div id="netStatusWrap" class="relative shrink-0">
+                        <button id="netStatusBtn" type="button" onclick="toggleNetPopover(event)" class="hidden w-9 h-9 sm:w-10 sm:h-10 items-center justify-center bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 rounded-xl transition border border-amber-500/30" title="Connection status" aria-label="Connection status">
+                            <i id="netStatusIcon" class="fa-solid fa-signal text-sm"></i>
+                        </button>
+                        <div id="netPopover" class="hidden absolute right-0 top-full mt-2 w-64 z-50 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 p-3 text-xs">
+                            <p id="netPopoverMsg" class="font-semibold leading-snug"></p>
+                            <div id="netPopoverBtns" class="flex flex-wrap gap-2 mt-2"></div>
                         </div>
                     </div>
 
@@ -439,7 +439,14 @@
                 </div>
                 <button onclick="fetchSheetData()" class="shrink-0 px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-semibold text-[11px] transition">Try again</button>
             </div>
-            <p class="text-[11px] text-slate-400 dark:text-slate-500 flex items-center gap-1.5 -mb-1"><i class="fa-regular fa-clock"></i> <span id="lastUpdatedLabel">Not synced yet</span></p>
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 -mb-1">
+                <p class="text-[11px] text-slate-400 dark:text-slate-500 flex items-center gap-1.5"><i class="fa-regular fa-clock"></i> <span id="lastUpdatedLabel">Not synced yet</span></p>
+                <div id="netChip" class="hidden items-center gap-1.5 text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-500/15 dark:text-amber-300">
+                    <i id="netChipIcon" class="fa-solid fa-signal"></i>
+                    <span id="netChipText"></span>
+                    <span id="netChipActions" class="flex items-center gap-2"></span>
+                </div>
+            </div>
 
             <!-- SINGLE LINE TOOLBAR FOR ALL CONTROLS -->
             <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
@@ -1313,47 +1320,83 @@
             return !!c.saveData || /(^|-)2g$/.test(c.effectiveType || "") ||
                    (c.rtt && c.rtt > 1500) || (c.downlink && c.downlink < 0.4);
         }
+        function savedWhen() {
+            return lastSyncedAt ? lastSyncedAt.toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "earlier";
+        }
+        function netButtons(state, primaryClass, plainClass) {
+            // Returns the action buttons for the current state
+            const list = [];
+            if (state === "weak" && hasSavedRecords()) list.push({ label: "Use offline mode", onClick: enterOfflineMode });
+            if (state === "offline") list.push({ label: "Go online", onClick: () => { exitOfflineMode(); fetchSheetData(); } });
+            return list;
+        }
+        function renderNet() {
+            const state = netBannerKind;
+            const chip = document.getElementById("netChip");
+            const btn = document.getElementById("netStatusBtn");
+            const pop = document.getElementById("netPopover");
+            if (!chip || !btn || !pop) return;
+            if (!state) {
+                chip.classList.add("hidden"); chip.classList.remove("flex");
+                btn.classList.add("hidden"); btn.classList.remove("flex");
+                pop.classList.add("hidden");
+                return;
+            }
+            const weak = state === "weak";
+            const icon = weak ? "fa-signal" : "fa-cloud-arrow-down";
+            const actions = netButtons(state);
+
+            // Status line next to "Last updated"
+            document.getElementById("netChipIcon").className = "fa-solid " + icon;
+            document.getElementById("netChipText").textContent = weak ? "Weak signal" : "Offline mode \u00B7 saved " + savedWhen();
+            const ca = document.getElementById("netChipActions");
+            ca.innerHTML = "";
+            actions.forEach((a) => {
+                const b = document.createElement("button");
+                b.type = "button"; b.textContent = a.label; b.onclick = a.onClick;
+                b.className = "underline underline-offset-2 font-bold hover:opacity-80";
+                ca.appendChild(b);
+            });
+            chip.classList.remove("hidden"); chip.classList.add("flex");
+
+            // Header icon + its small menu
+            document.getElementById("netStatusIcon").className = "fa-solid " + icon + " text-sm";
+            btn.classList.remove("hidden"); btn.classList.add("flex");
+            document.getElementById("netPopoverMsg").textContent = weak
+                ? "Weak signal detected. Loading may be slow." + (hasSavedRecords() ? " You can use your last saved records instead." : "")
+                : "Offline mode: showing records saved on " + savedWhen() + ".";
+            const pb = document.getElementById("netPopoverBtns");
+            pb.innerHTML = "";
+            actions.forEach((a) => {
+                const b = document.createElement("button");
+                b.type = "button"; b.textContent = a.label;
+                b.onclick = () => { pop.classList.add("hidden"); a.onClick(); };
+                b.className = "px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold transition";
+                pb.appendChild(b);
+            });
+            pb.classList.toggle("hidden", actions.length === 0);
+        }
+        function toggleNetPopover(e) {
+            if (e) e.stopPropagation();
+            document.getElementById("netPopover").classList.toggle("hidden");
+        }
+        document.addEventListener("click", (e) => {
+            const wrap = document.getElementById("netStatusWrap");
+            if (wrap && !wrap.contains(e.target)) document.getElementById("netPopover").classList.add("hidden");
+        });
         function hideNetBanner(onlyKind) {
             if (onlyKind && netBannerKind !== onlyKind) return;
-            const b = document.getElementById("netBanner");
-            if (b) b.classList.add("hidden");
             netBannerKind = "";
-        }
-        function showNetBanner(kind, msg, icon, buttons) {
-            const b = document.getElementById("netBanner");
-            if (!b) return;
-            netBannerKind = kind;
-            document.getElementById("netBannerMsg").textContent = msg;
-            document.getElementById("netBannerIcon").className = "fa-solid " + icon + " text-amber-400 mt-0.5";
-            const box = document.getElementById("netBannerBtns");
-            box.innerHTML = "";
-            buttons.forEach((bt) => {
-                const el = document.createElement("button");
-                el.type = "button";
-                el.textContent = bt.label;
-                el.className = bt.primary
-                    ? "px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold transition"
-                    : "px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition";
-                el.onclick = bt.onClick;
-                box.appendChild(el);
-            });
-            b.classList.remove("hidden");
+            renderNet();
         }
         function showWeakSignalBanner() {
-            if (offlineMode || weakDismissed || netBannerKind === "offline") return;
-            const canGoOffline = hasSavedRecords();
-            const buttons = [];
-            if (canGoOffline) buttons.push({ label: "Use offline mode", primary: true, onClick: enterOfflineMode });
-            buttons.push({ label: canGoOffline ? "Keep waiting" : "Dismiss", onClick: () => { weakDismissed = true; hideNetBanner("weak"); } });
-            showNetBanner("weak",
-                canGoOffline ? "Weak signal detected. Loading may be slow. You can use your last saved records instead."
-                             : "Weak signal detected. Loading may be slow.",
-                "fa-signal", buttons);
+            if (offlineMode || netBannerKind === "offline") return;
+            netBannerKind = "weak";
+            renderNet();
         }
         function showOfflineBanner() {
-            const when = lastSyncedAt ? lastSyncedAt.toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "earlier";
-            showNetBanner("offline", "Offline mode: showing records saved on " + when + ".", "fa-cloud-arrow-down",
-                [{ label: "Go online", primary: true, onClick: () => { exitOfflineMode(); fetchSheetData(); } }]);
+            netBannerKind = "offline";
+            renderNet();
         }
         function enterOfflineMode() {
             if (!hasSavedRecords()) { showToast("No saved records yet. Connect once to save them."); return; }
