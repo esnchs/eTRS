@@ -188,6 +188,18 @@
         html:not(.dark) :where(.text-slate-400) { color: #64748b; }
         html:not(.dark) :where(.text-slate-500) { color: #475569; }
         @media print { html:not(.dark) :where(.bg-white) { background-color: #fff; } }
+
+        /* Soft shadows: lower opacity, higher blur, higher Y offset */
+        html .shadow-sm { --tw-shadow: 0 1px 2px rgba(15,23,42,.04), 0 3px 10px -3px rgba(15,23,42,.07); --tw-shadow-colored: 0 3px 10px -3px var(--tw-shadow-color); }
+        html .shadow, html .shadow-md { --tw-shadow: 0 8px 24px -8px rgba(15,23,42,.12); --tw-shadow-colored: 0 8px 24px -8px var(--tw-shadow-color); }
+        html .shadow-lg { --tw-shadow: 0 14px 36px -12px rgba(15,23,42,.16); --tw-shadow-colored: 0 14px 36px -12px var(--tw-shadow-color); }
+        html .shadow-xl { --tw-shadow: 0 20px 48px -14px rgba(15,23,42,.18); --tw-shadow-colored: 0 20px 48px -14px var(--tw-shadow-color); }
+        html .shadow-2xl { --tw-shadow: 0 30px 70px -20px rgba(15,23,42,.28); --tw-shadow-colored: 0 30px 70px -20px var(--tw-shadow-color); }
+        html.dark .shadow-sm { --tw-shadow: 0 3px 10px -3px rgba(0,0,0,.35); }
+        html.dark .shadow, html.dark .shadow-md { --tw-shadow: 0 8px 24px -8px rgba(0,0,0,.45); }
+        html.dark .shadow-lg { --tw-shadow: 0 14px 36px -12px rgba(0,0,0,.55); }
+        html.dark .shadow-xl { --tw-shadow: 0 20px 48px -14px rgba(0,0,0,.6); }
+        html.dark .shadow-2xl { --tw-shadow: 0 30px 70px -20px rgba(0,0,0,.7); }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans antialiased selection:bg-amber-200 transition-colors duration-200">
@@ -266,7 +278,7 @@
                 <div class="h-6 w-px bg-slate-200 dark:bg-slate-700 hidden lg:block"></div>
 
                 <!-- Dark / Light Mode Toggle Button -->
-                <button id="themeToggleBtn" aria-label="Toggle dark or light mode" onclick="toggleTheme()" class="p-2 sm:p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-amber-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition border border-slate-200 dark:border-slate-700 flex items-center justify-center shrink-0" title="Toggle Dark/Light Mode">
+                <button id="themeToggleBtn" aria-label="Toggle dark or light mode" title="Switch light / dark mode" onclick="toggleTheme()" class="w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-amber-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition border border-slate-200 dark:border-slate-700 flex items-center justify-center shrink-0" title="Toggle Dark/Light Mode">
                     <i id="themeToggleIcon" class="fa-solid fa-moon text-xs sm:text-sm"></i>
                 </button>
 
@@ -285,7 +297,7 @@
                     <!-- Live Clock Button (click to open calendar + time popover) -->
                     <div class="relative">
                         <button id="clockBtn" onclick="toggleClockPopover(event)" class="px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs sm:text-sm font-semibold rounded-xl transition border border-slate-200 dark:border-slate-700 flex items-center gap-1.5" title="Date & Time" aria-label="Show date and time">
-                            <i class="fa-regular fa-clock text-xs"></i>
+                            <i class="fa-solid fa-clock text-xs"></i>
                             <span id="navClockTime" class="font-mono">--:--</span>
                         </button>
                         <!-- Calendar + Time Popover -->
@@ -449,7 +461,7 @@
                 <button onclick="fetchSheetData()" class="shrink-0 px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-semibold text-[11px] transition">Try again</button>
             </div>
             <div class="flex flex-wrap items-center gap-x-3 gap-y-1 -mb-1">
-                <p class="text-[11px] text-slate-400 dark:text-slate-500 flex items-center gap-1.5"><i class="fa-regular fa-clock"></i> <span id="lastUpdatedLabel">Not synced yet</span></p>
+                <p class="text-[11px] text-slate-400 dark:text-slate-500 flex items-center gap-1.5"><i class="fa-solid fa-clock"></i> <span id="lastUpdatedLabel">Not synced yet</span></p>
                 <div id="netChip" class="hidden items-center gap-1.5 text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-500/15 dark:text-amber-300">
                     <i id="netChipIcon" class="fa-solid fa-signal"></i>
                     <span id="netChipText"></span>
@@ -763,7 +775,7 @@
                     <p>
                         <span class="text-slate-400">TRF No:</span>
                         <span id="modalTRF" class="font-bold text-slate-800 dark:text-slate-100 font-mono">---</span>
-                        <button onclick="copyTRFFromModal()" class="text-slate-400 hover:text-amber-600 text-xs ml-1" title="Copy TRF" aria-label="Copy TRF number"><i class="fa-regular fa-copy"></i></button>
+                        <button onclick="copyTRFFromModal()" class="text-slate-400 hover:text-amber-600 text-xs ml-1" title="Copy TRF" aria-label="Copy TRF number"><i class="fa-solid fa-copy"></i></button>
                     </p>
                     <p><span class="text-slate-400">Destination:</span> <span id="modalTargetType" class="font-semibold text-amber-700 dark:text-amber-400">---</span></p>
                     <p><span class="text-slate-400">Document Source:</span> <span id="modalOffice" class="font-semibold text-slate-800 dark:text-slate-100">---</span></p>
@@ -1622,7 +1634,7 @@
                         <div class="flex flex-col items-start gap-1">
                             <span class="inline-flex items-center gap-1">
                                 ${esc(item.trf) || 'N/A'}
-                                <button class="copy-btn text-slate-300 dark:text-slate-600 hover:text-amber-600 dark:hover:text-amber-400 ml-0.5" title="Copy TRF" aria-label="Copy TRF number"><i class="fa-regular fa-copy text-xs"></i></button>
+                                <button class="copy-btn text-slate-300 dark:text-slate-600 hover:text-amber-600 dark:hover:text-amber-400 ml-0.5" title="Copy TRF" aria-label="Copy TRF number"><i class="fa-solid fa-copy text-xs"></i></button>
                             </span>
                             ${targetTag}
                         </div>
