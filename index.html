@@ -707,6 +707,9 @@
                 <a href="https://www.facebook.com/esnchs.borongan.3" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto px-6 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs sm:text-sm rounded-xl transition shadow active:scale-95 flex items-center justify-center gap-2">
                     <i class="fa-brands fa-facebook text-base"></i> Contact ESNCHS Facebook Page
                 </a>
+                <button type="button" onclick="openFeedbackModal()" class="w-full sm:w-auto px-6 py-3 border-2 border-amber-500 hover:bg-amber-500 text-amber-300 hover:text-slate-950 font-bold text-xs sm:text-sm rounded-xl transition active:scale-95 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-comment-dots text-base"></i> Send Feedback
+                </button>
             </div>
         </div>
     </section>
@@ -723,6 +726,7 @@
                     <i class="fa-brands fa-facebook text-sm"></i> Official Facebook
                 </a>
                 <span class="text-slate-700">•</span>
+                <button type="button" onclick="openFeedbackModal()" class="hover:text-amber-400 transition flex items-center gap-1.5"><i class="fa-solid fa-comment-dots text-sm"></i> Send feedback</button>
                 <a href="#" onclick="openPolicyModal('privacy'); return false;" class="hover:text-white transition">Privacy Policy</a>
                 <a href="#" onclick="openPolicyModal('terms'); return false;" class="hover:text-white transition">Terms of Service</a>
             </div>
@@ -858,6 +862,59 @@
             </div>
         </div>
     </div>
+
+    <!-- FEEDBACK MODAL (clean design) -->
+    <div id="feedbackModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4 z-50">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl max-h-[92vh] overflow-y-auto transition-colors">
+
+            <div id="feedbackFormView" class="p-6 sm:p-7">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">Send feedback</h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Help us make this portal better.</p>
+                    </div>
+                    <button type="button" onclick="closeFeedbackModal()" aria-label="Close feedback window" class="-mr-2 -mt-1 w-9 h-9 rounded-full text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200 text-2xl leading-none transition">&times;</button>
+                </div>
+
+                <input type="hidden" id="fbCategory" value="Suggestion">
+                <div class="flex gap-2 mt-5" role="group" aria-label="Category">
+                    <button type="button" data-cat="Suggestion" onclick="fbPick('Suggestion')" class="fb-pill flex-1 py-2 rounded-full text-xs font-semibold border transition">Suggestion</button>
+                    <button type="button" data-cat="Problem" onclick="fbPick('Problem')" class="fb-pill flex-1 py-2 rounded-full text-xs font-semibold border transition">Problem</button>
+                    <button type="button" data-cat="Question" onclick="fbPick('Question')" class="fb-pill flex-1 py-2 rounded-full text-xs font-semibold border transition">Question</button>
+                </div>
+
+                <label for="fbMessage" class="sr-only">Message</label>
+                <textarea id="fbMessage" rows="5" maxlength="1000" placeholder="What would you like to tell us?" class="mt-4 w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-transparent focus:border-slate-300 dark:focus:border-slate-600 focus:bg-white dark:focus:bg-slate-800 text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none resize-none transition"></textarea>
+                <div class="flex justify-between mt-1.5 px-1 text-[11px] text-slate-400">
+                    <span id="fbError" class="text-red-600 dark:text-red-400 font-semibold"></span>
+                    <span><span id="fbCount">0</span>/1000</span>
+                </div>
+
+                <label for="fbContact" class="sr-only">Contact (optional)</label>
+                <input id="fbContact" type="text" maxlength="120" autocomplete="off" placeholder="Contact (optional), only if you want a reply" class="mt-3 w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-transparent focus:border-slate-300 dark:focus:border-slate-600 focus:bg-white dark:focus:bg-slate-800 text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none transition">
+
+                <!-- hidden trap field: real people never fill this in -->
+                <input id="fbWebsite" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;">
+
+                <button type="button" id="fbSendBtn" onclick="submitFeedback()" class="mt-5 w-full py-3 bg-[#6B1111] text-white rounded-2xl text-sm font-semibold hover:bg-[#4A0B0B] transition disabled:opacity-60">Send</button>
+            </div>
+
+            <div id="feedbackDoneView" class="hidden p-8 text-center">
+                <div id="fbDoneIcon" class="w-14 h-14 mx-auto rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl mb-4"><i class="fa-solid fa-check"></i></div>
+                <h4 id="fbDoneTitle" class="text-lg font-bold text-slate-900 dark:text-slate-100">Thank you!</h4>
+                <p id="fbDoneText" class="text-sm text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">Your feedback was sent.</p>
+                <button type="button" onclick="closeFeedbackModal()" class="mt-6 w-full py-3 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-2xl text-sm font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition">Done</button>
+            </div>
+        </div>
+    </div>
+    <style>
+        .fb-pill { border-color: #e2e8f0; color: #64748b; background: transparent; }
+        .fb-pill:hover { background: #f1f5f9; }
+        .fb-pill.fb-on { background: #6B1111; border-color: #6B1111; color: #fff; }
+        .dark .fb-pill { border-color: #334155; color: #94a3b8; }
+        .dark .fb-pill:hover { background: #1e293b; }
+        .dark .fb-pill.fb-on { background: #6B1111; border-color: #6B1111; color: #fff; }
+    </style>
 
     <script>
         // >>> PASTE YOUR GOOGLE SPREADSHEET LINK HERE <<<
@@ -1117,6 +1174,7 @@
                     <p>This portal displays transmittal records (TRF number, document source, report name, destination, and status) so that staff and requestors can track submissions without visiting the office in person.</p>
                     <p><strong class="text-slate-900 dark:text-slate-100">Current data visibility:</strong> the records shown here are currently accessible to anyone who has the link to this page. There is no per-user login required to view transmittal records.</p>
                     <p><strong class="text-slate-900 dark:text-slate-100">Where the data comes from:</strong> the information originates from the school's official Record Book. The connected Google Sheet is a synced copy used to power this website; it is not a separate, independent record.</p>
+                    <p><strong class="text-slate-900 dark:text-slate-100">Feedback:</strong> if you use the Send feedback form, your category, message, and optional contact detail are saved in a private Google Sheet managed by the school, and are used only to improve this portal or to reply to you. Please do not include passwords or other sensitive personal information in your message. If you are offline, your feedback is kept on your own device until it can be sent.</p>
                     <p>If you believe a record shown here contains an error or should not be public, please contact the Principal's Office directly so it can be corrected at the source.</p>
                 `
             },
@@ -1144,6 +1202,112 @@
             const modal = document.getElementById('policyModal');
             modal.classList.add('hidden');
             modal.classList.remove('flex');
+        }
+
+        // ===== FEEDBACK =====
+        // Feedback endpoint (Google Apps Script web app). It only adds new rows to a sheet.
+        const FEEDBACK_URL = "https://script.google.com/macros/s/AKfycbz7Bm8BNu_eJB707Oqm2zeFEU3HSxVylmqO7n5WSSjDKgWfFyxeT8B2w_rlOsdRBLBM/exec";
+        const FEEDBACK_QUEUE_KEY = "etrs_feedback_queue";
+
+        function fbQueueGet() {
+            try { return JSON.parse(localStorage.getItem(FEEDBACK_QUEUE_KEY) || "[]"); } catch (e) { return []; }
+        }
+        function fbQueueSet(list) {
+            try { localStorage.setItem(FEEDBACK_QUEUE_KEY, JSON.stringify(list)); } catch (e) {}
+        }
+        async function fbPost(item) {
+            // no-cors: the request is sent, but the reply cannot be read.
+            // A network failure still throws, which is how "offline" is detected.
+            await fetch(FEEDBACK_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify(item)
+            });
+        }
+        let fbFlushing = false;
+        async function fbFlushQueue() {
+            if (fbFlushing) return;
+            fbFlushing = true;
+            try {
+                let list = fbQueueGet();
+                while (list.length) {
+                    try { await fbPost(list[0]); list.shift(); fbQueueSet(list); }
+                    catch (e) { break; }
+                }
+            } finally { fbFlushing = false; }
+        }
+        window.addEventListener("online", fbFlushQueue);
+        window.addEventListener("load", () => setTimeout(fbFlushQueue, 3000));
+
+        function fbPick(cat) {
+            document.getElementById("fbCategory").value = cat;
+            document.querySelectorAll(".fb-pill").forEach(b => b.classList.toggle("fb-on", b.dataset.cat === cat));
+        }
+        function openFeedbackModal() {
+            fbPick("Suggestion");
+            document.getElementById("fbMessage").value = "";
+            document.getElementById("fbContact").value = "";
+            document.getElementById("fbWebsite").value = "";
+            document.getElementById("fbError").textContent = "";
+            document.getElementById("fbCount").textContent = "0";
+            document.getElementById("fbSendBtn").disabled = false;
+            document.getElementById("fbSendBtn").textContent = "Send";
+            document.getElementById("feedbackFormView").classList.remove("hidden");
+            document.getElementById("feedbackDoneView").classList.add("hidden");
+            const modal = document.getElementById("feedbackModal");
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+            document.getElementById("fbMessage").focus();
+        }
+        function closeFeedbackModal() {
+            const modal = document.getElementById("feedbackModal");
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+        }
+        document.getElementById("fbMessage").addEventListener("input", (e) => {
+            document.getElementById("fbCount").textContent = e.target.value.length;
+        });
+
+        async function submitFeedback() {
+            const message = document.getElementById("fbMessage").value.trim();
+            const err = document.getElementById("fbError");
+            if (message.length < 5) { err.textContent = "Please write a short message first."; return; }
+            err.textContent = "";
+            // trap field filled in = a bot; pretend success and send nothing
+            const isBot = document.getElementById("fbWebsite").value !== "";
+
+            const item = {
+                category: document.getElementById("fbCategory").value,
+                message: message,
+                contact: document.getElementById("fbContact").value.trim(),
+                submitted: new Date().toISOString(),
+                page: location.href
+            };
+            const btn = document.getElementById("fbSendBtn");
+            btn.disabled = true;
+            btn.textContent = "Sending...";
+
+            let sent = false;
+            if (!isBot) {
+                if (navigator.onLine !== false) {
+                    try { await fbPost(item); sent = true; } catch (e) { sent = false; }
+                }
+                if (!sent) { const q = fbQueueGet(); q.push(item); fbQueueSet(q); }
+            } else { sent = true; }
+
+            document.getElementById("feedbackFormView").classList.add("hidden");
+            document.getElementById("feedbackDoneView").classList.remove("hidden");
+            const icon = document.getElementById("fbDoneIcon");
+            if (sent) {
+                icon.innerHTML = '<i class="fa-solid fa-check"></i>';
+                document.getElementById("fbDoneTitle").textContent = "Thank you!";
+                document.getElementById("fbDoneText").textContent = "Your feedback was sent to the school. We read every message.";
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i>';
+                document.getElementById("fbDoneTitle").textContent = "Saved";
+                document.getElementById("fbDoneText").textContent = "Saved, will send when you\u2019re back online. Keep this page open or visit again later on this device.";
+            }
         }
 
         // Admin credentials: username is checked in plain text (it's not a secret),
