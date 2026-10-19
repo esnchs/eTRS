@@ -399,15 +399,19 @@
             </div></div>
             </div>
             <div class="pt-2 flex flex-col sm:flex-row justify-center items-center gap-3 w-full max-w-sm sm:max-w-none mx-auto">
-                <a href="#tracker" class="w-full sm:w-auto px-8 py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm sm:text-base rounded-xl shadow-lg transition flex items-center justify-center gap-2 active:scale-95">
+                <a href="#tracker" class="order-2 w-full sm:w-auto px-8 py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm sm:text-base rounded-xl shadow-lg transition flex items-center justify-center gap-2 active:scale-95">
                     <i class="fa-solid fa-magnifying-glass"></i> Track a Document
                 </a>
-                <button type="button" onclick="installApp()" class="installAppBtn hidden w-full sm:w-auto px-8 py-3.5 bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold text-sm sm:text-base rounded-xl shadow-lg transition items-center justify-center gap-2 active:scale-95">
+                <button type="button" onclick="installApp()" class="installAppBtn order-4 hidden w-full sm:w-auto px-8 py-3.5 bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold text-sm sm:text-base rounded-xl shadow-lg transition items-center justify-center gap-2 active:scale-95">
                     <i class="fa-solid fa-mobile-screen-button"></i> Get the App
                 </button>
                 <!-- Hero Record Book Button: Hidden by default until Admin logs in -->
-                <a href="#" onclick="openRecordBook(event)" id="heroRecordBookBtn" class="hidden w-full sm:w-auto px-8 py-3.5 bg-[#4A0B0B] hover:bg-[#380808] text-amber-400 font-bold text-sm sm:text-base rounded-xl shadow-lg transition items-center justify-center gap-2 active:scale-95 border border-amber-500/20">
+                <a href="#" onclick="openRecordBook(event)" id="heroRecordBookBtn" class="order-1 hidden w-full sm:w-auto px-8 py-3.5 bg-[#4A0B0B] hover:bg-[#380808] text-amber-400 font-bold text-sm sm:text-base rounded-xl shadow-lg transition items-center justify-center gap-2 active:scale-95 border border-amber-500/20">
                     <i class="fa-solid fa-book-open"></i> Record Book
+                </a>
+                <!-- Hero Feedback Sheet Button: Hidden by default until Admin logs in -->
+                <a href="#" onclick="openFeedbackSheet(event)" id="heroFeedbackSheetBtn" class="order-3 hidden w-full sm:w-auto px-8 py-3.5 bg-[#4A0B0B] hover:bg-[#380808] text-amber-400 font-bold text-sm sm:text-base rounded-xl shadow-lg transition items-center justify-center gap-2 active:scale-95 border border-amber-500/20">
+                    <i class="fa-solid fa-comment-dots"></i> Feedback Sheet
                 </a>
             </div>
         </div>
@@ -920,6 +924,16 @@
         // reading the sheet directly, so the sheet itself can be set fully private.
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyCnoFrZrOw2J21iYpKo1aAL5X_WLCvjjw6seqkmYlOC1s4J1hwl4McrsphehfVZNmm1w/exec";
 
+        // >>> PASTE YOUR ETRS FEEDBACK GOOGLE SPREADSHEET LINK HERE (admin-only button) <<<
+        const FEEDBACK_SHEET_URL = "https://docs.google.com/spreadsheets/d/10JgQ51BQSv5krbi-dWhk6bxVEZfdM7NzOvPkiIUa7bE/edit?usp=sharing";
+
+        function openFeedbackSheet(e) {
+            if (e) e.preventDefault();
+            if (!isAdminLoggedIn) { showToast("Admin login required."); return; }
+            if (!FEEDBACK_SHEET_URL) { showToast("Feedback sheet link not set yet."); return; }
+            window.open(FEEDBACK_SHEET_URL, "_blank", "noopener,noreferrer");
+        }
+
         function openRecordBook(e) {
             if (e) e.preventDefault();
             if (!isAdminLoggedIn) { showToast("Admin login required."); return; }
@@ -1337,6 +1351,11 @@
                     heroBtn.classList.remove('hidden');
                     heroBtn.classList.add('flex');
                 }
+                const fbBtn = document.getElementById('heroFeedbackSheetBtn');
+                if (fbBtn) {
+                    fbBtn.classList.remove('hidden');
+                    fbBtn.classList.add('flex');
+                }
                 
                 // Switch Auth Button to Logout (desktop)
                 const btn = document.getElementById('authBtn');
@@ -1367,6 +1386,11 @@
             if (heroBtn) {
                 heroBtn.classList.add('hidden');
                 heroBtn.classList.remove('flex');
+            }
+            const fbBtn = document.getElementById('heroFeedbackSheetBtn');
+            if (fbBtn) {
+                fbBtn.classList.add('hidden');
+                fbBtn.classList.remove('flex');
             }
             
             // Revert Auth Button (desktop)
