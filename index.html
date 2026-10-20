@@ -216,7 +216,7 @@
         <div class="sp-loc">Borongan City, Eastern Samar</div>
         <div class="sp-stt" aria-hidden="true">
             <span class="sp-m1">Connecting to the Record Book<i class="sp-dt"></i><i class="sp-dt"></i><i class="sp-dt"></i></span>
-            <span class="sp-m2">Loading transmittal records<i class="sp-dt"></i><i class="sp-dt"></i><i class="sp-dt"></i></span>
+            <span class="sp-m2">Loading document records<i class="sp-dt"></i><i class="sp-dt"></i><i class="sp-dt"></i></span>
             <span class="sp-m3">Almost ready<i class="sp-dt"></i><i class="sp-dt"></i><i class="sp-dt"></i></span>
         </div>
     </div>
@@ -418,7 +418,7 @@
         <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3 mb-4 sm:mb-6">
             <div class="bg-white dark:bg-slate-900 p-3 sm:p-4 rounded-xl shadow-md border border-slate-200/80 dark:border-slate-800 flex items-center justify-between transition-colors">
                 <div>
-                    <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 font-semibold">Total Records</p>
+                    <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 font-semibold">Total Documents</p>
                     <p class="text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-100" id="statTotal">0</p>
                 </div>
                 <div class="p-2 sm:p-2.5 bg-slate-100 dark:bg-slate-800 rounded-lg text-slate-600 dark:text-slate-300"><i class="fa-solid fa-folder-open text-base sm:text-lg"></i></div>
@@ -483,7 +483,7 @@
                   <label for="searchInput" class="block text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-1">Search records</label>
                   <div class="relative">
                     <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-2.5 text-slate-400 dark:text-slate-500 text-xs"></i>
-                    <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Search TRF, Source, Destination, or Barcode..."
+                    <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Search TRF, name, document, destination or barcode..."
                         class="w-full pl-9 pr-4 py-1.5 text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                   </div>
                 </div>
@@ -608,13 +608,13 @@
             </div>
             
             <p class="text-xs sm:text-sm md:text-base text-slate-600 dark:text-slate-300 max-w-4xl mx-auto text-center leading-relaxed">
-                This portal is the online home of the <strong class="text-slate-900 dark:text-white">eTransmittal Record System</strong>, built to make document routing between the School and its receiving offices fast and easy to follow. Check a transmittal's real-time status, view its full digital record, and see exactly where it stands in the process, <span class="text-[#6B1111] dark:text-amber-400 font-semibold">from submission to release</span>.
+                This portal is the online home of the <strong class="text-slate-900 dark:text-white">eTransmittal Record System</strong>, built to make document routing between the School and its receiving offices fast and easy to follow. Check the latest synced status of your documents, view the full record, and see which transmittal they were listed in, <span class="text-[#6B1111] dark:text-amber-400 font-semibold">from submission to release</span>.
             </p>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2 max-w-5xl mx-auto">
                 <div class="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-sm text-center">
                     <div class="w-8 h-8 mx-auto mb-2 rounded-lg bg-amber-100 dark:bg-amber-950/50 text-[#6B1111] dark:text-amber-400 flex items-center justify-center font-bold text-sm">🔍</div>
-                    <h3 class="font-bold text-xs sm:text-sm text-slate-800 dark:text-slate-100 mb-1">Live Web Tracking</h3>
+                    <h3 class="font-bold text-xs sm:text-sm text-slate-800 dark:text-slate-100 mb-1">Online Tracking</h3>
                     <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 leading-normal">
                         Search TRF numbers online to check whether your document is pending, released, or returned.
                     </p>
@@ -630,9 +630,9 @@
 
                 <div class="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-sm text-center">
                     <div class="w-8 h-8 mx-auto mb-2 rounded-lg bg-amber-100 dark:bg-amber-950/50 text-[#6B1111] dark:text-amber-400 flex items-center justify-center font-bold text-sm">📄</div>
-                    <h3 class="font-bold text-xs sm:text-sm text-slate-800 dark:text-slate-100 mb-1">Digital Transmittal Slips</h3>
+                    <h3 class="font-bold text-xs sm:text-sm text-slate-800 dark:text-slate-100 mb-1">Document Tracker Slips</h3>
                     <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 leading-normal">
-                        Generate and print official transmittal receipts straight from your browser.
+                        View and print a document tracker slip for any document, straight from your browser.
                     </p>
                 </div>
             </div>
@@ -648,21 +648,21 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-                <!-- Card 1: Automated Transmittals -->
-                <div class="flip-card" tabindex="0" role="button" aria-label="Automated Transmittals - tap to flip for more detail" onclick="this.classList.toggle('flipped')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.classList.toggle('flipped');}">
+                <!-- Card 1: Transmittal Tracking -->
+                <div class="flip-card" tabindex="0" role="button" aria-label="Transmittal Tracking - tap to flip for more detail" onclick="this.classList.toggle('flipped')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.classList.toggle('flipped');}">
                     <div class="flip-card-inner">
                         <div class="flip-card-front p-5 sm:p-6 pt-6 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 transition-colors flex flex-col items-center text-center gap-2 justify-start">
                             <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 flex items-center justify-center text-lg sm:text-xl font-bold">⚡</div>
-                            <h3 class="font-bold text-slate-800 dark:text-slate-100 text-base sm:text-lg">Automated Transmittals</h3>
+                            <h3 class="font-bold text-slate-800 dark:text-slate-100 text-base sm:text-lg">Transmittal Tracking</h3>
                             <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                                Creates an official transmittal slip for every document you submit, with its own tracking number.
+                                Every transmittal submitted by the school office has its own TRF number, and each document listed in it is logged here so you can track it.
                             </p>
                         </div>
                         <div class="flip-card-back p-5 sm:p-6 pt-0 sm:pt-0 bg-amber-50 dark:bg-amber-950/30 rounded-2xl border border-amber-200/80 dark:border-amber-800/40 transition-colors flex flex-col items-center text-center gap-1.5 justify-start">
                             <div class="w-10 h-10 sm:w-12 sm:h-12 -mt-5 sm:-mt-6 rounded-xl bg-amber-400 dark:bg-amber-500 text-white border-4 border-white dark:border-slate-950 shadow-md flex items-center justify-center text-lg sm:text-xl font-bold shrink-0">⚡</div>
-                            <span class="inline-block mt-1 px-3 py-1 rounded-xl bg-amber-100 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300 text-xs sm:text-sm font-bold">Automated Transmittals</span>
+                            <span class="inline-block mt-1 px-3 py-1 rounded-xl bg-amber-100 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300 text-xs sm:text-sm font-bold">Transmittal Tracking</span>
                             <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed pt-1">
-                                Each document gets its own TRF number ("d-" means District, no "d-" means Division). You can follow it every step of the way: Submitted, then the office it's routed to, then Released or Returned, with the date for each step. A barcode and printable slip are included too.
+                                Each transmittal has its own TRF number ("d-" means District, no "d-" means Division). Every document listed in it is logged here, so you can follow it step by step: Submitted, then the office it's routed to, then Released or Returned, with the date for each step. A barcode and printable slip are included too.
                             </p>
                         </div>
                     </div>
@@ -675,7 +675,7 @@
                             <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#6B1111] text-[#D97706] flex items-center justify-center text-lg sm:text-xl font-bold">📖</div>
                             <h3 class="font-bold text-slate-800 dark:text-slate-100 text-base sm:text-lg">Digital Record Book</h3>
                             <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                                Keeps every record in one safe, searchable place instead of a paper logbook.
+                                The school's Record Book, online. View the same records kept by the Principal's Office, anytime.
                             </p>
                         </div>
                         <div class="flip-card-back p-5 sm:p-6 pt-0 sm:pt-0 bg-red-50 dark:bg-red-950/20 rounded-2xl border border-red-200/80 dark:border-red-900/40 transition-colors flex flex-col items-center text-center gap-1.5 justify-start">
@@ -750,7 +750,7 @@
             <div class="bg-[#6B1111] text-white px-5 py-3.5 flex items-center justify-between shrink-0">
                 <div class="flex items-center space-x-2">
                     <i class="fa-solid fa-receipt text-amber-400"></i>
-                    <h3 class="font-bold text-sm">Official Transmittal Slip</h3>
+                    <h3 class="font-bold text-sm">Document Tracker Slip</h3>
                 </div>
                 <button onclick="closeModal()" aria-label="Close receipt" class="text-amber-200 hover:text-white text-xl p-1">&times;</button>
             </div>
@@ -1193,29 +1193,105 @@
             privacy: {
                 title: "Privacy Policy",
                 body: `
-                    <p>This portal displays transmittal records (TRF number, document source, report name, destination, and status) so that staff and requestors can track submissions without visiting the office in person.</p>
-                    <p><strong class="text-slate-900 dark:text-slate-100">Current data visibility:</strong> the records shown here are currently accessible to anyone who has the link to this page. There is no per-user login required to view transmittal records.</p>
-                    <p><strong class="text-slate-900 dark:text-slate-100">Where the data comes from:</strong> the information originates from the school's official Record Book. The connected Google Sheet is a synced copy used to power this website; it is not a separate, independent record.</p>
-                    <p><strong class="text-slate-900 dark:text-slate-100">Feedback:</strong> if you use the Send feedback form, your category, message, and optional contact detail are saved in a private Google Sheet managed by the school, and are used only to improve this portal or to reply to you. Please do not include passwords or other sensitive personal information in your message. If you are offline, your feedback is kept on your own device until it can be sent.</p>
-                    <p><strong class="text-slate-900 dark:text-slate-100">My documents:</strong> if you star a document, its TRF number and last seen status are saved only in your own browser on this device. They are not sent to the school or to anyone else.</p>
-                                        <p>If you believe a record shown here contains an error or should not be public, please contact the Principal's Office directly so it can be corrected at the source.</p>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400">Effective Date: October 20, 2026</p>
+                    <h4 class="font-bold text-slate-900 dark:text-slate-100 pt-2">1. Introduction</h4>
+                    <p>The Eastern Samar National Comprehensive High School (ESNCHS) eTransmittal Record System (eTRS) is a digital tool designed to help users view and track the status of official transmittals. This Privacy Policy explains how the system collects, uses, stores, and protects information when users access or interact with it.</p>
+                    <p>By using the system, users acknowledge the practices described in this policy.</p>
+                    <h4 class="font-bold text-slate-900 dark:text-slate-100 pt-2">2. Information We Collect</h4>
+                    <p>The eTRS may process the following types of information:</p>
+                    <p class="font-semibold text-slate-900 dark:text-slate-100">a. Transmittal Records</p>
+                    <p>The system displays information related to official transmittals, including the transmittal reference number, document name, source, destination, and current status. These records are based on the school's official transmittal records.</p>
+                    <p class="font-semibold text-slate-900 dark:text-slate-100">b. User Feedback</p>
+                    <p>When users submit feedback, the system may collect the feedback category, message, optional contact information, access method (web or application), device identifier, submission date and time, and page URL. This information is used to review concerns, address reported issues, and improve the system.</p>
+                    <p class="font-semibold text-slate-900 dark:text-slate-100">c. Locally Stored Information</p>
+                    <p>The system may store certain information in the user's browser, such as starred documents and their last viewed status. Feedback submitted while offline may also be temporarily stored in the browser until it can be submitted.</p>
+                    <h4 class="font-bold text-slate-900 dark:text-slate-100 pt-2">3. How We Use Information</h4>
+                    <p>Information processed through the eTRS may be used to:</p>
+                    <ul class="list-disc pl-5 space-y-1">
+                    <li>Display and track transmittal records.</li>
+                    <li>Review and respond to user feedback and reported issues.</li>
+                    <li>Maintain and improve the system's functionality.</li>
+                    <li>Identify technical problems and support system maintenance.</li>
+                    <li>Help ensure the accuracy and reliability of displayed information.</li>
+                    </ul>
+                    <h4 class="font-bold text-slate-900 dark:text-slate-100 pt-2">4. Data Storage and Third-Party Services</h4>
+                    <p>Transmittal records are based on the school's official records. A connected Google Sheet may be used as a synchronized copy of these records.</p>
+                    <p>Feedback submissions may be transmitted to a school-managed spreadsheet through an automated script. Certain system functions may also rely on third-party services, hosting providers, or external libraries.</p>
+                    <p>These services may process information as necessary to provide their functions, subject to their respective terms and privacy practices.</p>
+                    <h4 class="font-bold text-slate-900 dark:text-slate-100 pt-2">5. Data Sharing and Disclosure</h4>
+                    <p>The eTRS does not intend to sell users' personal information. Information may be accessed by authorized school personnel when necessary to manage transmittal records, review feedback, maintain the system, or address legitimate administrative concerns.</p>
+                    <p>Information may also be disclosed when required by applicable laws, regulations, or lawful government processes.</p>
+                    <p>Users should be aware that transmittal information displayed on a publicly accessible page may be visible to anyone who can access the system. Only information approved for public display should be published.</p>
+                    <h4 class="font-bold text-slate-900 dark:text-slate-100 pt-2">6. Data Retention and Security</h4>
+                    <p>Information may be retained for as long as necessary to fulfill the system's administrative and operational purposes, subject to applicable school records-retention requirements and laws.</p>
+                    <p>Reasonable measures should be implemented to protect information against unauthorized access, alteration, disclosure, or loss. However, no digital system can guarantee absolute security.</p>
+                    <p>Some information, such as starred records and temporarily queued feedback, is stored locally in the user's browser. Clearing browser data may remove this locally stored information.</p>
+                    <h4 class="font-bold text-slate-900 dark:text-slate-100 pt-2">7. User Choices and Privacy Concerns</h4>
+                    <p>Users may choose whether to provide optional contact information when submitting feedback. They may also remove locally stored preferences by clearing the relevant browser data.</p>
+                    <p>For questions, requests, or concerns regarding information processed through the eTRS, users should contact the school's designated system administrator or authorized school representative.</p>
+                    <h4 class="font-bold text-slate-900 dark:text-slate-100 pt-2">8. Compliance with Applicable Laws</h4>
+                    <p>The collection and processing of personal information through the eTRS should comply with applicable Philippine laws and regulations, including Republic Act No. 10173, otherwise known as the Data Privacy Act of 2012, where applicable.</p>
+                    <p>The school should ensure that the system's actual data-processing practices, privacy notices, and security measures are reviewed by the appropriate school authority or designated Data Protection Officer.</p>
+                    <h4 class="font-bold text-slate-900 dark:text-slate-100 pt-2">9. Changes to This Privacy Policy</h4>
+                    <p>This Privacy Policy may be revised when necessary to reflect changes in the system, its data-processing practices, or applicable requirements. The updated version will be made available through the system.</p>
+                    <h4 class="font-bold text-slate-900 dark:text-slate-100 pt-2">10. Contact Information</h4>
+                    <p>For questions or concerns about this Privacy Policy or the handling of information through the eTRS, users may contact the authorized ESNCHS representative responsible for the system.</p>
                 `
             },
             terms: {
                 title: "Terms of Service",
                 body: `
-                    <p>This eTransmittal Record System is provided by Eastern Samar National Comprehensive High School (ESNCHS) as an informational tracking tool for official document transmittals.</p>
-                    <p>Information shown here is for reference only and does not replace the official Record Book maintained by the school. In case of any discrepancy, the school's official records take precedence.</p>
-                    <p>Do not use this system to submit, alter, or request changes to records. All such actions must go through the Principal's Office directly.</p>
-                    <p>The "Admin" login on this page only shows or hides certain links for staff convenience. It does not encrypt or restrict access to the underlying data.</p>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400">Effective Date: October 20, 2026</p>
+                    <h4 class="font-bold text-slate-900 dark:text-slate-100 pt-2">1. Acceptance of Terms</h4>
+                    <p>The Eastern Samar National Comprehensive High School (ESNCHS) eTransmittal Record System (eTRS) is provided to help users view and track official transmittal records. By accessing or using the system, users agree to comply with these Terms of Service.</p>
+                    <p>Users who do not agree with these terms should discontinue using the system.</p>
+                    <h4 class="font-bold text-slate-900 dark:text-slate-100 pt-2">2. Purpose of the System</h4>
+                    <p>The eTRS is intended to provide convenient access to transmittal information, including reference numbers, document names, sources, destinations, and current statuses.</p>
+                    <p>The system serves as a supplementary tracking tool. It does not replace the school's official transmittal records, Record Book, or other authorized administrative documents. In cases of discrepancies, the school's verified official records shall prevail.</p>
+                    <h4 class="font-bold text-slate-900 dark:text-slate-100 pt-2">3. Accuracy and Availability of Information</h4>
+                    <p>The information displayed in the eTRS depends on the accuracy and timeliness of the records supplied to the system. Updates may not appear immediately, and technical issues may temporarily affect the availability of information.</p>
+                    <p>Users who identify incorrect, incomplete, or outdated information should report the concern through the available feedback feature or to the authorized school personnel.</p>
+                    <p>The school should verify reported discrepancies against the appropriate official records before making corrections.</p>
+                    <h4 class="font-bold text-slate-900 dark:text-slate-100 pt-2">4. Acceptable Use</h4>
+                    <p>Users agree to use the eTRS responsibly and only for lawful and legitimate purposes related to accessing or tracking transmittal information.</p>
+                    <p>Users must not:</p>
+                    <ul class="list-disc pl-5 space-y-1">
+                    <li>Attempt to gain unauthorized access to the system, its data, or its administrative functions.</li>
+                    <li>Modify, manipulate, or interfere with transmittal records without proper authorization.</li>
+                    <li>Use the system to submit false, misleading, abusive, or unlawful content.</li>
+                    <li>Attempt to disrupt the system's operation or compromise its security.</li>
+                    <li>Collect, copy, disclose, or misuse information in violation of applicable laws, school policies, or privacy requirements.</li>
+                    </ul>
+                    <h4 class="font-bold text-slate-900 dark:text-slate-100 pt-2">5. Administrative Functions and Access Limitations</h4>
+                    <p>Certain administrative features may be available through the system's interface. However, hiding or displaying administrative controls in a web page does not, by itself, provide secure access control.</p>
+                    <p>Administrative actions involving restricted information or official records must be protected by appropriate authorization and security measures. Users must not rely on the visibility of interface controls as proof that an action is secure or authorized.</p>
+                    <h4 class="font-bold text-slate-900 dark:text-slate-100 pt-2">6. Feedback and User Submissions</h4>
+                    <p>The eTRS may provide a feedback feature for reporting technical issues, record discrepancies, and suggestions for improvement.</p>
+                    <p>Users should ensure that their submissions are accurate, relevant, respectful, and appropriate. They should avoid including unnecessary personal information, confidential documents, passwords, or other sensitive information in feedback messages.</p>
+                    <p>Submitting feedback does not guarantee an immediate response or a specific outcome.</p>
+                    <h4 class="font-bold text-slate-900 dark:text-slate-100 pt-2">7. Third-Party Services</h4>
+                    <p>The system may depend on third-party services, including hosting platforms, Google services, automated scripts, and external software libraries. The availability and operation of these services may affect the functionality of the eTRS.</p>
+                    <p>The school does not control all aspects of third-party services. Their use may also be subject to the applicable terms and privacy policies of their respective providers.</p>
+                    <h4 class="font-bold text-slate-900 dark:text-slate-100 pt-2">8. Privacy</h4>
+                    <p>Users' information will be handled in accordance with the system's Privacy Policy and applicable laws and regulations. Users are encouraged to review the Privacy Policy to understand what information may be processed and how it may be used.</p>
+                    <h4 class="font-bold text-slate-900 dark:text-slate-100 pt-2">9. Limitations of Responsibility</h4>
+                    <p>The eTRS is provided as an administrative support tool. Although reasonable efforts should be made to maintain accurate records and reliable service, the system may contain errors, experience delays, or become temporarily unavailable.</p>
+                    <p>The eTRS should not be treated as the sole authority for official transmittal information. Users should verify important matters with the appropriate school personnel or official records.</p>
+                    <p>To the extent permitted by applicable law, the school shall not be held responsible for losses arising from reliance on incomplete, outdated, or inaccurate information displayed by the system, or from temporary service interruptions.</p>
+                    <h4 class="font-bold text-slate-900 dark:text-slate-100 pt-2">10. Changes to the Terms</h4>
+                    <p>These Terms of Service may be updated when necessary to reflect changes in the system, school policies, or applicable legal requirements. Continued use of the system after revised terms are published constitutes acceptance of the revised terms, to the extent permitted by applicable law.</p>
+                    <h4 class="font-bold text-slate-900 dark:text-slate-100 pt-2">11. Applicable Law</h4>
+                    <p>These Terms of Service shall be interpreted in accordance with applicable laws and regulations of the Republic of the Philippines.</p>
+                    <h4 class="font-bold text-slate-900 dark:text-slate-100 pt-2">12. Contact Information</h4>
+                    <p>For questions, concerns, or reports regarding the eTRS, users may contact the authorized ESNCHS representative responsible for the system.</p>
                 `
             }
         };
-
         function openPolicyModal(kind) {
             const content = POLICY_CONTENT[kind] || POLICY_CONTENT.privacy;
             document.getElementById('policyModalTitle').innerText = content.title;
             document.getElementById('policyModalBody').innerHTML = content.body;
+            document.getElementById('policyModalBody').scrollTop = 0;
             const modal = document.getElementById('policyModal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
