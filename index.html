@@ -373,7 +373,7 @@
                 Find your documents here
             </h1>
             <p class="text-xs sm:text-base md:text-lg text-slate-200 max-w-2xl mx-auto font-normal leading-relaxed">
-                Enter the barcode of your document to see whether it is Pending, Returned or Released.
+                Enter the document code or barcode of your document to see whether it is Pending, Returned or Released.
             </p>
 
             <div id="journeyWrap" class="jr-collapsed" aria-hidden="true">
@@ -480,11 +480,11 @@
 
                 <!-- Center: Search by barcode -->
                 <div class="w-full lg:max-w-md flex-1">
-                  <label for="searchInput" class="block text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-1">Search by barcode</label>
+                  <label for="searchInput" class="block text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-1">Search by document code or barcode</label>
                   <div class="flex gap-2">
                     <div class="relative flex-1">
                       <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-2.5 text-slate-400 dark:text-slate-500 text-xs"></i>
-                      <input type="text" id="searchInput" maxlength="20" autocomplete="off" autocapitalize="characters" spellcheck="false" onkeydown="if(event.key==='Enter'){runSearch();}" placeholder="6-digit barcode, e.g. 025603"
+                      <input type="text" id="searchInput" maxlength="20" autocomplete="off" autocapitalize="characters" spellcheck="false" onkeydown="if(event.key==='Enter'){runSearch();}" placeholder="6-digit code, e.g. 643746"
                         class="w-full pl-9 pr-4 py-1.5 text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                     </div>
                     <button type="button" id="searchBtn" onclick="runSearch()" class="px-4 py-1.5 bg-[#6B1111] hover:bg-[#4A0B0B] text-white text-xs sm:text-sm font-bold rounded-xl transition shrink-0">Search</button>
@@ -620,7 +620,7 @@
                     <div class="w-8 h-8 mx-auto mb-2 rounded-lg bg-amber-100 dark:bg-amber-950/50 text-[#6B1111] dark:text-amber-400 flex items-center justify-center font-bold text-sm">🔍</div>
                     <h3 class="font-bold text-xs sm:text-sm text-slate-800 dark:text-slate-100 mb-1">Online Tracking</h3>
                     <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 leading-normal">
-                        Search your document's barcode online to check whether it is pending, released, or returned.
+                        Search your document code or barcode online to check whether it is pending, released, or returned.
                     </p>
                 </div>
 
@@ -679,7 +679,7 @@
                             <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#6B1111] text-[#D97706] flex items-center justify-center text-lg sm:text-xl font-bold">📖</div>
                             <h3 class="font-bold text-slate-800 dark:text-slate-100 text-base sm:text-lg">Digital Record Book</h3>
                             <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                                The school's Record Book, online. Look up the status of your document with its barcode, anytime.
+                                The school's Record Book, online. Look up the status of your document with its code, anytime.
                             </p>
                         </div>
                         <div class="flip-card-back p-5 sm:p-6 pt-0 sm:pt-0 bg-red-50 dark:bg-red-950/20 rounded-2xl border border-red-200/80 dark:border-red-900/40 transition-colors flex flex-col items-center text-center gap-1.5 justify-start">
@@ -798,6 +798,8 @@
                     <p><span class="text-slate-400">Destination:</span> <span id="modalTargetType" class="font-semibold text-amber-700 dark:text-amber-400">---</span></p>
                     <p><span class="text-slate-400">Document Source:</span> <span id="modalOffice" class="font-semibold text-slate-800 dark:text-slate-100">---</span></p>
                     <p><span class="text-slate-400">Name of Reports Submitted:</span> <span id="modalDoc" class="font-semibold text-slate-800 dark:text-slate-100">---</span></p>
+                    <p id="modalCodeRow" class="hidden"><span class="text-slate-400">Document Code:</span> <span id="modalCode" class="font-semibold text-slate-800 dark:text-slate-100 font-mono"></span>
+                        <button onclick="copyToClipboard(document.getElementById('modalCode').innerText)" class="text-slate-400 hover:text-amber-600 text-xs ml-1" title="Copy document code" aria-label="Copy document code"><i class="fa-solid fa-copy"></i></button></p>
                     <p><span class="text-slate-400">Barcode:</span> <span id="modalBarcode" class="font-semibold text-slate-800 dark:text-slate-100 font-mono"></span>
                         <button id="modalBarcodeCopy" onclick="copyBarcodeFromModal()" class="hidden text-slate-400 hover:text-amber-600 text-xs ml-1" title="Copy barcode" aria-label="Copy barcode number"><i class="fa-solid fa-copy"></i></button></p>
                 </div>
@@ -1198,7 +1200,7 @@
                     <p>The eTRS may process the following types of information:</p>
                     <p class="font-semibold text-slate-900 dark:text-slate-100">a. Transmittal Records</p>
                     <p>The system displays information related to official transmittals, including the transmittal reference number, document name, source, destination, and current status. These records are based on the school's official transmittal records.</p>
-                    <p>Records are not listed for browsing. A record is shown only when its exact barcode is entered, and the name of the person who submitted the document is partly hidden. Searches are counted and limited to prevent misuse.</p>
+                    <p>Records are not listed for browsing. A record is shown only when its exact document code or barcode is entered, and the name of the person who submitted the document is partly hidden. Searches are counted and limited to prevent misuse.</p>
                     <p class="font-semibold text-slate-900 dark:text-slate-100">b. User Feedback</p>
                     <p>When users submit feedback, the system may collect the feedback category, message, optional contact information, access method (web or application), device identifier, submission date and time, and page URL. This information is used to review concerns, address reported issues, and improve the system.</p>
                     <p class="font-semibold text-slate-900 dark:text-slate-100">c. Locally Stored Information</p>
@@ -1259,7 +1261,7 @@
                     <li>Use the system to submit false, misleading, abusive, or unlawful content.</li>
                     <li>Attempt to disrupt the system's operation or compromise its security.</li>
                     <li>Collect, copy, disclose, or misuse information in violation of applicable laws, school policies, or privacy requirements.</li>
-                    <li>Guess, scan, or automatically try barcodes to find records that are not their own.</li>
+                    <li>Guess, scan, or automatically try codes or barcodes to find records that are not their own.</li>
                     </ul>
                     <h4 class="font-bold text-slate-900 dark:text-slate-100 pt-2">5. Administrative Functions and Access Limitations</h4>
                     <p>Certain administrative features may be available through the system's interface. However, hiding or displaying administrative controls in a web page does not, by itself, provide secure access control.</p>
@@ -1731,7 +1733,7 @@
         }
         function cleanItem(r) {
             const t = x => (x == null ? "" : String(x));
-            return { trf: t(r.trf), date: t(r.date), office: t(r.office), doc: t(r.doc), dest: t(r.dest), barcode: t(r.barcode), status: t(r.status), returned: t(r.returned) };
+            return { trf: t(r.trf), date: t(r.date), office: t(r.office), doc: t(r.doc), dest: t(r.dest), barcode: t(r.barcode), code: t(r.code), status: t(r.status), returned: t(r.returned) };
         }
         function setSearchMsg(msg) {
             const el = document.getElementById("searchMsg");
@@ -1741,7 +1743,7 @@
         }
         function searchErrorText(err) {
             if (err && err.code === "rate") return "Too many searches. Please wait a few minutes and try again.";
-            if (err && err.code === "invalid") return "Enter the 6-digit barcode (for example 025603) or the full code (SDOBOR-26-025603).";
+            if (err && err.code === "invalid") return "Enter the 6-digit code (for example 643746) or the full barcode (SDOBOR-26-025603).";
             if (err && err.name === "AbortError") return "The connection is too slow right now. Please try again.";
             if ((err instanceof TypeError) || navigator.onLine === false) return "You appear to be offline. Searching needs an internet connection.";
             return "Could not search right now. Please try again.";
@@ -1873,7 +1875,7 @@
             return [item.trf, item.office, item.doc].map(x => (x || "").replace(/\s+/g, " ").trim().toLowerCase()).join("|");
         }
         function snapOf(item) {
-            return { trf: item.trf || "", date: item.date || "", office: item.office || "", doc: item.doc || "", dest: item.dest || "", barcode: item.barcode || "", status: item.status || "", returned: item.returned || "" };
+            return { trf: item.trf || "", date: item.date || "", office: item.office || "", doc: item.doc || "", dest: item.dest || "", barcode: item.barcode || "", code: item.code || "", status: item.status || "", returned: item.returned || "" };
         }
         // Older versions saved starred documents without their details. Those cannot be shown, so remove them.
         (function () {
@@ -1884,11 +1886,11 @@
         // Check each starred document again, using its barcode (at most 10)
         async function refreshMyDocs() {
             const map = myDocsGet();
-            const keys = Object.keys(map).filter(k => map[k].snap && map[k].snap.barcode).slice(0, 10);
+            const keys = Object.keys(map).filter(k => map[k].snap && (map[k].snap.code || map[k].snap.barcode)).slice(0, 10);
             let changed = false;
             for (const k of keys) {
                 try {
-                    const j = await apiGet({ action: "search", q: barcodeQuery(map[k].snap.barcode) });
+                    const j = await apiGet({ action: "search", q: barcodeQuery(map[k].snap.code || map[k].snap.barcode) });
                     const hit = (j.results || []).map(cleanItem).find(d => docKey(d) === k);
                     if (hit) { map[k].snap = snapOf(hit); changed = true; }
                 } catch (e) { break; }
@@ -1982,9 +1984,9 @@
 
             if (totalItems === 0) {
                 const emptyMsg = !hasSearched
-                    ? "Enter your document's barcode above and tap Search. Records are not listed for browsing."
+                    ? "Enter your document code or barcode above and tap Search. Records are not listed for browsing."
                     : sheetData.length === 0
-                        ? "No exact match found. Please check the barcode. If your document has no barcode yet, please ask the office."
+                        ? "No exact match found. Please check the code. If you do not have a code yet, please ask the office."
                         : "No result matches the selected status. Choose All to see it.";
                 const emptyState = `<p class="text-center text-xs text-slate-400 dark:text-slate-500 py-6">${emptyMsg}</p>`;
                 tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-xs text-slate-400 dark:text-slate-500">${emptyMsg}</td></tr>`;
@@ -2180,6 +2182,8 @@
             document.getElementById("modalTargetType").innerText = item.dest || (level + " Office");
             document.getElementById("modalOffice").innerText = item.office || '—';
             document.getElementById("modalDoc").innerText = item.doc || '—';
+            document.getElementById("modalCode").innerText = item.code || "";
+            document.getElementById("modalCodeRow").classList.toggle("hidden", !item.code);
             document.getElementById("modalBarcode").innerText = item.barcode || "";
             currentModalBarcode = (item.barcode || "").trim();
             document.getElementById("modalBarcodeCopy").classList.toggle("hidden", !currentModalBarcode);
