@@ -484,7 +484,7 @@
                   <div class="flex gap-2">
                     <div class="relative flex-1">
                       <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-2.5 text-slate-400 dark:text-slate-500 text-xs"></i>
-                      <input type="text" id="searchInput" maxlength="20" autocomplete="off" autocapitalize="characters" spellcheck="false" onkeydown="if(event.key==='Enter'){runSearch();}" placeholder="6-digit code, e.g. 643746"
+                      <input type="text" id="searchInput" maxlength="20" autocomplete="off" autocapitalize="characters" spellcheck="false" oninput="onSearchInput()" onkeydown="if(event.key==='Enter'){runSearch();}" placeholder="6-digit code, e.g. 643746"
                         class="w-full pl-9 pr-4 py-1.5 text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                     </div>
                     <button type="button" id="searchBtn" onclick="runSearch()" class="px-4 py-1.5 bg-[#6B1111] hover:bg-[#4A0B0B] text-white text-xs sm:text-sm font-bold rounded-xl transition shrink-0">Search</button>
@@ -798,8 +798,7 @@
                     <p><span class="text-slate-400">Destination:</span> <span id="modalTargetType" class="font-semibold text-amber-700 dark:text-amber-400">---</span></p>
                     <p><span class="text-slate-400">Document Source:</span> <span id="modalOffice" class="font-semibold text-slate-800 dark:text-slate-100">---</span></p>
                     <p><span class="text-slate-400">Name of Reports Submitted:</span> <span id="modalDoc" class="font-semibold text-slate-800 dark:text-slate-100">---</span></p>
-                    <p id="modalCodeRow" class="hidden"><span class="text-slate-400">Document Code:</span> <span id="modalCode" class="font-semibold text-slate-800 dark:text-slate-100 font-mono"></span>
-                        <button onclick="copyToClipboard(document.getElementById('modalCode').innerText)" class="text-slate-400 hover:text-amber-600 text-xs ml-1" title="Copy document code" aria-label="Copy document code"><i class="fa-solid fa-copy"></i></button></p>
+                    
                     <p><span class="text-slate-400">Barcode:</span> <span id="modalBarcode" class="font-semibold text-slate-800 dark:text-slate-100 font-mono"></span>
                         <button id="modalBarcodeCopy" onclick="copyBarcodeFromModal()" class="hidden text-slate-400 hover:text-amber-600 text-xs ml-1" title="Copy barcode" aria-label="Copy barcode number"><i class="fa-solid fa-copy"></i></button></p>
                 </div>
@@ -1758,6 +1757,19 @@
             applyFilters();
         }
 
+        // As soon as the code in the box no longer matches the search shown, remove the results
+        function clearSearchResults() {
+            sheetData = [];
+            lastQuery = "";
+            hasSearched = false;
+            applyFilters();
+        }
+        function onSearchInput() {
+            const q = normalizeQuery(document.getElementById("searchInput").value);
+            setSearchMsg("");
+            if (hasSearched && q !== lastQuery) clearSearchResults();
+        }
+
         async function runSearch() {
             const q = normalizeQuery(document.getElementById("searchInput").value);
             if (!isValidQuery(q)) { setSearchMsg(searchErrorText({ code: "invalid" })); return; }
@@ -2182,8 +2194,6 @@
             document.getElementById("modalTargetType").innerText = item.dest || (level + " Office");
             document.getElementById("modalOffice").innerText = item.office || '—';
             document.getElementById("modalDoc").innerText = item.doc || '—';
-            document.getElementById("modalCode").innerText = item.code || "";
-            document.getElementById("modalCodeRow").classList.toggle("hidden", !item.code);
             document.getElementById("modalBarcode").innerText = item.barcode || "";
             currentModalBarcode = (item.barcode || "").trim();
             document.getElementById("modalBarcodeCopy").classList.toggle("hidden", !currentModalBarcode);
