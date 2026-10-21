@@ -373,7 +373,7 @@
                 Find your documents here
             </h1>
             <p class="text-xs sm:text-base md:text-lg text-slate-200 max-w-2xl mx-auto font-normal leading-relaxed">
-                Search by TRF number, your name or the document title to find the transmittal your document was listed in, and see whether it is Pending, Returned or Released.
+                Enter the barcode of your document to see whether it is Pending, Returned or Released.
             </p>
 
             <div id="journeyWrap" class="jr-collapsed" aria-hidden="true">
@@ -478,14 +478,18 @@
                     <button onclick="setStatusFilter('Returned')" id="pillReturned" class="pill-btn whitespace-nowrap px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-blue-100 dark:hover:bg-blue-950/50 shrink-0 transition">Returned</button>
                 </div>
 
-                <!-- Center: Search Input Bar -->
+                <!-- Center: Search by barcode -->
                 <div class="w-full lg:max-w-md flex-1">
-                  <label for="searchInput" class="block text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-1">Search records</label>
-                  <div class="relative">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-2.5 text-slate-400 dark:text-slate-500 text-xs"></i>
-                    <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Search TRF, name, document, destination or barcode..."
+                  <label for="searchInput" class="block text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-1">Search by barcode</label>
+                  <div class="flex gap-2">
+                    <div class="relative flex-1">
+                      <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-2.5 text-slate-400 dark:text-slate-500 text-xs"></i>
+                      <input type="text" id="searchInput" maxlength="20" autocomplete="off" autocapitalize="characters" spellcheck="false" onkeydown="if(event.key==='Enter'){runSearch();}" placeholder="6-digit barcode, e.g. 025603"
                         class="w-full pl-9 pr-4 py-1.5 text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
+                    </div>
+                    <button type="button" id="searchBtn" onclick="runSearch()" class="px-4 py-1.5 bg-[#6B1111] hover:bg-[#4A0B0B] text-white text-xs sm:text-sm font-bold rounded-xl transition shrink-0">Search</button>
                   </div>
+                  <p id="searchMsg" class="hidden mt-1 text-[11px] font-semibold text-rose-600 dark:text-rose-400"></p>
                 </div>
 
                 <!-- Right: Sort Dropdown -->
@@ -616,7 +620,7 @@
                     <div class="w-8 h-8 mx-auto mb-2 rounded-lg bg-amber-100 dark:bg-amber-950/50 text-[#6B1111] dark:text-amber-400 flex items-center justify-center font-bold text-sm">🔍</div>
                     <h3 class="font-bold text-xs sm:text-sm text-slate-800 dark:text-slate-100 mb-1">Online Tracking</h3>
                     <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 leading-normal">
-                        Search TRF numbers online to check whether your document is pending, released, or returned.
+                        Search your document's barcode online to check whether it is pending, released, or returned.
                     </p>
                 </div>
 
@@ -675,7 +679,7 @@
                             <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#6B1111] text-[#D97706] flex items-center justify-center text-lg sm:text-xl font-bold">📖</div>
                             <h3 class="font-bold text-slate-800 dark:text-slate-100 text-base sm:text-lg">Digital Record Book</h3>
                             <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                                The school's Record Book, online. View the same records kept by the Principal's Office, anytime.
+                                The school's Record Book, online. Look up the status of your document with its barcode, anytime.
                             </p>
                         </div>
                         <div class="flip-card-back p-5 sm:p-6 pt-0 sm:pt-0 bg-red-50 dark:bg-red-950/20 rounded-2xl border border-red-200/80 dark:border-red-900/40 transition-colors flex flex-col items-center text-center gap-1.5 justify-start">
@@ -934,7 +938,7 @@
         const RECORD_BOOK_URL = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/edit?usp=sharing";
         // Backend endpoint (Google Apps Script) - the website now talks to this instead of
         // reading the sheet directly, so the sheet itself can be set fully private.
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyCnoFrZrOw2J21iYpKo1aAL5X_WLCvjjw6seqkmYlOC1s4J1hwl4McrsphehfVZNmm1w/exec";
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzzWThp5Jnt_tG_ca5t4F_H-awR0wn5-UZdWUoS8XEItxhTToAwMEhoDOubHrdjIjCPsQ/exec";
 
         // >>> PASTE YOUR ETRS FEEDBACK GOOGLE SPREADSHEET LINK HERE (admin-only button) <<<
         const FEEDBACK_SHEET_URL = "https://docs.google.com/spreadsheets/d/10JgQ51BQSv5krbi-dWhk6bxVEZfdM7NzOvPkiIUa7bE/edit?usp=sharing";
@@ -1040,14 +1044,7 @@
         // Builds a count of how many TRFs were submitted on each day, keyed "Y-M-D"
         // (month is 0-indexed to match JS Date), based on each record's submitted date.
         function getSubmissionCountsByDay() {
-            const counts = {};
-            sheetData.forEach(item => {
-                const d = item.date ? new Date(item.date) : null;
-                if (!d || isNaN(d)) return;
-                const key = d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate();
-                counts[key] = (counts[key] || 0) + 1;
-            });
-            return counts;
+            return {};   // records are not browsable, so no day lists TRF numbers
         }
 
         let calViewYear = null, calViewMonth = null;
@@ -1201,10 +1198,11 @@
                     <p>The eTRS may process the following types of information:</p>
                     <p class="font-semibold text-slate-900 dark:text-slate-100">a. Transmittal Records</p>
                     <p>The system displays information related to official transmittals, including the transmittal reference number, document name, source, destination, and current status. These records are based on the school's official transmittal records.</p>
+                    <p>Records are not listed for browsing. A record is shown only when its exact barcode is entered, and the name of the person who submitted the document is partly hidden. Searches are counted and limited to prevent misuse.</p>
                     <p class="font-semibold text-slate-900 dark:text-slate-100">b. User Feedback</p>
                     <p>When users submit feedback, the system may collect the feedback category, message, optional contact information, access method (web or application), device identifier, submission date and time, and page URL. This information is used to review concerns, address reported issues, and improve the system.</p>
                     <p class="font-semibold text-slate-900 dark:text-slate-100">c. Locally Stored Information</p>
-                    <p>The system may store certain information in the user's browser, such as starred documents and their last viewed status. Feedback submitted while offline may also be temporarily stored in the browser until it can be submitted.</p>
+                    <p>The system may store certain information in the user's browser, such as the details and last viewed status of documents the user stars (up to 10). The system does not keep a copy of all records on the device. Feedback submitted while offline may also be temporarily stored in the browser until it can be submitted.</p>
                     <h4 class="font-bold text-slate-900 dark:text-slate-100 pt-2">3. How We Use Information</h4>
                     <p>Information processed through the eTRS may be used to:</p>
                     <ul class="list-disc pl-5 space-y-1">
@@ -1261,6 +1259,7 @@
                     <li>Use the system to submit false, misleading, abusive, or unlawful content.</li>
                     <li>Attempt to disrupt the system's operation or compromise its security.</li>
                     <li>Collect, copy, disclose, or misuse information in violation of applicable laws, school policies, or privacy requirements.</li>
+                    <li>Guess, scan, or automatically try barcodes to find records that are not their own.</li>
                     </ul>
                     <h4 class="font-bold text-slate-900 dark:text-slate-100 pt-2">5. Administrative Functions and Access Limitations</h4>
                     <p>Certain administrative features may be available through the system's interface. However, hiding or displaying administrative controls in a web page does not, by itself, provide secure access control.</p>
@@ -1588,9 +1587,7 @@
             const banner = document.getElementById("syncErrorBanner");
             const text = document.getElementById("syncErrorDetail");
             if (!banner || !text) return;
-            text.textContent = detail + (sheetData.length
-                ? " The table is showing the records from the last successful update."
-                : " No records are available to show right now.");
+            text.textContent = detail;
             banner.classList.remove("hidden");
             banner.classList.add("flex");
         }
@@ -1606,22 +1603,14 @@
         // fully private, since only the backend (running with its own permission) touches it.
         // ---------- Weak signal notice & offline mode ----------
         let offlineMode = false;
-        try { offlineMode = localStorage.getItem("etrs_offline_mode") === "1"; } catch (e) {}
+        // Remove any full copy of the records that older versions saved on this device
+        try { localStorage.removeItem("etrs_cache"); localStorage.removeItem("etrs_offline_mode"); } catch (e) {}
         let weakDismissed = false;      // user chose "Keep waiting" this session
         let activeCtrl = null;          // the request currently in flight (so offline mode can stop it)
         let netBannerKind = "";
 
-        function hasSavedRecords() {
-            try { const c = JSON.parse(localStorage.getItem("etrs_cache") || "null"); return !!(c && c.values && c.values.length); }
-            catch (e) { return false; }
-        }
-        function loadSavedRecords() {
-            try {
-                const c = JSON.parse(localStorage.getItem("etrs_cache") || "null");
-                if (c && c.values) { sheetData = mapSheetValues(c.values); lastSyncedAt = new Date(c.t); updateLastUpdated(); return true; }
-            } catch (e) {}
-            return false;
-        }
+        function hasSavedRecords() { return false; }   // no copy of the records is kept on the device
+        function loadSavedRecords() { return false; }
         function isWeakSignal() {
             const c = navigator.connection;
             if (!c) return false;
@@ -1696,9 +1685,17 @@
             navigator.connection.addEventListener("change", () => { if (isWeakSignal()) showWeakSignalBanner(); else hideNetBanner("weak"); });
         }
 
-        // Slow-connection friendly request: gives up on a stuck request instead of waiting forever,
-        // and tries once more with a longer allowance before reporting a problem.
-        async function fetchRecordsWithRetry() {
+        // ---------- Search-only data access ----------
+        // The Record Book script never sends the whole sheet. It returns (a) the totals and
+        // (b) only the records whose barcode matches exactly what was typed.
+        let serverStats = null;
+        let hasSearched = false;
+        let lastQuery = "";
+
+        // One request with a time limit and one retry (helps on a weak signal)
+        async function apiGet(params) {
+            const qs = new URLSearchParams(Object.assign({}, params, { device: fbDevice(), _: Date.now() }));
+            const url = APPS_SCRIPT_URL + "?" + qs.toString();
             const allowances = [25000, 45000];
             let lastErr;
             for (let i = 0; i < allowances.length; i++) {
@@ -1706,92 +1703,102 @@
                 activeCtrl = ctrl;
                 const timer = setTimeout(() => ctrl.abort(), allowances[i]);
                 try {
-                    const r = await fetch(APPS_SCRIPT_URL + "?_=" + Date.now(), { signal: ctrl.signal });
+                    const r = await fetch(url, { signal: ctrl.signal });
                     clearTimeout(timer);
-                    return r;
+                    if (!r.ok) throw new Error("The backend answered with an error (HTTP " + r.status + ").");
+                    let j;
+                    try { j = await r.json(); }
+                    catch (parseErr) { throw new Error("The backend did not send readable data. Please check that the Apps Script is deployed."); }
+                    if (j && j.ok === false) { const e = new Error(j.error || "error"); e.code = j.error; e.noRetry = true; throw e; }
+                    return j;
                 } catch (e) {
                     clearTimeout(timer);
                     lastErr = e;
-                    if (navigator.onLine === false || offlineMode) break;
+                    if (e.noRetry || navigator.onLine === false || offlineMode) break;
                 }
             }
             throw lastErr;
         }
 
+        function normalizeQuery(v) { return String(v == null ? "" : v).toUpperCase().replace(/\s+/g, ""); }
+        function isValidQuery(v) {
+            const s = normalizeQuery(v);
+            return /^\d{6}$/.test(s) || /^SDOBOR-?\d{2}-?\d{6}$/.test(s);
+        }
+        function barcodeQuery(code) {
+            const s = normalizeQuery(code);
+            return /^\d{1,5}$/.test(s) ? ("000000" + s).slice(-6) : s;   // a barcode may have lost its leading zeros
+        }
+        function cleanItem(r) {
+            const t = x => (x == null ? "" : String(x));
+            return { trf: t(r.trf), date: t(r.date), office: t(r.office), doc: t(r.doc), dest: t(r.dest), barcode: t(r.barcode), status: t(r.status), returned: t(r.returned) };
+        }
+        function setSearchMsg(msg) {
+            const el = document.getElementById("searchMsg");
+            if (!el) return;
+            el.textContent = msg || "";
+            el.classList.toggle("hidden", !msg);
+        }
+        function searchErrorText(err) {
+            if (err && err.code === "rate") return "Too many searches. Please wait a few minutes and try again.";
+            if (err && err.code === "invalid") return "Enter the 6-digit barcode (for example 025603) or the full code (SDOBOR-26-025603).";
+            if (err && err.name === "AbortError") return "The connection is too slow right now. Please try again.";
+            if ((err instanceof TypeError) || navigator.onLine === false) return "You appear to be offline. Searching needs an internet connection.";
+            return "Could not search right now. Please try again.";
+        }
+
+        // Runs a search and shows only the matches. Throws if it fails.
+        async function runSearchInner(q) {
+            const j = await apiGet({ action: "search", q: q });
+            sheetData = (j.results || []).map(cleanItem);
+            lastQuery = q;
+            hasSearched = true;
+            applyFilters();
+        }
+
+        async function runSearch() {
+            const q = normalizeQuery(document.getElementById("searchInput").value);
+            if (!isValidQuery(q)) { setSearchMsg(searchErrorText({ code: "invalid" })); return; }
+            setSearchMsg("");
+            const btn = document.getElementById("searchBtn");
+            btn.disabled = true; btn.textContent = "Searching...";
+            try { await runSearchInner(q); }
+            catch (err) { console.error("Search failed:", err); setSearchMsg(searchErrorText(err)); }
+            finally { btn.disabled = false; btn.textContent = "Search"; }
+        }
+
+        // The sync button: refresh the totals, the current results and the starred documents
         async function fetchSheetDataInner(silent) {
             const refreshIcon = document.getElementById("refreshIcon");
             if (refreshIcon) refreshIcon.classList.add("fa-spin");
-
-            // Show the last saved records instantly, then refresh from the server in the background
-            let shownFromCache = false;
-            if (!sheetData.length) {
-                try {
-                    const saved = JSON.parse(localStorage.getItem("etrs_cache") || "null");
-                    if (saved && saved.values) {
-                        sheetData = mapSheetValues(saved.values);
-                        lastSyncedAt = new Date(saved.t);
-                        updateLastUpdated();
-                        applyFilters();
-                        shownFromCache = true;
-                        if (window.hideSplash) window.hideSplash();
-                    }
-                } catch (e) {}
-            }
-            if (!shownFromCache && !silent) showLoadingState();
             if (!silent && typeof journeyOnSyncStart === "function") journeyOnSyncStart();
 
-            // Tell the user when the connection is slow, instead of leaving them guessing
             const slowTimer = setTimeout(() => { if (!silent) { showToast("Slow connection - still updating..."); showWeakSignalBanner(); } }, 6000);
             try {
-                const resp = await fetchRecordsWithRetry();
+                const j = await apiGet({ action: "stats" });
                 clearTimeout(slowTimer);
-                if (!resp.ok) throw new Error("The backend answered with an error (HTTP " + resp.status + ").");
-                let json;
-                try { json = await resp.json(); }
-                catch (parseErr) { throw new Error("The backend did not send readable data. Please check that the Apps Script is deployed and that its tab name matches the sheet."); }
-                if (json && json.error) throw new Error(json.error);
-                sheetData = mapSheetValues(json && json.values);
+                serverStats = j.stats || null;
                 lastSyncedAt = new Date();
-                try { localStorage.setItem("etrs_cache", JSON.stringify({ t: lastSyncedAt.getTime(), values: json.values })); } catch (e) {}
                 clearSyncError();
                 hideNetBanner("weak");
                 updateLastUpdated();
-                if (!silent) showToast("Synced " + sheetData.length + " records.");
+                updateMetrics();
+                if (lastQuery) { try { await runSearchInner(lastQuery); } catch (e) {} }
+                try { await refreshMyDocs(); } catch (e) {}
+                if (!silent) showToast("Updated.");
             } catch (err) {
                 clearTimeout(slowTimer);
-                if (offlineMode) {
-                    // The user switched to offline mode while waiting: keep the saved records, no error
-                    if (refreshIcon) refreshIcon.classList.remove("fa-spin");
-                    if (!sheetData.length) loadSavedRecords();
-                    applyFilters();
-                    if (!silent && typeof journeyOnSyncEnd === "function") journeyOnSyncEnd();
-                    if (window.hideSplash) window.hideSplash();
-                    return;
+                console.error("Sync failed:", err);
+                if (!silent) {
+                    const noConnection = (err instanceof TypeError) || (typeof navigator !== "undefined" && navigator.onLine === false);
+                    const tooSlow = err && err.name === "AbortError";
+                    showSyncError(
+                        tooSlow ? "The connection is too slow right now. Please tap the sync button to try again."
+                        : noConnection ? "You appear to be offline."
+                        : err.message
+                    );
+                    showToast("Sync failed. See the message above the table.");
                 }
-                console.error("Sheet sync failed:", err);
-                if (silent) {
-                    // Background refresh failed: keep what is on screen, say nothing
-                    if (refreshIcon) refreshIcon.classList.remove("fa-spin");
-                    return;
-                }
-                const noConnection = (err instanceof TypeError) || (typeof navigator !== "undefined" && navigator.onLine === false);
-                if (!sheetData.length) {
-                    try {
-                        const saved = JSON.parse(localStorage.getItem("etrs_cache") || "null");
-                        if (saved && saved.values) {
-                            sheetData = mapSheetValues(saved.values);
-                            lastSyncedAt = new Date(saved.t);
-                            updateLastUpdated();
-                        }
-                    } catch (e) {}
-                }
-                const tooSlow = err && err.name === "AbortError";
-                showSyncError(
-                    tooSlow ? "The connection is too slow right now. Showing your last saved records - tap the sync button to try again."
-                    : noConnection ? "You appear to be offline."
-                    : err.message
-                );
-                showToast("Sync failed. See the message above the table.");
             }
             applyFilters();
             if (refreshIcon) refreshIcon.classList.remove("fa-spin");
@@ -1865,6 +1872,29 @@
         function docKey(item) {
             return [item.trf, item.office, item.doc].map(x => (x || "").replace(/\s+/g, " ").trim().toLowerCase()).join("|");
         }
+        function snapOf(item) {
+            return { trf: item.trf || "", date: item.date || "", office: item.office || "", doc: item.doc || "", dest: item.dest || "", barcode: item.barcode || "", status: item.status || "", returned: item.returned || "" };
+        }
+        // Older versions saved starred documents without their details. Those cannot be shown, so remove them.
+        (function () {
+            const m = myDocsGet(); let changed = false;
+            Object.keys(m).forEach(k => { if (!m[k] || !m[k].snap) { delete m[k]; changed = true; } });
+            if (changed) myDocsSet(m);
+        })();
+        // Check each starred document again, using its barcode (at most 10)
+        async function refreshMyDocs() {
+            const map = myDocsGet();
+            const keys = Object.keys(map).filter(k => map[k].snap && map[k].snap.barcode).slice(0, 10);
+            let changed = false;
+            for (const k of keys) {
+                try {
+                    const j = await apiGet({ action: "search", q: barcodeQuery(map[k].snap.barcode) });
+                    const hit = (j.results || []).map(cleanItem).find(d => docKey(d) === k);
+                    if (hit) { map[k].snap = snapOf(hit); changed = true; }
+                } catch (e) { break; }
+            }
+            if (changed) { myDocsSet(map); renderMyDocs(); }
+        }
         function isStarred(item) { return !!item && Object.prototype.hasOwnProperty.call(myDocsGet(), docKey(item)); }
         function starButtonHTML(item) {
             if (!item || (!item.trf && !item.doc)) return "";
@@ -1878,7 +1908,10 @@
             const key = docKey(item);
             let added = false;
             if (Object.prototype.hasOwnProperty.call(map, key)) { delete map[key]; }
-            else { map[key] = { seen: statusKey(item.status) }; added = true; }
+            else {
+                if (Object.keys(map).length >= 10) { showToast("You can save up to 10 documents."); return; }
+                map[key] = { seen: statusKey(item.status), snap: snapOf(item) }; added = true;
+            }
             if (!myDocsSet(map)) { showToast("Couldn't save on this device."); return; }
             showToast(added ? "Added to My documents. Saved on this device only." : "Removed from My documents.");
             renderData();
@@ -1888,7 +1921,8 @@
             const map = myDocsGet();
             const key = docKey(item);
             if (!Object.prototype.hasOwnProperty.call(map, key)) return;
-            if (map[key].seen === statusKey(item.status)) return;
+            map[key].snap = snapOf(item);
+            if (map[key].seen === statusKey(item.status)) { myDocsSet(map); return; }
             map[key].seen = statusKey(item.status);
             myDocsSet(map);
             renderMyDocs();
@@ -1896,8 +1930,7 @@
         function markAllMyDocsSeen() {
             const map = myDocsGet();
             Object.keys(map).forEach(k => {
-                const it = sheetData.find(d => docKey(d) === k);
-                if (it) map[k].seen = statusKey(it.status);
+                if (map[k].snap) map[k].seen = statusKey(map[k].snap.status);
             });
             myDocsSet(map);
             renderMyDocs();
@@ -1908,7 +1941,7 @@
             if (!box || !list) return;
             const map = myDocsGet();
             const rows = Object.keys(map).map(k => {
-                const it = sheetData.find(d => docKey(d) === k);
+                const it = map[k].snap;
                 return it ? { it, seen: map[k].seen, changed: statusKey(it.status) !== map[k].seen } : null;
             }).filter(Boolean);
             if (!rows.length) { box.classList.add("hidden"); list.innerHTML = ""; return; }
@@ -1948,7 +1981,11 @@
             const totalItems = filteredData.length;
 
             if (totalItems === 0) {
-                const emptyMsg = sheetData.length === 0 ? "No records loaded yet. Check the message above, then tap the sync button." : "No matching records found.";
+                const emptyMsg = !hasSearched
+                    ? "Enter your document's barcode above and tap Search. Records are not listed for browsing."
+                    : sheetData.length === 0
+                        ? "No exact match found. Please check the barcode. If your document has no barcode yet, please ask the office."
+                        : "No result matches the selected status. Choose All to see it.";
                 const emptyState = `<p class="text-center text-xs text-slate-400 dark:text-slate-500 py-6">${emptyMsg}</p>`;
                 tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-xs text-slate-400 dark:text-slate-500">${emptyMsg}</td></tr>`;
                 mobileContainer.innerHTML = emptyState;
@@ -2061,24 +2098,19 @@
         }
 
         function updateMetrics() {
-            document.getElementById("statTotal").innerText = sheetData.length;
-            document.getElementById("statPending").innerText = sheetData.filter(d => (d.status || '').toLowerCase() === "pending").length;
-            document.getElementById("statReleased").innerText = sheetData.filter(d => (d.status || '').toLowerCase() === "released").length;
-            document.getElementById("statReturned").innerText = sheetData.filter(d => (d.status || '').toLowerCase() === "returned").length;
+            const st = serverStats;
+            document.getElementById("statTotal").innerText = st ? st.total : "-";
+            document.getElementById("statPending").innerText = st ? st.pending : "-";
+            document.getElementById("statReleased").innerText = st ? st.released : "-";
+            document.getElementById("statReturned").innerText = st ? st.returned : "-";
         }
 
         function applyFilters() {
-            const query = document.getElementById("searchInput").value.toLowerCase();
             const sortVal = document.getElementById("sortSelect").value;
 
             filteredData = sheetData.filter(item => {
-                const matchesQuery = (item.trf || '').toLowerCase().includes(query) || 
-                                     (item.office || '').toLowerCase().includes(query) || 
-                                     (item.doc || '').toLowerCase().includes(query) ||
-                                     (item.dest || '').toLowerCase().includes(query) ||
-                                     (item.barcode || '').toLowerCase().includes(query);
                 const matchesStatus = activeStatus === "ALL" || (item.status || '').toLowerCase() === activeStatus.toLowerCase();
-                return matchesQuery && matchesStatus;
+                return matchesStatus;
             });
 
             filteredData.sort((a, b) => {
