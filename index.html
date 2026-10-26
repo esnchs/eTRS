@@ -206,6 +206,15 @@
         #tableBody td { vertical-align: middle; }
         #tableBody tr { height: 4.25rem; }
     </style>
+    <style>
+        .nav-pulse { animation: navPulse 1.4s ease-out; }
+        @keyframes navPulse {
+            0%   { box-shadow: 0 0 0 0 rgba(245, 158, 11, .75); }
+            70%  { box-shadow: 0 0 0 14px rgba(245, 158, 11, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+        }
+        @media (prefers-reduced-motion: reduce) { .nav-pulse { animation: none; } }
+    </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans antialiased selection:bg-amber-200 transition-colors duration-200">
 
@@ -275,7 +284,7 @@
                 <div class="hidden lg:flex items-center space-x-6 text-sm font-semibold text-slate-600 dark:text-slate-300">
                     <a href="#hero" class="hover:text-[#6B1111] dark:hover:text-amber-400 transition">Home</a>
                     <a href="#about" class="hover:text-[#6B1111] dark:hover:text-amber-400 transition">About Web Portal</a>
-                    <a href="#tracker" class="hover:text-[#6B1111] dark:hover:text-amber-400 transition">Track Document</a>
+                    <a href="#hero" onclick="goToHeroTrack(event)" class="hover:text-[#6B1111] dark:hover:text-amber-400 transition">Track Document</a>
                     <a href="#features" class="hover:text-[#6B1111] dark:hover:text-amber-400 transition">Services</a>
                     <a href="#contact" class="hover:text-[#6B1111] dark:hover:text-amber-400 transition">Contact</a>
                 </div>
@@ -351,14 +360,14 @@
 
         <!-- Mobile Navigation Menu Dropdown -->
         <div id="mobileMenu" class="hidden lg:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 pt-2 pb-4 space-y-1 text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 shadow-lg">
-            <a href="#hero" onclick="closeMobileMenu()" class="block py-2 px-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition">🏠 Home</a>
-            <a href="#about" onclick="closeMobileMenu()" class="block py-2 px-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition">🌐 About Web Portal</a>
-            <a href="#tracker" onclick="closeMobileMenu()" class="block py-2 px-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition">🔍 Track Document</a>
-            <a href="#features" onclick="closeMobileMenu()" class="block py-2 px-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition">⚙️ Services & Capabilities</a>
-            <a href="#contact" onclick="closeMobileMenu()" class="block py-2 px-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition">📞 Contact Support</a>
+            <a href="#hero" onclick="closeMobileMenu()" class="block py-2 px-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"><i class="fa-solid fa-house w-5 text-center mr-1.5"></i>Home</a>
+            <a href="#about" onclick="closeMobileMenu()" class="block py-2 px-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"><i class="fa-solid fa-globe w-5 text-center mr-1.5"></i>About Web Portal</a>
+            <a href="#hero" onclick="closeMobileMenu(); goToHeroTrack(event)" class="block py-2 px-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"><i class="fa-solid fa-magnifying-glass w-5 text-center mr-1.5"></i>Track Document</a>
+            <a href="#features" onclick="closeMobileMenu()" class="block py-2 px-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"><i class="fa-solid fa-gear w-5 text-center mr-1.5"></i>Services &amp; Capabilities</a>
+            <a href="#contact" onclick="closeMobileMenu()" class="block py-2 px-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"><i class="fa-solid fa-phone w-5 text-center mr-1.5"></i>Contact Support</a>
             <div class="h-px bg-slate-200 dark:bg-slate-800 my-1.5"></div>
             <button id="authBtnMobile" onclick="openLoginModal(); closeMobileMenu();" class="w-full text-left block py-2 px-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition">
-                <span id="authBtnIconMobile">🔒</span> <span id="authBtnTextMobile">Admin Login</span>
+                <i id="authBtnIconMobile" class="fa-solid fa-user-lock w-5 text-center mr-1.5"></i> <span id="authBtnTextMobile">Admin Login</span>
             </button>
         </div>
     </nav>
@@ -393,7 +402,7 @@
             </div></div>
             </div>
             <div class="pt-2 flex flex-col sm:flex-row justify-center items-center gap-3 w-full max-w-sm sm:max-w-none mx-auto">
-                <a href="#tracker" class="order-2 w-full sm:w-auto px-8 py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm sm:text-base rounded-xl shadow-lg transition flex items-center justify-center gap-2 active:scale-95">
+                <a href="#tracker" id="heroTrackBtn" onclick="goToSearch(event)" class="order-2 w-full sm:w-auto px-8 py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm sm:text-base rounded-xl shadow-lg transition flex items-center justify-center gap-2 active:scale-95">
                     <i class="fa-solid fa-magnifying-glass"></i> Track a Document
                 </a>
                 <button type="button" onclick="installApp()" class="installAppBtn order-4 hidden w-full sm:w-auto px-8 py-3.5 bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold text-sm sm:text-base rounded-xl shadow-lg transition items-center justify-center gap-2 active:scale-95">
@@ -467,79 +476,79 @@
                 </div>
             </div>
 
-            <!-- SINGLE LINE TOOLBAR FOR ALL CONTROLS -->
-            <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
-                
-                <!-- Left: Status Filter Pills -->
-                <div class="flex items-center gap-1.5 overflow-x-auto w-full lg:w-auto no-scrollbar shrink-0 py-0.5">
-                    <button onclick="setStatusFilter('ALL')" id="pillALL" class="pill-btn whitespace-nowrap px-3.5 py-1.5 text-xs font-bold rounded-xl bg-[#6B1111] text-white shrink-0 shadow-xs transition">All</button>
-                    <button onclick="setStatusFilter('Pending')" id="pillPending" class="pill-btn whitespace-nowrap px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-amber-100 dark:hover:bg-amber-950/50 shrink-0 transition">Pending</button>
-                    <button onclick="setStatusFilter('Released')" id="pillReleased" class="pill-btn whitespace-nowrap px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-emerald-100 dark:hover:bg-emerald-950/50 shrink-0 transition">Released</button>
-                    <button onclick="setStatusFilter('Returned')" id="pillReturned" class="pill-btn whitespace-nowrap px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-blue-100 dark:hover:bg-blue-950/50 shrink-0 transition">Returned</button>
-                </div>
-
+            <!-- SEARCH ROW: search bar + TRF code legend side by side -->
+            <div id="searchRow" class="flex flex-col lg:flex-row lg:items-start gap-3 lg:gap-6 rounded-xl">
                 <!-- Center: Search by barcode -->
-                <div class="w-full lg:max-w-md flex-1">
+                <div class="w-full lg:flex-1 min-w-0">
                   <label for="searchInput" class="block text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-1">Search by document code or barcode</label>
                   <div class="flex gap-2">
                     <div class="relative flex-1">
-                      <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-2.5 text-slate-400 dark:text-slate-500 text-xs"></i>
+                      <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 text-sm"></i>
                       <input type="text" id="searchInput" maxlength="20" autocomplete="off" autocapitalize="characters" spellcheck="false" oninput="onSearchInput()" onkeydown="if(event.key==='Enter'){runSearch();}" placeholder="6-digit code, e.g. 643746"
-                        class="w-full pl-9 pr-4 py-1.5 text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
+                        class="w-full pl-10 pr-4 py-2.5 text-base bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                     </div>
-                    <button type="button" id="searchBtn" onclick="runSearch()" class="px-4 py-1.5 bg-[#6B1111] hover:bg-[#4A0B0B] text-white text-xs sm:text-sm font-bold rounded-xl transition shrink-0">Search</button>
+                    <button type="button" id="searchBtn" onclick="runSearch()" class="px-5 py-2.5 bg-[#6B1111] hover:bg-[#4A0B0B] text-white text-sm sm:text-base font-bold rounded-xl transition shrink-0 flex items-center justify-center gap-2 disabled:opacity-70"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
                   </div>
                   <p id="searchMsg" class="hidden mt-1 text-[11px] font-semibold text-rose-600 dark:text-rose-400"></p>
                 </div>
 
-                <!-- Right: Sort Dropdown -->
-                <div class="w-full lg:w-auto shrink-0 flex justify-end">
-                    <select id="sortSelect" onchange="applyFilters()" class="w-full lg:w-auto py-1.5 px-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-amber-500 transition cursor-pointer">
-                        <option value="newest">Sort: Newest First</option>
-                        <option value="oldest">Sort: Oldest First</option>
-                        <option value="trf">Sort: TRF Number</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- TRF DISTINCTION LEGEND BANNER -->
-            <div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 text-xs">
-                <div class="flex items-center gap-2 font-bold text-slate-800 dark:text-slate-100 shrink-0">
-                    <span class="w-6 h-6 rounded-lg bg-slate-200 dark:bg-slate-700 text-[#6B1111] dark:text-slate-200 flex items-center justify-center shrink-0">
-                        <i class="fa-solid fa-circle-info text-xs"></i>
-                    </span>
-                    <span>TRF Code Legend</span>
-                </div>
-                <div class="flex flex-wrap items-center gap-2 sm:gap-4 text-slate-600 dark:text-slate-300">
-                    <div class="flex items-center gap-1.5 bg-white dark:bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 shadow-xs">
-                        <span class="font-mono font-bold text-amber-700 dark:text-amber-400 bg-amber-100 dark:bg-amber-950/60 px-1.5 py-0.5 rounded text-[11px]">d-001</span>
-                        <span class="text-[11px] font-medium text-slate-700 dark:text-slate-200">
-                            <strong class="text-amber-700 dark:text-amber-400">Starts with 'd'</strong> = District Office Submission
-                        </span>
-                    </div>
-                    <div class="flex items-center gap-1.5 bg-white dark:bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 shadow-xs">
-                        <span class="font-mono font-bold text-blue-700 dark:text-blue-400 bg-blue-100 dark:bg-blue-950/60 px-1.5 py-0.5 rounded text-[11px]">0001</span>
-                        <span class="text-[11px] font-medium text-slate-700 dark:text-slate-200">
-                            <strong class="text-blue-700 dark:text-blue-400">Numbers Only</strong> = Division Office Submission
-                        </span>
+                <!-- TRF code legend, beside the search bar -->
+                <div class="w-full lg:flex-1 min-w-0" aria-label="TRF code legend">
+                    <p class="flex items-center gap-1.5 text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-1"><i class="fa-solid fa-circle-info text-slate-400"></i> TRF Code Legend</p>
+                    <div class="flex flex-col sm:flex-row sm:flex-wrap gap-1.5">
+                        <div class="flex items-center gap-1.5 sm:flex-1 sm:min-w-[15rem] bg-white dark:bg-slate-800 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 shadow-xs">
+                            <span class="font-mono font-bold text-amber-700 dark:text-amber-400 bg-amber-100 dark:bg-amber-950/60 px-1.5 py-0.5 rounded text-[11px]">d-001</span>
+                            <span class="text-[11px] font-medium text-slate-700 dark:text-slate-200"><strong class="text-amber-700 dark:text-amber-400">Starts with 'd'</strong> = District Office Submission</span>
+                        </div>
+                        <div class="flex items-center gap-1.5 sm:flex-1 sm:min-w-[15rem] bg-white dark:bg-slate-800 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 shadow-xs">
+                            <span class="font-mono font-bold text-blue-700 dark:text-blue-400 bg-blue-100 dark:bg-blue-950/60 px-1.5 py-0.5 rounded text-[11px]">0001</span>
+                            <span class="text-[11px] font-medium text-slate-700 dark:text-slate-200"><strong class="text-blue-700 dark:text-blue-400">Numbers Only</strong> = Division Office Submission</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- MY DOCUMENTS (saved on this device only) -->
-            <div id="myDocsBox" class="hidden mx-3 sm:mx-4 mb-3 rounded-xl border border-amber-200 dark:border-amber-800/40 bg-amber-50/60 dark:bg-amber-950/20 p-3 sm:p-4">
-                <div class="flex flex-wrap items-center justify-between gap-2">
-                    <div class="flex items-center gap-2 font-bold text-sm text-slate-800 dark:text-slate-100">
+            <!-- HOW IT WORKS: 3 steps + where to find the code -->
+            <div id="howItWorks" class="rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 p-3 sm:p-4">
+                <ol class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs sm:text-[13px] text-slate-600 dark:text-slate-300">
+                    <li class="flex items-center gap-2.5 bg-white dark:bg-slate-900 rounded-xl px-3 py-2 border border-slate-200 dark:border-slate-700"><span class="w-6 h-6 shrink-0 rounded-full bg-[#6B1111] text-white text-xs font-bold flex items-center justify-center">1</span> Get your code from the office</li>
+                    <li class="flex items-center gap-2.5 bg-white dark:bg-slate-900 rounded-xl px-3 py-2 border border-slate-200 dark:border-slate-700"><span class="w-6 h-6 shrink-0 rounded-full bg-[#6B1111] text-white text-xs font-bold flex items-center justify-center">2</span> Type it in the search box</li>
+                    <li class="flex items-center gap-2.5 bg-white dark:bg-slate-900 rounded-xl px-3 py-2 border border-slate-200 dark:border-slate-700"><span class="w-6 h-6 shrink-0 rounded-full bg-[#6B1111] text-white text-xs font-bold flex items-center justify-center">3</span> See where your document is</li>
+                </ol>
+                <details class="mt-3 text-xs sm:text-sm">
+                    <summary class="cursor-pointer font-semibold text-[#6B1111] dark:text-amber-400">Where do I find my code?</summary>
+                    <p class="mt-1.5 text-slate-600 dark:text-slate-300">The office gives you a 6-digit code for each document you submit. If you do not have one yet, please ask the office. A document barcode also works if it has one.</p>
+                </details>
+            </div>
+
+            <!-- MY DOCUMENTS (saved on this device only): closed bar, compact rows -->
+            <div id="myDocsBox" class="hidden rounded-xl border border-amber-200 dark:border-amber-800/40 bg-amber-50/60 dark:bg-amber-950/20">
+                <button type="button" id="myDocsToggle" onclick="toggleMyDocs()" aria-expanded="false" aria-controls="myDocsPanel" class="w-full flex items-center justify-between gap-2 px-3 sm:px-4 py-2.5 text-left rounded-xl">
+                    <span class="flex items-center gap-2 font-bold text-sm text-slate-800 dark:text-slate-100">
                         <i class="fa-solid fa-star text-amber-500"></i>
                         <span>My documents</span>
                         <span id="myDocsCount" class="text-xs font-semibold text-slate-500 dark:text-slate-400"></span>
+                    </span>
+                    <span class="flex items-center gap-2">
+                        <span id="myDocsBadge" class="hidden px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500 text-slate-950"></span>
+                        <i id="myDocsChevron" class="fa-solid fa-chevron-down text-xs text-slate-500 dark:text-slate-400 transition-transform"></i>
+                    </span>
+                </button>
+                <div id="myDocsPanel" class="hidden px-3 sm:px-4 pb-3">
+                    <div id="myDocsList" class="divide-y divide-amber-200/70 dark:divide-amber-800/30"></div>
+                    <div class="mt-1.5 flex flex-wrap items-center justify-between gap-2">
+                        <button type="button" id="myDocsMore" onclick="toggleMyDocsAll()" class="hidden text-xs font-semibold text-[#6B1111] dark:text-amber-400 hover:underline"></button>
+                        <button type="button" id="myDocsSeenAll" onclick="markAllMyDocsSeen()" class="hidden ml-auto text-xs font-semibold text-[#6B1111] dark:text-amber-400 hover:underline">Mark all as seen</button>
                     </div>
-                    <button type="button" id="myDocsSeenAll" onclick="markAllMyDocsSeen()" class="hidden text-xs font-semibold text-[#6B1111] dark:text-amber-400 hover:underline">Mark all as seen</button>
+                    <p class="mt-2 text-[11px] text-slate-500 dark:text-slate-400">Tap the star on a document to add it here. Saved on this device only.</p>
                 </div>
-                <div id="myDocsList" class="mt-2.5 space-y-2"></div>
-                <p class="mt-2.5 text-[11px] text-slate-500 dark:text-slate-400">Tap the star on a document to add it here. Saved on this device only.</p>
             </div>
 
+            <!-- EMPTY STATE (before a search, or when nothing matches) -->
+            <div id="emptyStateCard" class="rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 py-10 px-4 text-center"></div>
+
+            <!-- RESULTS (only shown when a search found something) -->
+            <div id="resultsArea" class="hidden space-y-4">
             <!-- Desktop Data Table (Max 5 items per page) -->
             <div class="hidden md:block overflow-x-auto">
                 <table class="w-full table-fixed text-left text-sm border-collapse" style="min-width:880px">
@@ -582,23 +591,7 @@
                 <!-- JavaScript dynamically inserts max 5 cards here -->
             </div>
 
-            <!-- PAGINATION CONTROLS (Max 5 documents per page limit) -->
-            <div id="paginationContainer" class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400">
-                <div id="pageSummary" class="font-medium">
-                    Showing <span id="pageStart" class="font-bold text-slate-800 dark:text-slate-200">0</span> to <span id="pageEnd" class="font-bold text-slate-800 dark:text-slate-200">0</span> of <span id="pageTotal" class="font-bold text-slate-800 dark:text-slate-200">0</span> entries
-                </div>
-                <div class="flex items-center gap-2">
-                    <button id="btnPrevPage" onclick="changePage(-1)" class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold rounded-lg transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1">
-                        <i class="fa-solid fa-chevron-left text-[10px]"></i> Previous
-                    </button>
-                    <span id="pageBadge" class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold rounded-lg border border-slate-200 dark:border-slate-700">
-                        Page <span id="currentPageNum">1</span> / <span id="totalPagesNum">1</span>
-                    </span>
-                    <button id="btnNextPage" onclick="changePage(1)" class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold rounded-lg transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1">
-                        Next <i class="fa-solid fa-chevron-right text-[10px]"></i>
-                    </button>
-                </div>
-            </div>
+            </div><!-- /resultsArea -->
 
         </div>
     </section>
@@ -617,7 +610,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2 max-w-5xl mx-auto">
                 <div class="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-sm text-center">
-                    <div class="w-8 h-8 mx-auto mb-2 rounded-lg bg-amber-100 dark:bg-amber-950/50 text-[#6B1111] dark:text-amber-400 flex items-center justify-center font-bold text-sm">🔍</div>
+                    <div class="w-8 h-8 mx-auto mb-2 rounded-lg bg-amber-100 dark:bg-amber-950/50 text-[#6B1111] dark:text-amber-400 flex items-center justify-center font-bold text-sm"><i class="fa-solid fa-magnifying-glass"></i></div>
                     <h3 class="font-bold text-xs sm:text-sm text-slate-800 dark:text-slate-100 mb-1">Online Tracking</h3>
                     <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 leading-normal">
                         Search your document code or barcode online to check whether it is pending, released, or returned.
@@ -625,7 +618,7 @@
                 </div>
 
                 <div class="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-sm text-center">
-                    <div class="w-8 h-8 mx-auto mb-2 rounded-lg bg-amber-100 dark:bg-amber-950/50 text-[#6B1111] dark:text-amber-400 flex items-center justify-center font-bold text-sm">📖</div>
+                    <div class="w-8 h-8 mx-auto mb-2 rounded-lg bg-amber-100 dark:bg-amber-950/50 text-[#6B1111] dark:text-amber-400 flex items-center justify-center font-bold text-sm"><i class="fa-solid fa-book-open"></i></div>
                     <h3 class="font-bold text-xs sm:text-sm text-slate-800 dark:text-slate-100 mb-1">Digital Record Book</h3>
                     <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 leading-normal">
                         Access a transparent online ledger of all official transmittals moving across offices.
@@ -633,7 +626,7 @@
                 </div>
 
                 <div class="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-sm text-center">
-                    <div class="w-8 h-8 mx-auto mb-2 rounded-lg bg-amber-100 dark:bg-amber-950/50 text-[#6B1111] dark:text-amber-400 flex items-center justify-center font-bold text-sm">📄</div>
+                    <div class="w-8 h-8 mx-auto mb-2 rounded-lg bg-amber-100 dark:bg-amber-950/50 text-[#6B1111] dark:text-amber-400 flex items-center justify-center font-bold text-sm"><i class="fa-solid fa-file-lines"></i></div>
                     <h3 class="font-bold text-xs sm:text-sm text-slate-800 dark:text-slate-100 mb-1">Document Tracker Slips</h3>
                     <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 leading-normal">
                         View and print a document tracker slip for any document, straight from your browser.
@@ -656,14 +649,14 @@
                 <div class="flip-card" tabindex="0" role="button" aria-label="Transmittal Tracking - tap to flip for more detail" onclick="this.classList.toggle('flipped')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.classList.toggle('flipped');}">
                     <div class="flip-card-inner">
                         <div class="flip-card-front p-5 sm:p-6 pt-6 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 transition-colors flex flex-col items-center text-center gap-2 justify-start">
-                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 flex items-center justify-center text-lg sm:text-xl font-bold">⚡</div>
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 flex items-center justify-center text-lg sm:text-xl font-bold"><i class="fa-solid fa-bolt"></i></div>
                             <h3 class="font-bold text-slate-800 dark:text-slate-100 text-base sm:text-lg">Transmittal Tracking</h3>
                             <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
                                 Every transmittal submitted by the school office has its own TRF number, and each document listed in it is logged here so you can track it.
                             </p>
                         </div>
                         <div class="flip-card-back p-5 sm:p-6 pt-0 sm:pt-0 bg-amber-50 dark:bg-amber-950/30 rounded-2xl border border-amber-200/80 dark:border-amber-800/40 transition-colors flex flex-col items-center text-center gap-1.5 justify-start">
-                            <div class="w-10 h-10 sm:w-12 sm:h-12 -mt-5 sm:-mt-6 rounded-xl bg-amber-400 dark:bg-amber-500 text-white border-4 border-white dark:border-slate-950 shadow-md flex items-center justify-center text-lg sm:text-xl font-bold shrink-0">⚡</div>
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 -mt-5 sm:-mt-6 rounded-xl bg-amber-400 dark:bg-amber-500 text-white border-4 border-white dark:border-slate-950 shadow-md flex items-center justify-center text-lg sm:text-xl font-bold shrink-0"><i class="fa-solid fa-bolt"></i></div>
                             <span class="inline-block mt-1 px-3 py-1 rounded-xl bg-amber-100 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300 text-xs sm:text-sm font-bold">Transmittal Tracking</span>
                             <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed pt-1">
                                 Each transmittal has its own TRF number ("d-" means District, no "d-" means Division). Every document listed in it is logged here, so you can follow it step by step: Submitted, then the office it's routed to, then Released or Returned, with the date for each step. A barcode and printable slip are included too.
@@ -676,14 +669,14 @@
                 <div class="flip-card" tabindex="0" role="button" aria-label="Digital Record Book - tap to flip for more detail" onclick="this.classList.toggle('flipped')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.classList.toggle('flipped');}">
                     <div class="flip-card-inner">
                         <div class="flip-card-front p-5 sm:p-6 pt-6 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 transition-colors flex flex-col items-center text-center gap-2 justify-start">
-                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#6B1111] text-[#D97706] flex items-center justify-center text-lg sm:text-xl font-bold">📖</div>
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#6B1111] text-[#D97706] flex items-center justify-center text-lg sm:text-xl font-bold"><i class="fa-solid fa-book-open"></i></div>
                             <h3 class="font-bold text-slate-800 dark:text-slate-100 text-base sm:text-lg">Digital Record Book</h3>
                             <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
                                 The school's Record Book, online. Look up the status of your document with its code, anytime.
                             </p>
                         </div>
                         <div class="flip-card-back p-5 sm:p-6 pt-0 sm:pt-0 bg-red-50 dark:bg-red-950/20 rounded-2xl border border-red-200/80 dark:border-red-900/40 transition-colors flex flex-col items-center text-center gap-1.5 justify-start">
-                            <div class="w-10 h-10 sm:w-12 sm:h-12 -mt-5 sm:-mt-6 rounded-xl bg-[#6B1111] text-[#D97706] border-4 border-white dark:border-slate-950 shadow-md flex items-center justify-center text-lg sm:text-xl font-bold shrink-0">📖</div>
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 -mt-5 sm:-mt-6 rounded-xl bg-[#6B1111] text-[#D97706] border-4 border-white dark:border-slate-950 shadow-md flex items-center justify-center text-lg sm:text-xl font-bold shrink-0"><i class="fa-solid fa-book-open"></i></div>
                             <span class="inline-block mt-1 px-3 py-1 rounded-xl bg-red-100 dark:bg-red-950/40 text-[#6B1111] dark:text-amber-400 text-xs sm:text-sm font-bold">Digital Record Book</span>
                             <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed pt-1">
                                 Find any document by its TRF number, sender, destination, or barcode. Filter by status (Pending, Released, or Returned), or tap a date on the calendar to see everything submitted that day.
@@ -696,14 +689,14 @@
                 <div class="flip-card" tabindex="0" role="button" aria-label="Web Stream and Transparency - tap to flip for more detail" onclick="this.classList.toggle('flipped')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.classList.toggle('flipped');}">
                     <div class="flip-card-inner">
                         <div class="flip-card-front p-5 sm:p-6 pt-6 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 transition-colors flex flex-col items-center text-center gap-2 justify-start">
-                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 flex items-center justify-center text-lg sm:text-xl font-bold">📡</div>
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 flex items-center justify-center text-lg sm:text-xl font-bold"><i class="fa-solid fa-satellite-dish"></i></div>
                             <h3 class="font-bold text-slate-800 dark:text-slate-100 text-base sm:text-lg">Web Stream & Transparency</h3>
                             <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
                                 See a document's status online anytime, no need to call or visit the office.
                             </p>
                         </div>
                         <div class="flip-card-back p-5 sm:p-6 pt-0 sm:pt-0 bg-emerald-50 dark:bg-emerald-950/20 rounded-2xl border border-emerald-200/80 dark:border-emerald-900/40 transition-colors flex flex-col items-center text-center gap-1.5 justify-start">
-                            <div class="w-10 h-10 sm:w-12 sm:h-12 -mt-5 sm:-mt-6 rounded-xl bg-emerald-500 text-white border-4 border-white dark:border-slate-950 shadow-md flex items-center justify-center text-lg sm:text-xl font-bold shrink-0">📡</div>
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 -mt-5 sm:-mt-6 rounded-xl bg-emerald-500 text-white border-4 border-white dark:border-slate-950 shadow-md flex items-center justify-center text-lg sm:text-xl font-bold shrink-0"><i class="fa-solid fa-satellite-dish"></i></div>
                             <span class="inline-block mt-1 px-3 py-1 rounded-xl bg-emerald-100 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 text-xs sm:text-sm font-bold">Web Stream & Transparency</span>
                             <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed pt-1">
                                 Tap Sync to get the newest updates. Anyone with the link can check a document, no account needed. It also works well on phones and in dark mode.
@@ -845,11 +838,11 @@
             <form id="loginForm" onsubmit="handleLogin(event)" class="p-5 space-y-4 text-sm text-slate-700 dark:text-slate-200 bg-slate-50 dark:bg-slate-950">
                 <div class="space-y-1.5">
                     <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400">Username</label>
-                    <input type="text" id="loginUsername" required class="w-full px-3 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition text-xs" placeholder="Username">
+                    <input type="text" id="loginUsername" required class="w-full px-3 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition text-base" placeholder="Username">
                 </div>
                 <div class="space-y-1.5">
                     <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400">Password</label>
-                    <input type="password" id="loginPassword" required class="w-full px-3 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition text-xs" placeholder="Password">
+                    <input type="password" id="loginPassword" required class="w-full px-3 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition text-base" placeholder="Password">
                 </div>
                 <div id="loginError" class="hidden text-rose-500 text-xs font-semibold text-center bg-rose-50 dark:bg-rose-950/40 py-2 rounded-lg border border-rose-200 dark:border-rose-900/50">Invalid username or password.</div>
                 <div class="pt-2 flex gap-2">
@@ -900,14 +893,14 @@
                 </div>
 
                 <label for="fbMessage" class="sr-only">Message</label>
-                <textarea id="fbMessage" rows="5" maxlength="1000" placeholder="What would you like to tell us?" class="mt-4 w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-transparent focus:border-slate-300 dark:focus:border-slate-600 focus:bg-white dark:focus:bg-slate-800 text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none resize-none transition"></textarea>
+                <textarea id="fbMessage" rows="5" maxlength="1000" placeholder="What would you like to tell us?" class="mt-4 w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-transparent focus:border-slate-300 dark:focus:border-slate-600 focus:bg-white dark:focus:bg-slate-800 text-base text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none resize-none transition"></textarea>
                 <div class="flex justify-between mt-1.5 px-1 text-[11px] text-slate-400">
                     <span id="fbError" class="text-red-600 dark:text-red-400 font-semibold"></span>
                     <span><span id="fbCount">0</span>/1000</span>
                 </div>
 
                 <label for="fbContact" class="sr-only">Contact (optional)</label>
-                <input id="fbContact" type="text" maxlength="120" autocomplete="off" placeholder="Contact (optional), only if you want a reply" class="mt-3 w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-transparent focus:border-slate-300 dark:focus:border-slate-600 focus:bg-white dark:focus:bg-slate-800 text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none transition">
+                <input id="fbContact" type="text" maxlength="120" autocomplete="off" placeholder="Contact (optional), only if you want a reply" class="mt-3 w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-transparent focus:border-slate-300 dark:focus:border-slate-600 focus:bg-white dark:focus:bg-slate-800 text-base text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none transition">
 
                 <!-- hidden trap field: real people never fill this in -->
                 <input id="fbWebsite" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;">
@@ -970,8 +963,10 @@
         let isAdminLoggedIn = false;
 
         // PAGINATION CONSTANTS & STATE (Max 5 documents per page)
-        const PAGE_SIZE = 5;
+        const PAGE_SIZE = 25;   // show every match on one page (the server returns at most 25)
         let currentPage = 1;
+        let myDocsOpen = null;      // null = automatic (opens only when something was updated); true/false = the teacher chose
+        let myDocsShowAll = false;  // show every saved document, not only the first 5
         let filteredData = [];
 
         // Mobile Menu Toggle Functionality
@@ -1470,7 +1465,7 @@
                 if (btnMobile) {
                     btnMobile.onclick = () => { handleLogout(); closeMobileMenu(); };
                     document.getElementById('authBtnTextMobile').innerText = "Logout (Admin)";
-                    document.getElementById('authBtnIconMobile').innerText = "🔓";
+                    document.getElementById('authBtnIconMobile').className = "fa-solid fa-right-from-bracket w-5 text-center mr-1.5";
                 }
             } else {
                 document.getElementById('loginError').classList.remove('hidden');
@@ -1506,7 +1501,7 @@
             if (btnMobile) {
                 btnMobile.onclick = () => { openLoginModal(); closeMobileMenu(); };
                 document.getElementById('authBtnTextMobile').innerText = "Admin Login";
-                document.getElementById('authBtnIconMobile').innerText = "🔒";
+                document.getElementById('authBtnIconMobile').className = "fa-solid fa-user-lock w-5 text-center mr-1.5";
             }
         }
 
@@ -1734,14 +1729,23 @@
             const t = x => (x == null ? "" : String(x));
             return { trf: t(r.trf), date: t(r.date), office: t(r.office), doc: t(r.doc), dest: t(r.dest), barcode: t(r.barcode), code: t(r.code), status: t(r.status), returned: t(r.returned) };
         }
-        function setSearchMsg(msg) {
+        const SEARCH_BTN_HTML = '<i class="fa-solid fa-magnifying-glass"></i> Search';
+        const SEARCH_BTN_BUSY_HTML = '<i class="fa-solid fa-spinner fa-spin"></i> Searching';
+        // tone "calm" (amber) is for waits and limits; the default (red) is for something to correct
+        function setSearchMsg(msg, tone) {
             const el = document.getElementById("searchMsg");
             if (!el) return;
+            const calm = tone === "calm";
             el.textContent = msg || "";
             el.classList.toggle("hidden", !msg);
+            el.classList.toggle("text-rose-600", !calm);
+            el.classList.toggle("dark:text-rose-400", !calm);
+            el.classList.toggle("text-amber-700", calm);
+            el.classList.toggle("dark:text-amber-300", calm);
         }
+        function searchErrorTone(err) { return err && err.code === "invalid" ? "error" : "calm"; }
         function searchErrorText(err) {
-            if (err && err.code === "rate") return "Too many searches. Please wait a few minutes and try again.";
+            if (err && err.code === "rate") return "Lots of searches were made in a short time. Please wait a few minutes, then try again.";
             if (err && err.code === "invalid") return "Enter the 6-digit code (for example 643746) or the full barcode (SDOBOR-26-025603).";
             if (err && err.name === "AbortError") return "The connection is too slow right now. Please try again.";
             if ((err instanceof TypeError) || navigator.onLine === false) return "You appear to be offline. Searching needs an internet connection.";
@@ -1775,10 +1779,10 @@
             if (!isValidQuery(q)) { setSearchMsg(searchErrorText({ code: "invalid" })); return; }
             setSearchMsg("");
             const btn = document.getElementById("searchBtn");
-            btn.disabled = true; btn.textContent = "Searching...";
+            btn.disabled = true; btn.innerHTML = SEARCH_BTN_BUSY_HTML;
             try { await runSearchInner(q); }
-            catch (err) { console.error("Search failed:", err); setSearchMsg(searchErrorText(err)); }
-            finally { btn.disabled = false; btn.textContent = "Search"; }
+            catch (err) { console.error("Search failed:", err); setSearchMsg(searchErrorText(err), searchErrorTone(err)); }
+            finally { btn.disabled = false; btn.innerHTML = SEARCH_BTN_HTML; }
         }
 
         // The sync button: refresh the totals, the current results and the starred documents
@@ -1949,6 +1953,26 @@
             myDocsSet(map);
             renderMyDocs();
         }
+        const MYDOCS_VISIBLE = 5;
+        function statusMini(status) {
+            const k = (status || "").trim().toLowerCase();
+            const m = {
+                pending:  ["Pending",     "text-amber-700 dark:text-amber-300", "bg-amber-500"],
+                released: ["Released",    "text-emerald-700 dark:text-emerald-300", "bg-emerald-500"],
+                returned: ["For Release", "text-blue-700 dark:text-blue-300", "bg-blue-500"]
+            }[k] || [statusLabel(status), "text-slate-500 dark:text-slate-400", "bg-slate-400"];
+            return `<span class="shrink-0 inline-flex items-center gap-1 text-[11px] font-semibold ${m[1]}"><span class="w-2 h-2 rounded-full ${m[2]}"></span>${esc(m[0])}</span>`;
+        }
+        function toggleMyDocs() {
+            const open = !document.getElementById("myDocsPanel").classList.contains("hidden");
+            myDocsOpen = !open;
+            if (open) myDocsShowAll = false;
+            renderMyDocs();
+        }
+        function toggleMyDocsAll() {
+            myDocsShowAll = !myDocsShowAll;
+            renderMyDocs();
+        }
         function renderMyDocs() {
             const box = document.getElementById("myDocsBox");
             const list = document.getElementById("myDocsList");
@@ -1961,32 +1985,91 @@
             if (!rows.length) { box.classList.add("hidden"); list.innerHTML = ""; return; }
             rows.sort((a, b) => (b.changed ? 1 : 0) - (a.changed ? 1 : 0));
             box.classList.remove("hidden");
+
             const nChanged = rows.filter(r => r.changed).length;
-            document.getElementById("myDocsCount").textContent = nChanged ? "(" + nChanged + " updated)" : "(" + rows.length + ")";
+            const open = myDocsOpen === null ? nChanged > 0 : myDocsOpen;   // closed unless something was updated
+            document.getElementById("myDocsCount").textContent = "(" + rows.length + ")";
+            const badge = document.getElementById("myDocsBadge");
+            badge.textContent = nChanged + " updated";
+            badge.classList.toggle("hidden", nChanged === 0);
+            document.getElementById("myDocsPanel").classList.toggle("hidden", !open);
+            document.getElementById("myDocsToggle").setAttribute("aria-expanded", String(open));
+            document.getElementById("myDocsChevron").classList.toggle("rotate-180", open);
             document.getElementById("myDocsSeenAll").classList.toggle("hidden", nChanged === 0);
+
+            const more = document.getElementById("myDocsMore");
+            const limited = rows.length > MYDOCS_VISIBLE && !myDocsShowAll;
+            more.classList.toggle("hidden", rows.length <= MYDOCS_VISIBLE);
+            more.textContent = myDocsShowAll ? "Show fewer" : "Show all (" + rows.length + ")";
+
             list.innerHTML = "";
-            rows.forEach(r => {
+            if (!open) return;
+            (limited ? rows.slice(0, MYDOCS_VISIBLE) : rows).forEach(r => {
                 const row = document.createElement("div");
-                row.className = "flex items-stretch gap-2 bg-white dark:bg-slate-900 rounded-xl border " + (r.changed ? "border-amber-400 dark:border-amber-500" : "border-slate-200 dark:border-slate-700");
+                row.className = "flex items-center gap-1 py-1";
                 row.innerHTML = `
-                    <button type="button" class="my-open flex-1 min-w-0 text-left p-2.5 sm:p-3 rounded-l-xl hover:bg-slate-50 dark:hover:bg-slate-800/60 transition" aria-label="View receipt for ${esc(r.it.trf)}">
-                        <div class="flex flex-wrap items-center gap-1.5">
-                            <span class="font-mono font-bold text-xs text-[#6B1111] dark:text-amber-400">${esc(r.it.trf)}</span>
-                            ${getStatusBadge(r.it.status)}
-                            ${r.changed ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500 text-slate-950">Updated${r.seen ? ", was " + esc(statusLabel(r.seen)) : ""}</span>` : ""}
-                        </div>
-                        <p class="mt-1 text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">${esc(r.it.doc) || "N/A"}</p>
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate">${esc(r.it.date) || "N/A"}${r.it.dest ? " &middot; " + esc(r.it.dest) : ""}</p>
+                    <button type="button" class="my-open flex-1 min-w-0 flex items-center gap-2 text-left rounded-lg px-1.5 py-1.5 hover:bg-white/70 dark:hover:bg-slate-800/60 transition" aria-label="View slip for ${esc(r.it.trf)}" title="${r.changed && r.seen ? "Was " + esc(statusLabel(r.seen)) : ""}">
+                        <span class="font-mono font-bold text-[11px] text-[#6B1111] dark:text-amber-400 shrink-0">${esc(r.it.trf) || "-"}</span>
+                        <span class="min-w-0 flex-1 truncate text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100">${esc(r.it.doc) || "N/A"}</span>
+                        ${statusMini(r.it.status)}
+                        ${r.changed ? `<span class="shrink-0 px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500 text-slate-950">Updated</span>` : ""}
                     </button>
-                    <button type="button" class="my-remove px-3 text-slate-400 hover:text-red-600 dark:hover:text-red-400 rounded-r-xl transition" title="Remove from My documents" aria-label="Remove ${esc(r.it.trf)} from My documents"><i class="fa-solid fa-xmark"></i></button>`;
+                    <button type="button" class="my-remove shrink-0 w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-600 dark:hover:text-red-400 rounded-lg transition" title="Remove from My documents" aria-label="Remove ${esc(r.it.trf)} from My documents"><i class="fa-solid fa-xmark"></i></button>`;
                 row.querySelector(".my-open").onclick = () => openModal(r.it);
                 row.querySelector(".my-remove").onclick = () => toggleStar(r.it);
                 list.appendChild(row);
             });
         }
 
+        // ===== Smooth jumps: header "Track Document" -> hero button -> search bar =====
+        function motionOK() { return !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); }
+        function pulseEl(el) {
+            if (!el) return;
+            el.classList.remove('nav-pulse');
+            void el.offsetWidth;
+            el.classList.add('nav-pulse');
+            setTimeout(function () { el.classList.remove('nav-pulse'); }, 1600);
+        }
+        function goToHeroTrack(e) {
+            if (e) e.preventDefault();
+            var btn = document.getElementById('heroTrackBtn');
+            if (!btn) return;
+            btn.scrollIntoView({ behavior: motionOK() ? 'smooth' : 'auto', block: 'center' });
+            setTimeout(function () { pulseEl(btn); }, motionOK() ? 500 : 0);
+        }
+        function goToSearch(e) {
+            if (e) e.preventDefault();
+            var row = document.getElementById('searchRow');
+            var input = document.getElementById('searchInput');
+            if (!row) return;
+            row.scrollIntoView({ behavior: motionOK() ? 'smooth' : 'auto', block: 'center' });
+            setTimeout(function () {
+                pulseEl(row);
+                // only open the keyboard-style focus on devices with a mouse, so phones do not jump
+                if (input && window.matchMedia && window.matchMedia('(pointer: fine)').matches) input.focus({ preventScroll: true });
+            }, motionOK() ? 500 : 0);
+        }
+
+        function renderEmptyState() {
+            const el = document.getElementById("emptyStateCard");
+            if (!el) return;
+            const noMatch = hasSearched;
+            el.innerHTML = `
+                <div class="w-12 h-12 mx-auto rounded-full ${noMatch ? "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-300" : "bg-amber-100 dark:bg-amber-950/50 text-[#6B1111] dark:text-amber-400"} flex items-center justify-center text-xl mb-3">
+                    <i class="fa-solid ${noMatch ? "fa-circle-question" : "fa-magnifying-glass"}"></i>
+                </div>
+                <p class="font-bold text-slate-800 dark:text-slate-100">${noMatch ? "No match. Check the digits." : "Enter your code to find your document"}</p>
+                <p class="mt-1 text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto">${noMatch
+                    ? "Make sure you typed all 6 digits of your code. If you do not have a code yet, please ask the office."
+                    : "Records are not listed for browsing. Your document code keeps your information private."}</p>`;
+        }
+
         function renderData() {
             renderMyDocs();
+            const showResults = hasSearched && sheetData.length > 0;
+            document.getElementById("resultsArea").classList.toggle("hidden", !showResults);
+            document.getElementById("emptyStateCard").classList.toggle("hidden", showResults);
+            if (!showResults) renderEmptyState();
             const tbody = document.getElementById("tableBody");
             const mobileContainer = document.getElementById("mobileCards");
             tbody.innerHTML = "";
@@ -2003,7 +2086,6 @@
                 const emptyState = `<p class="text-center text-xs text-slate-400 dark:text-slate-500 py-6">${emptyMsg}</p>`;
                 tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-xs text-slate-400 dark:text-slate-500">${emptyMsg}</td></tr>`;
                 mobileContainer.innerHTML = emptyState;
-                updatePaginationControls(0, 0, 0, 1, 1);
                 updateMetrics();
                 return;
             }
@@ -2067,7 +2149,7 @@
                     </div>
                     <div>
                         <h3 class="font-bold text-slate-900 dark:text-slate-100 text-base leading-snug">${esc(item.doc) || 'N/A'}</h3>
-                        <p class="text-xs font-medium text-slate-600 dark:text-slate-300 mt-0.5">📍 Destination: ${esc(destination)}</p>
+                        <p class="text-xs font-medium text-slate-600 dark:text-slate-300 mt-0.5"><i class="fa-solid fa-location-dot mr-1"></i>Destination: ${esc(destination)}</p>
                     </div>
                     <div class="text-[11px] text-slate-500 dark:text-slate-400 grid grid-cols-2 gap-1 pt-1 bg-slate-50 dark:bg-slate-800/50 p-2.5 rounded-lg border border-slate-100 dark:border-slate-800">
                         <div><span class="text-slate-400 dark:text-slate-500 block text-[10px] uppercase font-bold">Document Source</span>${esc(item.office) || 'N/A'}</div>
@@ -2083,24 +2165,7 @@
                 mobileContainer.appendChild(card);
             });
 
-            updatePaginationControls(startIndex + 1, endIndex, totalItems, currentPage, totalPages);
             updateMetrics();
-        }
-
-        function updatePaginationControls(start, end, total, page, totalPages) {
-            document.getElementById("pageStart").innerText = start;
-            document.getElementById("pageEnd").innerText = end;
-            document.getElementById("pageTotal").innerText = total;
-            document.getElementById("currentPageNum").innerText = page;
-            document.getElementById("totalPagesNum").innerText = totalPages;
-
-            document.getElementById("btnPrevPage").disabled = page <= 1;
-            document.getElementById("btnNextPage").disabled = page >= totalPages;
-        }
-
-        function changePage(delta) {
-            currentPage += delta;
-            renderData();
         }
 
         function getStatusBadge(status) {
@@ -2120,7 +2185,7 @@
         }
 
         function applyFilters() {
-            const sortVal = document.getElementById("sortSelect").value;
+            const sortVal = "newest";   // newest first; there is no sort menu any more
 
             filteredData = sheetData.filter(item => {
                 const matchesStatus = activeStatus === "ALL" || (item.status || '').toLowerCase() === activeStatus.toLowerCase();
@@ -2136,16 +2201,6 @@
 
             currentPage = 1; // Reset to page 1 on filter or search changes
             renderData();
-        }
-
-        function setStatusFilter(status) {
-            activeStatus = status;
-            document.querySelectorAll(".pill-btn").forEach(btn => {
-                btn.className = "pill-btn whitespace-nowrap px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 transition";
-            });
-            const activePill = document.getElementById("pill" + status);
-            if (activePill) activePill.className = "pill-btn whitespace-nowrap px-3.5 py-1.5 text-xs font-bold rounded-xl bg-[#6B1111] text-white shrink-0 shadow-xs transition";
-            applyFilters();
         }
 
         function copyToClipboard(text) {
