@@ -531,17 +531,42 @@
                             <option value="returned">Returned</option>
                         </select>
                     </div>
-                    <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
-                        <table class="w-full min-w-[860px] text-left text-xs sm:text-sm">
-                            <thead class="bg-slate-50 dark:bg-slate-800 text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400">
-                                <tr>
-                                    <th class="px-3 py-2">TRF</th><th class="px-3 py-2">Date</th><th class="px-3 py-2">Source</th><th class="px-3 py-2">Document</th>
-                                    <th class="px-3 py-2">Destination</th><th class="px-3 py-2">Status</th><th class="px-3 py-2">Code</th><th class="px-3 py-2">Barcode</th><th class="px-3 py-2"></th>
-                                </tr>
-                            </thead>
-                            <tbody id="adminBody"></tbody>
+                    <!-- Same layout as the original table: desktop table, mobile cards -->
+                    <div class="hidden md:block overflow-x-auto">
+                        <table class="w-full table-fixed text-left text-sm border-collapse" style="min-width:880px">
+                    <colgroup>
+                        <col style="width:11%"><col style="width:13%"><col style="width:17%"><col style="width:27%"><col style="width:13%"><col style="width:11%"><col style="width:8%">
+                    </colgroup>
+                    <thead class="bg-slate-100/80 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 font-bold text-xs uppercase tracking-wider border-b border-slate-200/90 dark:border-slate-800 select-none">
+                        <tr>
+                            <th scope="col" class="py-3.5 px-4 text-center rounded-tl-lg whitespace-nowrap">
+                                <span class="flex items-center justify-center gap-1.5"><i class="fa-solid fa-hashtag text-slate-400 text-[10px]"></i> TRF No.</span>
+                            </th>
+                            <th scope="col" class="py-3.5 px-4 text-center whitespace-nowrap">
+                                <span class="flex items-center justify-center gap-1.5"><i class="fa-solid fa-calendar-days text-slate-400 text-[10px]"></i> Date</span>
+                            </th>
+                            <th scope="col" class="py-3.5 px-4 text-center whitespace-nowrap">
+                                <span class="flex items-center justify-center gap-1.5"><i class="fa-solid fa-building text-slate-400 text-[10px]"></i> Document Source</span>
+                            </th>
+                            <th scope="col" class="py-3.5 px-4 text-center whitespace-nowrap">
+                                <span class="flex items-center justify-center gap-1.5"><i class="fa-solid fa-file-lines text-slate-400 text-[10px]"></i> Name of Reports Submitted</span>
+                            </th>
+                            <th scope="col" class="py-3.5 px-4 text-center whitespace-nowrap">
+                                <span class="flex items-center justify-center gap-1.5"><i class="fa-solid fa-location-dot text-slate-400 text-[10px]"></i> Destination</span>
+                            </th>
+                            <th scope="col" class="py-3.5 px-4 text-center whitespace-nowrap">
+                                <span class="flex items-center justify-center gap-1.5"><i class="fa-solid fa-list-check text-slate-400 text-[10px]"></i> Remarks</span>
+                            </th>
+                            <th scope="col" class="py-3.5 px-4 text-center rounded-tr-lg whitespace-nowrap">
+                                <span class="flex items-center justify-center gap-1.5"><i class="fa-solid fa-eye text-slate-400 text-[10px]"></i> View</span>
+                            </th>
+                        </tr>
+                    </thead>
+                            <tbody id="adminBody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
                         </table>
                     </div>
+                    <div id="adminCards" class="grid grid-cols-1 gap-3 md:hidden"></div>
+
                     <div class="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-400">
                         <p id="adminShowing"></p>
                         <div class="flex items-center gap-2">
@@ -1011,7 +1036,7 @@
         let adminState = "idle";      // idle | loading | ok | error
         let adminErr = "";
         let adminPage = 1;
-        const ADMIN_PAGE_SIZE = 25;
+        const ADMIN_PAGE_SIZE = 10;
 
         // PAGINATION CONSTANTS & STATE (Max 5 documents per page)
         const PAGE_SIZE = 25;   // show every match on one page (the server returns at most 25)
@@ -2166,25 +2191,17 @@
             const start = (adminPage - 1) * ADMIN_PAGE_SIZE;
             const pageRows = rows.slice(start, start + ADMIN_PAGE_SIZE);
             const body = document.getElementById("adminBody");
+            const cards = document.getElementById("adminCards");
             body.innerHTML = "";
+            cards.innerHTML = "";
             if (!pageRows.length) {
-                body.innerHTML = '<tr><td colspan="9" class="px-3 py-6 text-center text-slate-500 dark:text-slate-400">No documents match the filter.</td></tr>';
+                const none = "No documents match the filter.";
+                body.innerHTML = '<tr><td colspan="7" class="text-center py-6 text-xs text-slate-400 dark:text-slate-500">' + none + '</td></tr>';
+                cards.innerHTML = '<p class="text-center text-xs text-slate-400 dark:text-slate-500 py-6">' + none + '</p>';
             }
             pageRows.forEach(it => {
-                const tr = document.createElement("tr");
-                tr.className = "border-t border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50";
-                tr.innerHTML = `
-                    <td class="px-3 py-2 font-mono font-bold text-[#6B1111] dark:text-amber-400 whitespace-nowrap">${esc(it.trf) || "-"}</td>
-                    <td class="px-3 py-2 whitespace-nowrap text-slate-600 dark:text-slate-300">${esc(it.date)}</td>
-                    <td class="px-3 py-2 text-slate-800 dark:text-slate-100">${esc(it.office)}</td>
-                    <td class="px-3 py-2 max-w-[18rem] text-slate-800 dark:text-slate-100">${esc(it.doc)}</td>
-                    <td class="px-3 py-2 text-slate-600 dark:text-slate-300">${esc(it.dest)}</td>
-                    <td class="px-3 py-2 whitespace-nowrap">${getStatusBadge(it.status)}</td>
-                    <td class="px-3 py-2 font-mono text-slate-600 dark:text-slate-300">${esc(it.code)}</td>
-                    <td class="px-3 py-2 font-mono text-[11px] text-slate-500 dark:text-slate-400 whitespace-nowrap">${esc(it.barcode)}</td>
-                    <td class="px-3 py-2"><button type="button" class="admin-view px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-semibold text-[#6B1111] dark:text-amber-400 hover:bg-white dark:hover:bg-slate-800 transition" aria-label="View slip for ${esc(it.trf)}"><i class="fa-solid fa-eye mr-1"></i>View</button></td>`;
-                tr.querySelector(".admin-view").onclick = () => openModal(it);
-                body.appendChild(tr);
+                body.appendChild(buildTableRow(it, true));
+                cards.appendChild(buildCard(it, true));
             });
             document.getElementById("adminShowing").textContent = rows.length
                 ? "Showing " + (start + 1) + " to " + (start + pageRows.length) + " of " + rows.length + (rows.length !== adminData.length ? " (filtered from " + adminData.length + ")" : "")
@@ -2208,8 +2225,87 @@
                     : "Records are not listed for browsing. Your document code keeps your information private."}</p>`;
         }
 
+        // ===== Shared row (desktop) and card (mobile). Used by the search results and by the admin view =====
+        function destinationOf(item) {
+            return item.dest || (getLevel(item) === "District" ? "District Office" : "Division Office");
+        }
+        function targetTagHTML(item) {
+            return getLevel(item) === "District"
+                ? `<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 text-[10px] font-bold border border-amber-200 dark:border-amber-800/40">District</span>`
+                : `<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 text-[10px] font-bold border border-blue-200 dark:border-blue-800/40">Division</span>`;
+        }
+        function buildTableRow(item, showCode) {
+            const statusBadge = getStatusBadge(item.status);
+            const destination = destinationOf(item);
+            const targetTag = targetTagHTML(item);
+            const codeLine = (showCode && item.code) ? `<span class="font-mono text-[10px] font-semibold text-slate-400 dark:text-slate-500">Code ${esc(item.code)}</span>` : "";
+            const tr = document.createElement("tr");
+            tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/50 transition";
+            tr.innerHTML = `
+                <td class="py-3.5 px-4 text-center font-bold text-slate-800 dark:text-slate-100 font-mono">
+                    <div class="flex flex-col items-center gap-1">
+                        <span class="inline-flex items-center gap-1">
+                            ${esc(item.trf) || 'N/A'}
+                            ${starButtonHTML(item)}
+                        </span>
+                        ${targetTag}
+                        ${codeLine}
+                    </div>
+                </td>
+                <td class="py-3.5 px-4 text-center text-slate-500 dark:text-slate-400">${esc(item.date) || 'N/A'}</td>
+                <td class="py-3.5 px-4 text-center text-slate-600 dark:text-slate-300"><div class="cell-clamp" title="${esc(item.office)}">${esc(item.office) || 'N/A'}</div></td>
+                <td class="py-3.5 px-4 text-center font-semibold text-slate-800 dark:text-slate-100"><div class="cell-clamp" title="${esc(item.doc)}">${esc(item.doc) || 'N/A'}</div></td>
+                <td class="py-3.5 px-4 text-center text-slate-600 dark:text-slate-300"><div class="cell-clamp" title="${esc(destination)}">${esc(destination)}</div></td>
+                <td class="py-3.5 px-4 text-center">${statusBadge}</td>
+                <td class="py-3.5 px-4 text-center">
+                    <button class="view-icon-btn w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-400 border border-amber-200 dark:border-amber-800/40 hover:bg-amber-100 dark:hover:bg-amber-900/50 transition inline-flex items-center justify-center" title="View slip" aria-label="View slip for ${esc(item.trf)}">
+                        <i class="fa-solid fa-eye text-xs"></i>
+                    </button>
+                </td>
+            `;
+            const trStar = tr.querySelector(".star-btn");
+            if (trStar) trStar.onclick = (e) => { e.stopPropagation(); toggleStar(item); };
+            tr.querySelector(".view-icon-btn").onclick = (e) => { e.stopPropagation(); openModal(item); };
+            return tr;
+        }
+        function buildCard(item, showCode) {
+            const statusBadge = getStatusBadge(item.status);
+            const destination = destinationOf(item);
+            const targetTag = targetTagHTML(item);
+            const codeCell = (showCode && item.code) ? `<div class="col-span-2"><span class="text-slate-400 dark:text-slate-500 block text-[10px] uppercase font-bold">Code</span><span class="font-mono">${esc(item.code)}</span></div>` : "";
+            const card = document.createElement("div");
+            card.className = "bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3 transition-colors";
+            card.innerHTML = `
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-xs font-extrabold text-[#6B1111] dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded border border-amber-200/60 dark:border-amber-800/40 font-mono">${esc(item.trf) || 'N/A'}</span>
+                        ${targetTag}
+                        ${starButtonHTML(item)}
+                    </div>
+                    ${statusBadge}
+                </div>
+                <div>
+                    <h3 class="font-bold text-slate-900 dark:text-slate-100 text-base leading-snug">${esc(item.doc) || 'N/A'}</h3>
+                    <p class="text-xs font-medium text-slate-600 dark:text-slate-300 mt-0.5"><i class="fa-solid fa-location-dot mr-1"></i>Destination: ${esc(destination)}</p>
+                </div>
+                <div class="text-[11px] text-slate-500 dark:text-slate-400 grid grid-cols-2 gap-1 pt-1 bg-slate-50 dark:bg-slate-800/50 p-2.5 rounded-lg border border-slate-100 dark:border-slate-800">
+                    <div><span class="text-slate-400 dark:text-slate-500 block text-[10px] uppercase font-bold">Document Source</span>${esc(item.office) || 'N/A'}</div>
+                    <div><span class="text-slate-400 dark:text-slate-500 block text-[10px] uppercase font-bold">Date</span>${esc(item.date) || 'N/A'}</div>
+                    ${codeCell}
+                </div>
+                <button class="view-btn w-full py-2.5 bg-[#6B1111] text-amber-300 hover:text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-sm active:scale-[0.98]">
+                    <i class="fa-solid fa-receipt"></i> View Official Receipt
+                </button>
+            `;
+            card.querySelector(".view-btn").onclick = () => openModal(item);
+            const cardStar = card.querySelector(".star-btn");
+            if (cardStar) cardStar.onclick = () => toggleStar(item);
+            return card;
+        }
+
         function renderData() {
             renderMyDocs();
+            renderAdminPanel();
             const showResults = hasSearched && sheetData.length > 0;
             document.getElementById("resultsArea").classList.toggle("hidden", !showResults);
             const adminOpen = isAdminLoggedIn && adminState !== "idle";
@@ -2246,70 +2342,8 @@
             const pageData = filteredData.slice(startIndex, endIndex);
 
             pageData.forEach(item => {
-                const statusBadge = getStatusBadge(item.status);
-                const isDistrict = getLevel(item) === "District";
-                const destination = item.dest || (isDistrict ? "District Office" : "Division Office");
-                const targetTag = isDistrict
-                    ? `<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 text-[10px] font-bold border border-amber-200 dark:border-amber-800/40">District</span>`
-                    : `<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 text-[10px] font-bold border border-blue-200 dark:border-blue-800/40">Division</span>`;
-
-                // Desktop Table Row
-                const tr = document.createElement("tr");
-                tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/50 transition";
-                tr.innerHTML = `
-                    <td class="py-3.5 px-4 text-center font-bold text-slate-800 dark:text-slate-100 font-mono">
-                        <div class="flex flex-col items-center gap-1">
-                            <span class="inline-flex items-center gap-1">
-                                ${esc(item.trf) || 'N/A'}
-                                ${starButtonHTML(item)}
-                            </span>
-                            ${targetTag}
-                        </div>
-                    </td>
-                    <td class="py-3.5 px-4 text-center text-slate-500 dark:text-slate-400">${esc(item.date) || 'N/A'}</td>
-                    <td class="py-3.5 px-4 text-center text-slate-600 dark:text-slate-300"><div class="cell-clamp" title="${esc(item.office)}">${esc(item.office) || 'N/A'}</div></td>
-                    <td class="py-3.5 px-4 text-center font-semibold text-slate-800 dark:text-slate-100"><div class="cell-clamp" title="${esc(item.doc)}">${esc(item.doc) || 'N/A'}</div></td>
-                    <td class="py-3.5 px-4 text-center text-slate-600 dark:text-slate-300"><div class="cell-clamp" title="${esc(destination)}">${esc(destination)}</div></td>
-                    <td class="py-3.5 px-4 text-center">${statusBadge}</td>
-                    <td class="py-3.5 px-4 text-center">
-                        <button class="view-icon-btn w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-400 border border-amber-200 dark:border-amber-800/40 hover:bg-amber-100 dark:hover:bg-amber-900/50 transition inline-flex items-center justify-center" title="View receipt" aria-label="View receipt for ${esc(item.trf)}">
-                            <i class="fa-solid fa-eye text-xs"></i>
-                        </button>
-                    </td>
-                `;
-                const trStar = tr.querySelector(".star-btn");
-                if (trStar) trStar.onclick = (e) => { e.stopPropagation(); toggleStar(item); };
-                tr.querySelector(".view-icon-btn").onclick = (e) => { e.stopPropagation(); openModal(item); };
-                tbody.appendChild(tr);
-
-                // Mobile Card View Item
-                const card = document.createElement("div");
-                card.className = "bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3 transition-colors";
-                card.innerHTML = `
-                    <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
-                        <div class="flex items-center gap-1.5">
-                            <span class="text-xs font-extrabold text-[#6B1111] dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded border border-amber-200/60 dark:border-amber-800/40 font-mono">${esc(item.trf) || 'N/A'}</span>
-                            ${targetTag}
-                            ${starButtonHTML(item)}
-                        </div>
-                        ${statusBadge}
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-slate-900 dark:text-slate-100 text-base leading-snug">${esc(item.doc) || 'N/A'}</h3>
-                        <p class="text-xs font-medium text-slate-600 dark:text-slate-300 mt-0.5"><i class="fa-solid fa-location-dot mr-1"></i>Destination: ${esc(destination)}</p>
-                    </div>
-                    <div class="text-[11px] text-slate-500 dark:text-slate-400 grid grid-cols-2 gap-1 pt-1 bg-slate-50 dark:bg-slate-800/50 p-2.5 rounded-lg border border-slate-100 dark:border-slate-800">
-                        <div><span class="text-slate-400 dark:text-slate-500 block text-[10px] uppercase font-bold">Document Source</span>${esc(item.office) || 'N/A'}</div>
-                        <div><span class="text-slate-400 dark:text-slate-500 block text-[10px] uppercase font-bold">Date</span>${esc(item.date) || 'N/A'}</div>
-                    </div>
-                    <button class="view-btn w-full py-2.5 bg-[#6B1111] text-amber-300 hover:text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-sm active:scale-[0.98]">
-                        <i class="fa-solid fa-receipt"></i> View Official Receipt
-                    </button>
-                `;
-                card.querySelector(".view-btn").onclick = () => openModal(item);
-                const cardStar = card.querySelector(".star-btn");
-                if (cardStar) cardStar.onclick = () => toggleStar(item);
-                mobileContainer.appendChild(card);
+                tbody.appendChild(buildTableRow(item, false));
+                mobileContainer.appendChild(buildCard(item, false));
             });
 
             updateMetrics();
