@@ -508,6 +508,51 @@
                 </div>
             </div>
 
+            <!-- ADMIN VIEW: every document. Only after admin login; loaded from the server with the admin key -->
+            <div id="adminPanel" class="hidden rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
+                <div class="flex flex-wrap items-center justify-between gap-2 px-4 py-3 bg-[#6B1111] text-white">
+                    <div class="flex items-center gap-2 font-bold text-sm">
+                        <i class="fa-solid fa-user-shield"></i>
+                        <span>Admin view: all documents</span>
+                        <span id="adminCount" class="font-semibold text-amber-300 text-xs"></span>
+                    </div>
+                    <button type="button" id="adminRefresh" onclick="loadAdminAll()" class="text-xs font-semibold bg-white/15 hover:bg-white/25 disabled:opacity-60 rounded-lg px-3 py-1.5 transition"><i class="fa-solid fa-rotate mr-1"></i> Refresh</button>
+                </div>
+                <p id="adminMsg" class="hidden px-4 py-6 text-center text-sm text-slate-600 dark:text-slate-300"></p>
+                <div id="adminTools" class="hidden p-3 sm:p-4 space-y-3">
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <input id="adminFilter" type="text" autocomplete="off" oninput="adminFilterChanged()" placeholder="Filter by name, document, TRF, code or barcode..."
+                            class="flex-1 min-w-0 px-4 py-2.5 text-base sm:text-sm bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 placeholder-slate-400 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        <select id="adminStatus" onchange="adminFilterChanged()" aria-label="Filter by status"
+                            class="px-3 py-2.5 text-base sm:text-sm bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500">
+                            <option value="ALL">All statuses</option>
+                            <option value="pending">Pending</option>
+                            <option value="released">Released</option>
+                            <option value="returned">Returned</option>
+                        </select>
+                    </div>
+                    <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
+                        <table class="w-full min-w-[860px] text-left text-xs sm:text-sm">
+                            <thead class="bg-slate-50 dark:bg-slate-800 text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                                <tr>
+                                    <th class="px-3 py-2">TRF</th><th class="px-3 py-2">Date</th><th class="px-3 py-2">Source</th><th class="px-3 py-2">Document</th>
+                                    <th class="px-3 py-2">Destination</th><th class="px-3 py-2">Status</th><th class="px-3 py-2">Code</th><th class="px-3 py-2">Barcode</th><th class="px-3 py-2"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-400">
+                        <p id="adminShowing"></p>
+                        <div class="flex items-center gap-2">
+                            <button type="button" id="adminPrev" onclick="adminChangePage(-1)" class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-40 transition">Previous</button>
+                            <span id="adminPageLabel" class="font-semibold"></span>
+                            <button type="button" id="adminNext" onclick="adminChangePage(1)" class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-40 transition">Next</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- HOW IT WORKS: 3 steps + where to find the code -->
             <div id="howItWorks" class="rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 p-3 sm:p-4">
                 <ol class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs sm:text-[13px] text-slate-600 dark:text-slate-300">
@@ -961,6 +1006,12 @@
 
         // ADMIN AUTH STATE
         let isAdminLoggedIn = false;
+        let adminKey = "";            // the admin password, kept in memory only (never saved); sent to the server to unlock the full list
+        let adminData = [];           // every document, newest first (admin only)
+        let adminState = "idle";      // idle | loading | ok | error
+        let adminErr = "";
+        let adminPage = 1;
+        const ADMIN_PAGE_SIZE = 25;
 
         // PAGINATION CONSTANTS & STATE (Max 5 documents per page)
         const PAGE_SIZE = 25;   // show every match on one page (the server returns at most 25)
@@ -1439,6 +1490,8 @@
                 isAdminLoggedIn = true;
                 closeLoginModal();
                 showToast("Admin access granted.");
+                adminKey = pass;
+                loadAdminAll();
                 
 
                 // Show Hero Record Book Button
@@ -1474,6 +1527,8 @@
 
         function handleLogout() {
             isAdminLoggedIn = false;
+            adminKey = ""; adminData = []; adminState = "idle"; adminErr = ""; adminPage = 1;
+            renderAdminPanel(); renderData();
             showToast("Admin logged out safely.");
             
 
@@ -2050,6 +2105,95 @@
             }, motionOK() ? 500 : 0);
         }
 
+        // ===== ADMIN VIEW: all documents (only after admin login) =====
+        function adminErrorText(err) {
+            const c = err && err.code;
+            if (c === "nokey") return "The server has no admin key yet. In Apps Script, add the script property ETRS_ADMIN_KEY with your admin password.";
+            if (c === "denied") return "The server did not accept the admin password. Make sure ETRS_ADMIN_KEY is the same password you log in with.";
+            if (c === "locked") return "Too many wrong attempts. Please wait 10 minutes, then press Refresh.";
+            if (err && err.code === "stale") return "The server has not been updated for the admin view yet. Add AdminView.gs, update the line in Code.gs, and deploy a New version.";
+            if ((err instanceof TypeError) || navigator.onLine === false) return "You appear to be offline. Press Refresh when you are back online.";
+            return "Could not load all documents. Press Refresh to try again.";
+        }
+        async function loadAdminAll() {
+            if (!isAdminLoggedIn || !adminKey) return;
+            adminState = "loading"; adminErr = "";
+            renderAdminPanel(); renderData();
+            try {
+                const j = await apiGet({ action: "all", key: adminKey });
+                if (!j || !Array.isArray(j.results)) { const e = new Error("stale"); e.code = "stale"; throw e; }
+                adminData = j.results.map(cleanItem).reverse();   // newest rows first
+                adminState = "ok"; adminPage = 1;
+            } catch (err) {
+                console.error("Admin load failed:", err);
+                adminState = "error"; adminErr = adminErrorText(err);
+            }
+            renderAdminPanel(); renderData();
+        }
+        function adminFiltered() {
+            const q = (document.getElementById("adminFilter").value || "").trim().toLowerCase();
+            const st = document.getElementById("adminStatus").value;
+            return adminData.filter(it => {
+                if (st !== "ALL" && statusKey(it.status) !== st) return false;
+                if (!q) return true;
+                return [it.trf, it.date, it.office, it.doc, it.dest, it.barcode, it.code, it.status].join(" ").toLowerCase().indexOf(q) !== -1;
+            });
+        }
+        function adminFilterChanged() { adminPage = 1; renderAdminPanel(); }
+        function adminChangePage(d) { adminPage += d; renderAdminPanel(); }
+        function renderAdminPanel() {
+            const panel = document.getElementById("adminPanel");
+            if (!panel) return;
+            const on = isAdminLoggedIn && adminState !== "idle";
+            panel.classList.toggle("hidden", !on);
+            if (!on) return;
+            const msg = document.getElementById("adminMsg"), tools = document.getElementById("adminTools");
+            document.getElementById("adminRefresh").disabled = adminState === "loading";
+            if (adminState !== "ok") {
+                tools.classList.add("hidden");
+                msg.classList.remove("hidden");
+                msg.textContent = adminState === "loading" ? "Loading all documents..." : adminErr;
+                document.getElementById("adminCount").textContent = "";
+                return;
+            }
+            msg.classList.add("hidden");
+            tools.classList.remove("hidden");
+            document.getElementById("adminCount").textContent = "(" + adminData.length + ")";
+            const rows = adminFiltered();
+            const totalPages = Math.max(1, Math.ceil(rows.length / ADMIN_PAGE_SIZE));
+            if (adminPage > totalPages) adminPage = totalPages;
+            if (adminPage < 1) adminPage = 1;
+            const start = (adminPage - 1) * ADMIN_PAGE_SIZE;
+            const pageRows = rows.slice(start, start + ADMIN_PAGE_SIZE);
+            const body = document.getElementById("adminBody");
+            body.innerHTML = "";
+            if (!pageRows.length) {
+                body.innerHTML = '<tr><td colspan="9" class="px-3 py-6 text-center text-slate-500 dark:text-slate-400">No documents match the filter.</td></tr>';
+            }
+            pageRows.forEach(it => {
+                const tr = document.createElement("tr");
+                tr.className = "border-t border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50";
+                tr.innerHTML = `
+                    <td class="px-3 py-2 font-mono font-bold text-[#6B1111] dark:text-amber-400 whitespace-nowrap">${esc(it.trf) || "-"}</td>
+                    <td class="px-3 py-2 whitespace-nowrap text-slate-600 dark:text-slate-300">${esc(it.date)}</td>
+                    <td class="px-3 py-2 text-slate-800 dark:text-slate-100">${esc(it.office)}</td>
+                    <td class="px-3 py-2 max-w-[18rem] text-slate-800 dark:text-slate-100">${esc(it.doc)}</td>
+                    <td class="px-3 py-2 text-slate-600 dark:text-slate-300">${esc(it.dest)}</td>
+                    <td class="px-3 py-2 whitespace-nowrap">${getStatusBadge(it.status)}</td>
+                    <td class="px-3 py-2 font-mono text-slate-600 dark:text-slate-300">${esc(it.code)}</td>
+                    <td class="px-3 py-2 font-mono text-[11px] text-slate-500 dark:text-slate-400 whitespace-nowrap">${esc(it.barcode)}</td>
+                    <td class="px-3 py-2"><button type="button" class="admin-view px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-semibold text-[#6B1111] dark:text-amber-400 hover:bg-white dark:hover:bg-slate-800 transition" aria-label="View slip for ${esc(it.trf)}"><i class="fa-solid fa-eye mr-1"></i>View</button></td>`;
+                tr.querySelector(".admin-view").onclick = () => openModal(it);
+                body.appendChild(tr);
+            });
+            document.getElementById("adminShowing").textContent = rows.length
+                ? "Showing " + (start + 1) + " to " + (start + pageRows.length) + " of " + rows.length + (rows.length !== adminData.length ? " (filtered from " + adminData.length + ")" : "")
+                : "";
+            document.getElementById("adminPageLabel").textContent = "Page " + adminPage + " of " + totalPages;
+            document.getElementById("adminPrev").disabled = adminPage <= 1;
+            document.getElementById("adminNext").disabled = adminPage >= totalPages;
+        }
+
         function renderEmptyState() {
             const el = document.getElementById("emptyStateCard");
             if (!el) return;
@@ -2068,7 +2212,10 @@
             renderMyDocs();
             const showResults = hasSearched && sheetData.length > 0;
             document.getElementById("resultsArea").classList.toggle("hidden", !showResults);
-            document.getElementById("emptyStateCard").classList.toggle("hidden", showResults);
+            const adminOpen = isAdminLoggedIn && adminState !== "idle";
+            document.getElementById("emptyStateCard").classList.toggle("hidden", showResults || (adminOpen && !hasSearched));
+            const hw = document.getElementById("howItWorks");
+            if (hw) hw.classList.toggle("hidden", adminOpen);
             if (!showResults) renderEmptyState();
             const tbody = document.getElementById("tableBody");
             const mobileContainer = document.getElementById("mobileCards");
