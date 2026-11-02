@@ -303,13 +303,13 @@
                 <!-- Action Buttons -->
                 <div class="flex items-center gap-2 shrink-0">
                     <!-- Admin Login Button (desktop only - lives inside the hamburger menu on mobile, see #mobileMenu) -->
-                    <button id="authBtn" onclick="openLoginModal()" class="hidden lg:flex px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs sm:text-sm font-semibold rounded-xl transition border border-slate-200 dark:border-slate-700 items-center gap-1.5" title="Admin Login">
+                    <button id="authBtn" onclick="openLoginModal()" class="hidden lg:flex px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs sm:text-sm font-semibold rounded-xl transition border border-slate-200 dark:border-slate-700 items-center gap-1.5" title="Admin Login">
                         <i id="authBtnIcon" class="fa-solid fa-user-lock text-xs"></i> <span id="authBtnText">Admin</span>
                     </button>
 
                     <!-- Live Clock Button (click to open calendar + time popover) -->
                     <div class="relative">
-                        <button id="clockBtn" onclick="toggleClockPopover(event)" class="px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs sm:text-sm font-semibold rounded-xl transition border border-slate-200 dark:border-slate-700 flex items-center gap-1.5" title="Date & Time" aria-label="Show date and time">
+                        <button id="clockBtn" onclick="toggleClockPopover(event)" class="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs sm:text-sm font-semibold rounded-xl transition border border-slate-200 dark:border-slate-700 flex items-center gap-1.5" title="Date & Time" aria-label="Show date and time">
                             <i class="fa-solid fa-clock text-xs"></i>
                             <span id="navClockTime" class="font-mono">--:--</span>
                         </button>
@@ -322,14 +322,14 @@
                             <!-- Calendar grid view -->
                             <div id="calendarMainView">
                                 <div class="flex items-center justify-between mb-1.5">
-                                    <button onclick="changeCalendarMonth(-1)" class="w-5 h-5 flex items-center justify-center rounded text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="Previous month" aria-label="Previous month"><i class="fa-solid fa-chevron-left text-[10px]"></i></button>
+                                    <button onclick="changeCalendarMonth(-1)" class="w-5 h-5 flex items-center justify-center rounded text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="Previous month" aria-label="Previous month"><i class="fa-solid fa-chevron-left text-[10px]"></i></button>
                                     <span id="calMonthLabel" class="text-xs font-bold text-slate-700 dark:text-slate-200">—</span>
-                                    <button onclick="changeCalendarMonth(1)" class="w-5 h-5 flex items-center justify-center rounded text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="Next month" aria-label="Next month"><i class="fa-solid fa-chevron-right text-[10px]"></i></button>
+                                    <button onclick="changeCalendarMonth(1)" class="w-5 h-5 flex items-center justify-center rounded text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="Next month" aria-label="Next month"><i class="fa-solid fa-chevron-right text-[10px]"></i></button>
                                 </div>
-                                <p class="text-[10px] text-center text-slate-400 dark:text-slate-500 mb-1.5">
+                                <p class="text-[10px] text-center text-slate-500 dark:text-slate-400 mb-1.5">
                                     <span class="inline-block w-1.5 h-1.5 rounded-full bg-amber-500 align-middle"></span> = day with submissions
                                 </p>
-                                <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-slate-400 dark:text-slate-500 mb-1">
+                                <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1">
                                     <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
                                 </div>
                                 <div id="calGrid" class="grid grid-cols-7 gap-y-1 text-center text-[11px]"></div>
@@ -365,7 +365,7 @@
             <a href="#features" onclick="closeMobileMenu()" class="block py-2 px-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"><i class="fa-solid fa-gear w-5 text-center mr-1.5"></i>Services &amp; Capabilities</a>
             <a href="#contact" onclick="closeMobileMenu()" class="block py-2 px-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"><i class="fa-solid fa-phone w-5 text-center mr-1.5"></i>Contact Support</a>
             <div class="h-px bg-slate-200 dark:bg-slate-800 my-1.5"></div>
-            <button id="authBtnMobile" onclick="openLoginModal(); closeMobileMenu();" class="w-full text-left block py-2 px-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+            <button id="authBtnMobile" onclick="openLoginModal(); closeMobileMenu();" class="w-full text-left block py-2 px-4 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition">
                 <i id="authBtnIconMobile" class="fa-solid fa-user-lock w-5 text-center mr-1.5"></i> <span id="authBtnTextMobile">Admin Login</span>
             </button>
         </div>
@@ -464,10 +464,10 @@
                     <p class="font-bold">Couldn't load the latest records.</p>
                     <p id="syncErrorDetail" class="mt-0.5 opacity-90"></p>
                 </div>
-                <button onclick="fetchSheetData()" class="shrink-0 px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-semibold text-[11px] transition">Try again</button>
+                <button onclick="fetchSheetData()" class="shrink-0 px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-semibold text-[11px] transition">Try Again</button>
             </div>
             <div class="flex flex-wrap items-center gap-x-3 gap-y-1 -mb-1">
-                <p class="text-[11px] text-slate-400 dark:text-slate-500 flex items-center gap-1.5"><i class="fa-solid fa-clock"></i> <span id="lastUpdatedLabel">Not synced yet</span></p>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1.5"><i class="fa-solid fa-clock"></i> <span id="lastUpdatedLabel">Not synced yet</span></p>
                 <div id="netChip" class="hidden items-center gap-1.5 text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-500/15 dark:text-amber-300">
                     <i id="netChipIcon" class="fa-solid fa-signal"></i>
                     <span id="netChipText"></span>
@@ -488,7 +488,16 @@
                     </div>
                     <button type="button" id="searchBtn" onclick="runSearch()" class="px-5 py-2.5 bg-[#6B1111] hover:bg-[#4A0B0B] text-white text-sm sm:text-base font-bold rounded-xl transition shrink-0 flex items-center justify-center gap-2 disabled:opacity-70"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
                   </div>
-                  <p id="searchMsg" class="hidden mt-1 text-[11px] font-semibold text-rose-600 dark:text-rose-400"></p>
+                  <div id="searchMsg" role="alert" class="hidden mt-2 rounded-2xl border p-3.5">
+                    <div class="flex items-start gap-3">
+                      <span id="searchMsgIconWrap" class="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center"><i id="searchMsgIcon" class="fa-solid fa-triangle-exclamation"></i></span>
+                      <div class="flex-1 min-w-0">
+                        <p id="searchMsgTitle" class="text-sm font-bold text-slate-900 dark:text-slate-100"></p>
+                        <p id="searchMsgText" class="mt-0.5 text-xs text-slate-600 dark:text-slate-300 leading-relaxed"></p>
+                        <button type="button" id="searchMsgAction" class="hidden mt-2.5 px-4 py-2 rounded-xl bg-[#6B1111] hover:bg-[#4A0B0B] text-white text-xs font-semibold transition active:scale-95"></button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <!-- TRF code legend, beside the search bar -->
@@ -536,7 +545,7 @@
                     <colgroup>
                         <col style="width:11%"><col style="width:13%"><col style="width:17%"><col style="width:27%"><col style="width:13%"><col style="width:11%"><col style="width:8%">
                     </colgroup>
-                    <thead class="bg-slate-100/80 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 font-bold text-xs uppercase tracking-wider border-b border-slate-200/90 dark:border-slate-800 select-none">
+                    <thead class="bg-slate-100/80 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 font-bold text-xs border-b border-slate-200/90 dark:border-slate-800 select-none">
                         <tr>
                             <th scope="col" class="py-3.5 px-4 text-center rounded-tl-lg whitespace-nowrap">
                                 <span class="flex items-center justify-center gap-1.5"><i class="fa-solid fa-hashtag text-slate-400 text-[10px]"></i> TRF No.</span>
@@ -605,7 +614,7 @@
 
             <!-- MY DOCUMENTS (saved on this device only): closed bar, compact rows -->
             <div id="myDocsBox" class="hidden rounded-xl border border-amber-200 dark:border-amber-800/40 bg-amber-50/60 dark:bg-amber-950/20">
-                <button type="button" id="myDocsToggle" onclick="toggleMyDocs()" aria-expanded="false" aria-controls="myDocsPanel" class="w-full flex items-center justify-between gap-2 px-3 sm:px-4 py-2.5 text-left rounded-xl">
+                <button type="button" id="myDocsToggle" onclick="toggleMyDocs()" aria-expanded="false" aria-controls="myDocsPanel" class="w-full flex items-center justify-between gap-2 px-3 sm:px-5 py-2.5 text-left rounded-xl">
                     <span class="flex items-center gap-2 font-bold text-sm text-slate-800 dark:text-slate-100">
                         <i class="fa-solid fa-star text-amber-500"></i>
                         <span>My documents</span>
@@ -637,7 +646,7 @@
                     <colgroup>
                         <col style="width:11%"><col style="width:13%"><col style="width:17%"><col style="width:27%"><col style="width:13%"><col style="width:11%"><col style="width:8%">
                     </colgroup>
-                    <thead class="bg-slate-100/80 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 font-bold text-xs uppercase tracking-wider border-b border-slate-200/90 dark:border-slate-800 select-none">
+                    <thead class="bg-slate-100/80 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 font-bold text-xs border-b border-slate-200/90 dark:border-slate-800 select-none">
                         <tr>
                             <th scope="col" class="py-3.5 px-4 text-center rounded-tl-lg whitespace-nowrap">
                                 <span class="flex items-center justify-center gap-1.5"><i class="fa-solid fa-hashtag text-slate-400 text-[10px]"></i> TRF No.</span>
@@ -682,7 +691,7 @@
     <section id="about" class="scroll-mt-20 bg-slate-100 dark:bg-slate-900/50 py-12 sm:py-16 border-t border-slate-200 dark:border-slate-800 transition-colors">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
             <div class="text-center space-y-2">
-                <span class="text-xs font-extrabold text-[#6B1111] dark:text-amber-400 tracking-wider uppercase">About This Web Portal</span>
+                <span class="text-xs font-extrabold text-[#6B1111] dark:text-amber-400 ">About This Web Portal</span>
                 <h2 class="text-xl sm:text-3xl font-bold text-slate-900 dark:text-white">Your Online Portal for Document Transmittals</h2>
             </div>
             
@@ -809,7 +818,7 @@
     </section>
 
     <!-- 7. FOOTER SECTION -->
-    <footer class="bg-slate-900 text-slate-400 text-xs py-8 border-t border-slate-800">
+    <footer class="bg-slate-900 text-slate-500 dark:text-slate-400 text-xs py-8 border-t border-slate-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
             <div>
                 <p class="font-bold text-white">Eastern Samar National Comprehensive High School</p>
@@ -844,12 +853,12 @@
 
                 <!-- Status Visual Timeline Progress -->
                 <div class="bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
-                    <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Transmittal Pipeline</p>
+                    <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400">Transmittal Pipeline</p>
                     <div class="grid grid-cols-3 text-center relative py-1 gap-1">
                         <div class="space-y-1 z-10">
                             <div class="w-6 h-6 mx-auto rounded-full bg-emerald-500 text-white flex items-center justify-center text-[10px]"><i class="fa-solid fa-check"></i></div>
                             <span class="text-[10px] font-semibold text-slate-700 dark:text-slate-300 block">Submitted</span>
-                            <span id="step1Date" class="text-[10px] text-slate-400 dark:text-slate-500 block leading-tight">—</span>
+                            <span id="step1Date" class="text-[10px] text-slate-500 dark:text-slate-400 block leading-tight">—</span>
                         </div>
                         <div class="space-y-1 z-10">
                             <div id="step2Icon" class="w-6 h-6 mx-auto rounded-full bg-slate-200 text-slate-500 flex items-center justify-center text-[10px]"><i class="fa-solid fa-gear"></i></div>
@@ -858,7 +867,7 @@
                         <div class="space-y-1 z-10">
                             <div id="step3Icon" class="w-6 h-6 mx-auto rounded-full bg-slate-200 text-slate-500 flex items-center justify-center text-[10px]"><i class="fa-solid fa-box-archive"></i></div>
                             <span id="step3Label" class="text-[10px] font-semibold text-slate-700 dark:text-slate-300 block">Pending</span>
-                            <span id="step3Date" class="text-[10px] text-slate-400 dark:text-slate-500 block leading-tight">—</span>
+                            <span id="step3Date" class="text-[10px] text-slate-500 dark:text-slate-400 block leading-tight">—</span>
                         </div>
                     </div>
                 </div>
@@ -866,19 +875,19 @@
                 <!-- Main Data Details (inline "Label: value" format) -->
                 <div class="bg-white dark:bg-slate-900 p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2 text-[13px] leading-relaxed">
                     <p>
-                        <span class="text-slate-400">TRF No:</span>
+                        <span class="text-slate-500 dark:text-slate-400">TRF No:</span>
                         <span id="modalTRF" class="font-bold text-slate-800 dark:text-slate-100 font-mono">---</span>
-                        <button onclick="copyTRFFromModal()" class="text-slate-400 hover:text-amber-600 text-xs ml-1" title="Copy TRF" aria-label="Copy TRF number"><i class="fa-solid fa-copy"></i></button>
+                        <button onclick="copyTRFFromModal()" class="text-slate-500 dark:text-slate-400 hover:text-amber-600 text-xs ml-1" title="Copy TRF" aria-label="Copy TRF number"><i class="fa-solid fa-copy"></i></button>
                     </p>
-                    <p id="modalCodeRow" class="sm:hidden"><span class="text-slate-400">Document Code:</span>
+                    <p id="modalCodeRow" class="sm:hidden"><span class="text-slate-500 dark:text-slate-400">Document Code:</span>
                         <span id="modalCode" class="font-bold text-slate-800 dark:text-slate-100 font-mono"></span>
-                        <button id="modalCodeCopy" onclick="copyCodeFromModal()" class="text-slate-400 hover:text-amber-600 text-xs ml-1" title="Copy document code" aria-label="Copy document code"><i class="fa-solid fa-copy"></i></button></p>
-                    <p><span class="text-slate-400">Destination:</span> <span id="modalTargetType" class="font-semibold text-amber-700 dark:text-amber-400">---</span></p>
-                    <p><span class="text-slate-400">Document Source:</span> <span id="modalOffice" class="font-semibold text-slate-800 dark:text-slate-100">---</span></p>
-                    <p><span class="text-slate-400">Name of Reports Submitted:</span> <span id="modalDoc" class="font-semibold text-slate-800 dark:text-slate-100">---</span></p>
+                        <button id="modalCodeCopy" onclick="copyCodeFromModal()" class="text-slate-500 dark:text-slate-400 hover:text-amber-600 text-xs ml-1" title="Copy document code" aria-label="Copy document code"><i class="fa-solid fa-copy"></i></button></p>
+                    <p><span class="text-slate-500 dark:text-slate-400">Destination:</span> <span id="modalTargetType" class="font-semibold text-amber-700 dark:text-amber-400">---</span></p>
+                    <p><span class="text-slate-500 dark:text-slate-400">Document Source:</span> <span id="modalOffice" class="font-semibold text-slate-800 dark:text-slate-100">---</span></p>
+                    <p><span class="text-slate-500 dark:text-slate-400">Name of Reports Submitted:</span> <span id="modalDoc" class="font-semibold text-slate-800 dark:text-slate-100">---</span></p>
                     
-                    <p><span class="text-slate-400">Barcode:</span> <span id="modalBarcode" class="font-semibold text-slate-800 dark:text-slate-100 font-mono"></span>
-                        <button id="modalBarcodeCopy" onclick="copyBarcodeFromModal()" class="hidden text-slate-400 hover:text-amber-600 text-xs ml-1" title="Copy barcode" aria-label="Copy barcode number"><i class="fa-solid fa-copy"></i></button></p>
+                    <p><span class="text-slate-500 dark:text-slate-400">Barcode:</span> <span id="modalBarcode" class="font-semibold text-slate-800 dark:text-slate-100 font-mono"></span>
+                        <button id="modalBarcodeCopy" onclick="copyBarcodeFromModal()" class="hidden text-slate-500 dark:text-slate-400 hover:text-amber-600 text-xs ml-1" title="Copy barcode" aria-label="Copy barcode number"><i class="fa-solid fa-copy"></i></button></p>
                 </div>
             </div>
 
@@ -930,9 +939,10 @@
                 </div>
                 <div class="space-y-1.5">
                     <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400">Password</label>
-                    <input type="password" id="loginPassword" required class="w-full px-3 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition text-base" placeholder="Password">
+                    <div class="relative"><input type="password" id="loginPassword" required class="w-full pl-3 pr-11 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition text-base" placeholder="Password">
+                    <button type="button" id="loginPwToggle" onclick="toggleLoginPw()" aria-label="Show password" class="absolute right-1.5 top-1/2 -translate-y-1/2 w-9 h-9 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100 transition"><i class="fa-solid fa-eye"></i></button></div>
                 </div>
-                <div id="loginError" class="hidden text-rose-500 text-xs font-semibold text-center bg-rose-50 dark:bg-rose-950/40 py-2 rounded-lg border border-rose-200 dark:border-rose-900/50">Invalid username or password.</div>
+                <div id="loginError" class="hidden text-rose-600 text-xs text-left bg-rose-50 px-3 dark:bg-rose-950/40 py-2 rounded-lg border border-rose-200 dark:border-rose-900/50"><p class="font-bold">Check your login</p><p class="mt-0.5 font-medium">The username or password did not match. Check both and try again.</p></div>
                 <div class="pt-2 flex gap-2">
                     <button type="button" onclick="closeLoginModal()" class="w-1/3 py-2.5 bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl text-xs font-semibold hover:bg-slate-300 dark:hover:bg-slate-700 transition">Cancel</button>
                     <button type="submit" class="w-2/3 py-2.5 bg-[#6B1111] text-white rounded-xl text-xs font-semibold hover:bg-red-900 transition shadow-sm active:scale-95">Secure Login</button>
@@ -970,7 +980,7 @@
                         <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">Send feedback</h3>
                         <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Help us make this portal better.</p>
                     </div>
-                    <button type="button" onclick="closeFeedbackModal()" aria-label="Close feedback window" class="-mr-2 -mt-1 w-9 h-9 rounded-full text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200 text-2xl leading-none transition">&times;</button>
+                    <button type="button" onclick="closeFeedbackModal()" aria-label="Close feedback window" class="-mr-2 -mt-1 w-9 h-9 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200 text-2xl leading-none transition">&times;</button>
                 </div>
 
                 <input type="hidden" id="fbCategory" value="Suggestion">
@@ -980,20 +990,20 @@
                     <button type="button" data-cat="Question" onclick="fbPick('Question')" class="fb-pill flex-1 py-2 rounded-full text-xs font-semibold border transition">Question</button>
                 </div>
 
-                <label for="fbMessage" class="sr-only">Message</label>
-                <textarea id="fbMessage" rows="5" maxlength="1000" placeholder="What would you like to tell us?" class="mt-4 w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-transparent focus:border-slate-300 dark:focus:border-slate-600 focus:bg-white dark:focus:bg-slate-800 text-base text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none resize-none transition"></textarea>
-                <div class="flex justify-between mt-1.5 px-1 text-[11px] text-slate-400">
+                <label for="fbMessage" class="block mt-5 text-xs font-semibold text-slate-600 dark:text-slate-300">Your Message</label>
+                <textarea id="fbMessage" rows="5" maxlength="1000" placeholder="What would you like to tell us?" class="mt-1.5 w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-transparent focus:border-slate-300 dark:focus:border-slate-600 focus:bg-white dark:focus:bg-slate-800 text-base text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none resize-none transition"></textarea>
+                <div class="flex justify-between mt-1.5 px-1 text-[11px] text-slate-500 dark:text-slate-400">
                     <span id="fbError" class="text-red-600 dark:text-red-400 font-semibold"></span>
                     <span><span id="fbCount">0</span>/1000</span>
                 </div>
 
-                <label for="fbContact" class="sr-only">Contact (optional)</label>
-                <input id="fbContact" type="text" maxlength="120" autocomplete="off" placeholder="Contact (optional), only if you want a reply" class="mt-3 w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-transparent focus:border-slate-300 dark:focus:border-slate-600 focus:bg-white dark:focus:bg-slate-800 text-base text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none transition">
+                <label for="fbContact" class="block mt-3 text-xs font-semibold text-slate-600 dark:text-slate-300">Contact <span class="font-normal text-slate-500 dark:text-slate-400">(Optional)</span></label>
+                <input id="fbContact" type="text" maxlength="120" autocomplete="off" placeholder="Phone or email, only if you want a reply" class="mt-1.5 w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-transparent focus:border-slate-300 dark:focus:border-slate-600 focus:bg-white dark:focus:bg-slate-800 text-base text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none transition">
 
                 <!-- hidden trap field: real people never fill this in -->
                 <input id="fbWebsite" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;">
 
-                <button type="button" id="fbSendBtn" onclick="submitFeedback()" class="mt-5 w-full py-3 bg-[#6B1111] text-white rounded-2xl text-sm font-semibold hover:bg-[#4A0B0B] transition disabled:opacity-60">Send</button>
+                <button type="button" id="fbSendBtn" onclick="submitFeedback()" class="mt-5 w-full py-3 bg-[#6B1111] text-white rounded-2xl text-sm font-semibold hover:bg-[#4A0B0B] transition disabled:opacity-60">Send Feedback</button>
             </div>
 
             <div id="feedbackDoneView" class="hidden p-8 text-center">
@@ -1210,7 +1220,7 @@
 
             const list = document.getElementById('trfListItems');
             if (uniqueTrfs.length === 0) {
-                list.innerHTML = `<p class="text-[11px] text-slate-400 dark:text-slate-500 text-center py-2">No TRFs found.</p>`;
+                list.innerHTML = `<p class="text-[11px] text-slate-500 dark:text-slate-400 text-center py-2">No TRFs found.</p>`;
             } else {
                 list.innerHTML = uniqueTrfs.map(trf => `
                     <span class="inline-block px-2.5 py-1 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono font-bold text-[11px] text-slate-800 dark:text-slate-100">${esc(trf)}</span>
@@ -1270,7 +1280,17 @@
             document.getElementById('loginUsername').focus();
         }
 
+        function toggleLoginPw() {
+            const i = document.getElementById("loginPassword");
+            const b = document.getElementById("loginPwToggle");
+            const show = i.type === "password";
+            i.type = show ? "text" : "password";
+            b.setAttribute("aria-label", show ? "Hide password" : "Show password");
+            b.innerHTML = show ? '<i class="fa-solid fa-eye-slash"></i>' : '<i class="fa-solid fa-eye"></i>';
+        }
         function closeLoginModal() {
+            const pw = document.getElementById("loginPassword");
+            if (pw && pw.type === "text") toggleLoginPw();
             const modal = document.getElementById('loginModal');
             modal.classList.add('hidden');
             modal.classList.remove('flex');
@@ -1449,7 +1469,7 @@
             document.getElementById("fbError").textContent = "";
             document.getElementById("fbCount").textContent = "0";
             document.getElementById("fbSendBtn").disabled = false;
-            document.getElementById("fbSendBtn").textContent = "Send";
+            document.getElementById("fbSendBtn").textContent = "Send Feedback";
             document.getElementById("feedbackFormView").classList.remove("hidden");
             document.getElementById("feedbackDoneView").classList.add("hidden");
             const modal = document.getElementById("feedbackModal");
@@ -1469,7 +1489,7 @@
         async function submitFeedback() {
             const message = document.getElementById("fbMessage").value.trim();
             const err = document.getElementById("fbError");
-            if (message.length < 5) { err.textContent = "Please write a short message first."; return; }
+            if (message.length < 5) { err.textContent = "Please write a short message first (at least 5 characters)."; return; }
             err.textContent = "";
             // trap field filled in = a bot; pretend success and send nothing
             const isBot = document.getElementById("fbWebsite").value !== "";
@@ -1485,7 +1505,7 @@
             };
             const btn = document.getElementById("fbSendBtn");
             btn.disabled = true;
-            btn.textContent = "Sending...";
+            btn.textContent = "Sending";
 
             let sent = false;
             if (!isBot) {
@@ -1829,25 +1849,41 @@
         }
         const SEARCH_BTN_HTML = '<i class="fa-solid fa-magnifying-glass"></i> Search';
         const SEARCH_BTN_BUSY_HTML = '<i class="fa-solid fa-spinner fa-spin"></i> Searching';
-        // tone "calm" (amber) is for waits and limits; the default (red) is for something to correct
-        function setSearchMsg(msg, tone) {
+        // Search problems show a title, a short explanation and (when it helps) one action button.
+        // tone "calm" (amber) is for waits and limits; "error" (red) is for something to correct.
+        function setSearchMsg(p) {
             const el = document.getElementById("searchMsg");
             if (!el) return;
-            const calm = tone === "calm";
-            el.textContent = msg || "";
-            el.classList.toggle("hidden", !msg);
-            el.classList.toggle("text-rose-600", !calm);
-            el.classList.toggle("dark:text-rose-400", !calm);
-            el.classList.toggle("text-amber-700", calm);
-            el.classList.toggle("dark:text-amber-300", calm);
+            if (!p || typeof p !== "object") { el.classList.add("hidden"); return; }
+            const calm = p.tone === "calm";
+            el.className = "mt-2 rounded-2xl border p-3.5 " + (calm
+                ? "border-amber-200 dark:border-amber-900/50 bg-amber-50 dark:bg-amber-950/30"
+                : "border-rose-200 dark:border-rose-900/50 bg-rose-50 dark:bg-rose-950/30");
+            document.getElementById("searchMsgIconWrap").className = "shrink-0 w-9 h-9 rounded-xl flex items-center justify-center " + (calm
+                ? "bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300"
+                : "bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-300");
+            document.getElementById("searchMsgIcon").className = "fa-solid " + (p.icon || "fa-triangle-exclamation");
+            document.getElementById("searchMsgTitle").textContent = p.title || "";
+            document.getElementById("searchMsgText").textContent = p.text || "";
+            const btn = document.getElementById("searchMsgAction");
+            if (p.action) { btn.textContent = p.action.label; btn.onclick = p.action.fn; btn.classList.remove("hidden"); }
+            else { btn.classList.add("hidden"); btn.onclick = null; }
         }
-        function searchErrorTone(err) { return err && err.code === "invalid" ? "error" : "calm"; }
-        function searchErrorText(err) {
-            if (err && err.code === "rate") return "Lots of searches were made in a short time. Please wait a few minutes, then try again.";
-            if (err && err.code === "invalid") return "Enter the 6-digit code (for example 643746) or the full barcode (SDOBOR-26-025603).";
-            if (err && err.name === "AbortError") return "The connection is too slow right now. Please try again.";
-            if ((err instanceof TypeError) || navigator.onLine === false) return "You appear to be offline. Searching needs an internet connection.";
-            return "Could not search right now. Please try again.";
+        function openCodeHelp() {
+            const d = document.querySelector("#howItWorks details");
+            if (d) { d.open = true; d.scrollIntoView({ behavior: "smooth", block: "nearest" }); }
+        }
+        function focusSearch() {
+            const i = document.getElementById("searchInput");
+            if (i) { i.focus(); i.select(); }
+        }
+        function searchErrorInfo(err) {
+            const retry = { label: "Try Again", fn: function () { runSearch(); } };
+            if (err && err.code === "rate") return { tone: "calm", icon: "fa-hourglass-half", title: "Too many searches", text: "Please wait a few minutes, then try again." };
+            if (err && err.code === "invalid") return { tone: "error", icon: "fa-circle-exclamation", title: "Check your code", text: "Enter the 6-digit code (for example 643746) or the full barcode (SDOBOR-26-025603).", action: { label: "Where Do I Find My Code?", fn: openCodeHelp } };
+            if (err && err.name === "AbortError") return { tone: "calm", icon: "fa-signal", title: "The connection is slow", text: "Your search did not finish in time. Try again when your signal is better.", action: retry };
+            if ((err instanceof TypeError) || navigator.onLine === false) return { tone: "calm", icon: "fa-wifi", title: "You\u2019re offline", text: "Searching needs an internet connection. Connect, then try again.", action: retry };
+            return { tone: "error", icon: "fa-triangle-exclamation", title: "We couldn\u2019t search", text: "Something went wrong on our side. Please try again in a moment.", action: retry };
         }
 
         // Runs a search and shows only the matches. Throws if it fails.
@@ -1868,18 +1904,18 @@
         }
         function onSearchInput() {
             const q = normalizeQuery(document.getElementById("searchInput").value);
-            setSearchMsg("");
+            setSearchMsg(null);
             if (hasSearched && q !== lastQuery) clearSearchResults();
         }
 
         async function runSearch() {
             const q = normalizeQuery(document.getElementById("searchInput").value);
-            if (!isValidQuery(q)) { setSearchMsg(searchErrorText({ code: "invalid" })); return; }
-            setSearchMsg("");
+            if (!isValidQuery(q)) { setSearchMsg(searchErrorInfo({ code: "invalid" })); return; }
+            setSearchMsg(null);
             const btn = document.getElementById("searchBtn");
             btn.disabled = true; btn.innerHTML = SEARCH_BTN_BUSY_HTML;
             try { await runSearchInner(q); }
-            catch (err) { console.error("Search failed:", err); setSearchMsg(searchErrorText(err), searchErrorTone(err)); }
+            catch (err) { console.error("Search failed:", err); setSearchMsg(searchErrorInfo(err)); }
             finally { btn.disabled = false; btn.innerHTML = SEARCH_BTN_HTML; }
         }
 
@@ -2112,7 +2148,7 @@
                         ${statusMini(r.it.status)}
                         ${r.changed ? `<span class="shrink-0 px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500 text-slate-950">Updated</span>` : ""}
                     </button>
-                    <button type="button" class="my-remove shrink-0 w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-600 dark:hover:text-red-400 rounded-lg transition" title="Remove from My documents" aria-label="Remove ${esc(r.it.trf)} from My documents"><i class="fa-solid fa-xmark"></i></button>`;
+                    <button type="button" class="my-remove shrink-0 w-8 h-8 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 rounded-lg transition" title="Remove from My documents" aria-label="Remove ${esc(r.it.trf)} from My documents"><i class="fa-solid fa-xmark"></i></button>`;
                 row.querySelector(".my-open").onclick = () => openModal(r.it);
                 row.querySelector(".my-remove").onclick = () => toggleStar(r.it);
                 list.appendChild(row);
@@ -2214,8 +2250,8 @@
             cards.innerHTML = "";
             if (!pageRows.length) {
                 const none = "No documents match the filter.";
-                body.innerHTML = '<tr><td colspan="7" class="text-center py-6 text-xs text-slate-400 dark:text-slate-500">' + none + '</td></tr>';
-                cards.innerHTML = '<p class="text-center text-xs text-slate-400 dark:text-slate-500 py-6">' + none + '</p>';
+                body.innerHTML = '<tr><td colspan="7" class="text-center py-6 text-xs text-slate-500 dark:text-slate-400">' + none + '</td></tr>';
+                cards.innerHTML = '<p class="text-center text-xs text-slate-500 dark:text-slate-400 py-6">' + none + '</p>';
             }
             pageRows.forEach(it => {
                 body.appendChild(buildTableRow(it, true));
@@ -2237,10 +2273,11 @@
                 <div class="w-12 h-12 mx-auto rounded-full ${noMatch ? "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-300" : "bg-amber-100 dark:bg-amber-950/50 text-[#6B1111] dark:text-amber-400"} flex items-center justify-center text-xl mb-3">
                     <i class="fa-solid ${noMatch ? "fa-circle-question" : "fa-magnifying-glass"}"></i>
                 </div>
-                <p class="font-bold text-slate-800 dark:text-slate-100">${noMatch ? "No match. Check the digits." : "Enter your code to find your document"}</p>
+                <p class="font-bold text-slate-800 dark:text-slate-100">${noMatch ? "No document found" : "Enter your code to find your document"}</p>
                 <p class="mt-1 text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto">${noMatch
-                    ? "Make sure you typed all 6 digits of your code. If you do not have a code yet, please ask the office."
-                    : "Records are not listed for browsing. Your document code keeps your information private."}</p>`;
+                    ? "We couldn\u2019t match that code. Check all 6 digits, or ask the office if you do not have a code yet."
+                    : "Records are not listed for browsing. Your document code keeps your information private."}</p>
+                ${noMatch ? `<button type="button" onclick="focusSearch()" class="mt-4 px-5 py-2.5 rounded-xl bg-[#6B1111] hover:bg-[#4A0B0B] text-white text-sm font-semibold transition active:scale-95">Search Again</button>` : ""}`;
         }
 
         // ===== Shared row (desktop) and card (mobile). Used by the search results and by the admin view =====
@@ -2256,7 +2293,7 @@
             const statusBadge = getStatusBadge(item.status);
             const destination = destinationOf(item);
             const targetTag = targetTagHTML(item);
-            const codeLine = (showCode && item.code) ? `<span class="font-mono text-[10px] font-semibold text-slate-400 dark:text-slate-500">Code ${esc(item.code)}</span>` : "";
+            const codeLine = (showCode && item.code) ? `<span class="font-mono text-[10px] font-semibold text-slate-500 dark:text-slate-400">Code ${esc(item.code)}</span>` : "";
             const tr = document.createElement("tr");
             tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/50 transition";
             tr.innerHTML = `
@@ -2290,7 +2327,7 @@
             const statusBadge = getStatusBadge(item.status);
             const destination = destinationOf(item);
             const targetTag = targetTagHTML(item);
-            const codeCell = (showCode && item.code) ? `<div class="col-span-2"><span class="text-slate-400 dark:text-slate-500 block text-[10px] uppercase font-bold">Code</span><span class="font-mono">${esc(item.code)}</span></div>` : "";
+            const codeCell = (showCode && item.code) ? `<div class="col-span-2"><span class="text-slate-500 dark:text-slate-400 block text-[11px] font-semibold">Code</span><span class="font-mono">${esc(item.code)}</span></div>` : "";
             const card = document.createElement("div");
             card.className = "bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3 transition-colors";
             card.innerHTML = `
@@ -2307,8 +2344,8 @@
                     <p class="text-xs font-medium text-slate-600 dark:text-slate-300 mt-0.5"><i class="fa-solid fa-location-dot mr-1"></i>Destination: ${esc(destination)}</p>
                 </div>
                 <div class="text-[11px] text-slate-500 dark:text-slate-400 grid grid-cols-2 gap-1 pt-1 bg-slate-50 dark:bg-slate-800/50 p-2.5 rounded-lg border border-slate-100 dark:border-slate-800">
-                    <div><span class="text-slate-400 dark:text-slate-500 block text-[10px] uppercase font-bold">Document Source</span>${esc(item.office) || 'N/A'}</div>
-                    <div><span class="text-slate-400 dark:text-slate-500 block text-[10px] uppercase font-bold">Date</span>${esc(item.date) || 'N/A'}</div>
+                    <div><span class="text-slate-500 dark:text-slate-400 block text-[11px] font-semibold">Document Source</span>${esc(item.office) || 'N/A'}</div>
+                    <div><span class="text-slate-500 dark:text-slate-400 block text-[11px] font-semibold">Date</span>${esc(item.date) || 'N/A'}</div>
                     ${codeCell}
                 </div>
                 <button class="view-btn w-full py-2.5 bg-[#6B1111] text-amber-300 hover:text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-sm active:scale-[0.98]">
@@ -2344,8 +2381,8 @@
                     : sheetData.length === 0
                         ? "No exact match found. Please check the code. If you do not have a code yet, please ask the office."
                         : "No result matches the selected status. Choose All to see it.";
-                const emptyState = `<p class="text-center text-xs text-slate-400 dark:text-slate-500 py-6">${emptyMsg}</p>`;
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-xs text-slate-400 dark:text-slate-500">${emptyMsg}</td></tr>`;
+                const emptyState = `<p class="text-center text-xs text-slate-500 dark:text-slate-400 py-6">${emptyMsg}</p>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-xs text-slate-500 dark:text-slate-400">${emptyMsg}</td></tr>`;
                 mobileContainer.innerHTML = emptyState;
                 updateMetrics();
                 return;
