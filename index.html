@@ -21,26 +21,25 @@
     <meta property="og:url" content="https://esnchs.github.io/eTRS/">
     <meta property="og:image" content="https://esnchs.github.io/eTRS/logo.png">
     <meta name="twitter:card" content="summary">
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind CSS: own copy first (assets/tailwind.css); the internet copy is only a backup if the file is missing -->
+    <link rel="stylesheet" href="assets/tailwind.css" onerror="etrsLoadTailwindBackup()">
     <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        crimson: {
-                            DEFAULT: '#6B1111',
-                            dark: '#4A0B0B',
-                        },
-                        gold: '#D97706',
-                    }
-                }
-            }
+        function etrsLoadTailwindBackup() {
+            if (window.__twBackup) return;
+            window.__twBackup = true;
+            var s = document.createElement("script");
+            s.src = "https://cdn.tailwindcss.com";
+            s.onload = function () {
+                tailwind.config = {
+                    darkMode: 'class',
+                    theme: { extend: { colors: { crimson: { DEFAULT: '#6B1111', dark: '#4A0B0B' }, gold: '#D97706' } } }
+                };
+            };
+            document.head.appendChild(s);
         }
     </script>
-    <!-- Font Awesome Icons -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons: own copy first (assets/fontawesome); the internet copy is only a backup -->
+    <link rel="stylesheet" href="assets/fontawesome/css/all.min.css" onerror="this.onerror=null;this.href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'">
     <style>
         html {
             scroll-padding-top: 5.5rem;
@@ -493,7 +492,7 @@
                 </div>
 
                 <!-- TRF code legend, beside the search bar -->
-                <div class="w-full lg:flex-1 min-w-0" aria-label="TRF code legend">
+                <div class="hidden lg:block w-full lg:flex-1 min-w-0" aria-label="TRF code legend">
                     <p class="flex items-center gap-1.5 text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-1"><i class="fa-solid fa-circle-info text-slate-400"></i> TRF Code Legend</p>
                     <div class="flex flex-col sm:flex-row sm:flex-wrap gap-1.5">
                         <div class="flex items-center gap-1.5 sm:flex-1 sm:min-w-[15rem] bg-white dark:bg-slate-800 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 shadow-xs">
@@ -580,7 +579,7 @@
 
             <!-- HOW IT WORKS: 3 steps + where to find the code -->
             <div id="howItWorks" class="rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 p-3 sm:p-4">
-                <ol class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs sm:text-[13px] text-slate-600 dark:text-slate-300">
+                <ol class="hidden lg:grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs sm:text-[13px] text-slate-600 dark:text-slate-300">
                     <li class="flex items-center gap-2.5 bg-white dark:bg-slate-900 rounded-xl px-3 py-2 border border-slate-200 dark:border-slate-700"><span class="w-6 h-6 shrink-0 rounded-full bg-[#6B1111] text-white text-xs font-bold flex items-center justify-center">1</span> Get your code from the office</li>
                     <li class="flex items-center gap-2.5 bg-white dark:bg-slate-900 rounded-xl px-3 py-2 border border-slate-200 dark:border-slate-700"><span class="w-6 h-6 shrink-0 rounded-full bg-[#6B1111] text-white text-xs font-bold flex items-center justify-center">2</span> Type it in the search box</li>
                     <li class="flex items-center gap-2.5 bg-white dark:bg-slate-900 rounded-xl px-3 py-2 border border-slate-200 dark:border-slate-700"><span class="w-6 h-6 shrink-0 rounded-full bg-[#6B1111] text-white text-xs font-bold flex items-center justify-center">3</span> See where your document is</li>
@@ -588,6 +587,19 @@
                 <details class="mt-3 text-xs sm:text-sm">
                     <summary class="cursor-pointer font-semibold text-[#6B1111] dark:text-amber-400">Where do I find my code?</summary>
                     <p class="mt-1.5 text-slate-600 dark:text-slate-300">The office gives you a 6-digit code for each document you submit. If you do not have one yet, please ask the office. A document barcode also works if it has one.</p>
+                    <div class="lg:hidden mt-3" aria-label="TRF code legend">
+                        <p class="flex items-center gap-1.5 text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-1"><i class="fa-solid fa-circle-info text-slate-400"></i> TRF Code Legend</p>
+                        <div class="flex flex-col gap-1.5">
+                            <div class="flex items-center gap-1.5 bg-white dark:bg-slate-800 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700">
+                                <span class="font-mono font-bold text-amber-700 dark:text-amber-400 bg-amber-100 dark:bg-amber-950/60 px-1.5 py-0.5 rounded text-[11px]">d-001</span>
+                                <span class="text-[11px] font-medium text-slate-700 dark:text-slate-200"><strong class="text-amber-700 dark:text-amber-400">Starts with 'd'</strong> = District Office Submission</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 bg-white dark:bg-slate-800 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700">
+                                <span class="font-mono font-bold text-blue-700 dark:text-blue-400 bg-blue-100 dark:bg-blue-950/60 px-1.5 py-0.5 rounded text-[11px]">0001</span>
+                                <span class="text-[11px] font-medium text-slate-700 dark:text-slate-200"><strong class="text-blue-700 dark:text-blue-400">Numbers Only</strong> = Division Office Submission</span>
+                            </div>
+                        </div>
+                    </div>
                 </details>
             </div>
 
@@ -858,6 +870,9 @@
                         <span id="modalTRF" class="font-bold text-slate-800 dark:text-slate-100 font-mono">---</span>
                         <button onclick="copyTRFFromModal()" class="text-slate-400 hover:text-amber-600 text-xs ml-1" title="Copy TRF" aria-label="Copy TRF number"><i class="fa-solid fa-copy"></i></button>
                     </p>
+                    <p id="modalCodeRow" class="sm:hidden"><span class="text-slate-400">Document Code:</span>
+                        <span id="modalCode" class="font-bold text-slate-800 dark:text-slate-100 font-mono"></span>
+                        <button id="modalCodeCopy" onclick="copyCodeFromModal()" class="text-slate-400 hover:text-amber-600 text-xs ml-1" title="Copy document code" aria-label="Copy document code"><i class="fa-solid fa-copy"></i></button></p>
                     <p><span class="text-slate-400">Destination:</span> <span id="modalTargetType" class="font-semibold text-amber-700 dark:text-amber-400">---</span></p>
                     <p><span class="text-slate-400">Document Source:</span> <span id="modalOffice" class="font-semibold text-slate-800 dark:text-slate-100">---</span></p>
                     <p><span class="text-slate-400">Name of Reports Submitted:</span> <span id="modalDoc" class="font-semibold text-slate-800 dark:text-slate-100">---</span></p>
@@ -870,7 +885,10 @@
             <!-- Modal Footer -->
             <div class="p-3.5 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 flex gap-2 shrink-0">
                 <button onclick="closeModal()" class="w-1/3 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl text-xs font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition">Close</button>
-                <button onclick="window.print()" class="w-2/3 py-2 bg-[#6B1111] text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm hover:bg-red-900 transition active:scale-95">
+                <button onclick="closeModal(); openFeedbackModal()" class="sm:hidden w-2/3 py-2 bg-[#6B1111] text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm hover:bg-red-900 transition active:scale-95">
+                    <i class="fa-solid fa-comment-dots text-amber-400"></i> Send feedback
+                </button>
+                <button onclick="window.print()" class="hidden sm:flex w-2/3 py-2 bg-[#6B1111] text-white rounded-xl text-xs font-semibold items-center justify-center gap-1.5 shadow-sm hover:bg-red-900 transition active:scale-95">
                     <i class="fa-solid fa-print text-amber-400"></i> Print Receipt
                 </button>
             </div>
@@ -2393,6 +2411,11 @@
             if (currentModalTRF) copyToClipboard(currentModalTRF);
         }
 
+        let currentModalCode = "";
+        function copyCodeFromModal() {
+            if (currentModalCode) copyToClipboard(currentModalCode);
+        }
+
         function copyBarcodeFromModal() {
             if (currentModalBarcode) copyToClipboard(currentModalBarcode);
         }
@@ -2430,6 +2453,10 @@
             document.getElementById("modalTargetType").innerText = item.dest || (level + " Office");
             document.getElementById("modalOffice").innerText = item.office || '—';
             document.getElementById("modalDoc").innerText = item.doc || '—';
+            const codeVal = (item.code || "").trim();
+            currentModalCode = codeVal;
+            document.getElementById("modalCode").innerText = codeVal;
+            document.getElementById("modalCodeRow").classList.toggle("hidden", !codeVal);
             document.getElementById("modalBarcode").innerText = item.barcode || "";
             currentModalBarcode = (item.barcode || "").trim();
             document.getElementById("modalBarcodeCopy").classList.toggle("hidden", !currentModalBarcode);
