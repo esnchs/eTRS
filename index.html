@@ -616,6 +616,7 @@
                 <details class="group lg:mt-3 text-xs sm:text-sm max-lg:rounded-xl max-lg:bg-slate-50 dark:max-lg:bg-slate-800 max-lg:border max-lg:border-slate-200 dark:max-lg:border-slate-700">
                     <summary class="flex items-center justify-between gap-2 list-none cursor-pointer font-semibold text-[#6B1111] dark:text-amber-400 max-lg:min-h-[46px] max-lg:px-4 max-lg:text-sm"><span>Where do I find my code?</span><i class="fa-solid fa-chevron-down text-[11px] transition-transform group-open:rotate-180 lg:hidden"></i></summary>
                     <p class="mt-1.5 max-lg:px-4 text-slate-600 dark:text-slate-300">The office gives you a 6-digit code for each document you submit. If you do not have one yet, please ask the office. A document barcode also works if it has one.</p>
+                        <div class="mt-2 max-lg:px-4"><button type="button" onclick="openFeedbackModal('Code Request')" class="px-4 py-2 rounded-xl border border-[#6B1111] dark:border-amber-400 text-[#6B1111] dark:text-amber-400 text-xs font-semibold hover:bg-[#6B1111] hover:text-white dark:hover:bg-amber-400 dark:hover:text-slate-900 transition active:scale-95"><i class="fa-solid fa-key mr-1.5"></i>Don’t Have Your Code? Request My Code</button></div>
                     <div class="lg:hidden mt-3 px-4 pb-4" aria-label="TRF code legend">
                         <p class="flex items-center gap-1.5 text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-1"><i class="fa-solid fa-circle-info text-slate-400"></i> TRF Code Legend</p>
                         <div class="flex flex-col gap-1.5">
@@ -1007,13 +1008,30 @@
                 </div>
 
                 <input type="hidden" id="fbCategory" value="Suggestion">
-                <div class="flex gap-2 mt-5" role="group" aria-label="Category">
+                <div class="flex flex-wrap gap-2 mt-5" role="group" aria-label="Category">
                     <button type="button" data-cat="Suggestion" onclick="fbPick('Suggestion')" class="fb-pill flex-1 py-2 rounded-full text-xs font-semibold border transition">Suggestion</button>
                     <button type="button" data-cat="Problem" onclick="fbPick('Problem')" class="fb-pill flex-1 py-2 rounded-full text-xs font-semibold border transition">Problem</button>
                     <button type="button" data-cat="Question" onclick="fbPick('Question')" class="fb-pill flex-1 py-2 rounded-full text-xs font-semibold border transition">Question</button>
+                    <button type="button" data-cat="Code Request" onclick="fbPick('Code Request')" class="fb-pill basis-full py-2 rounded-full text-xs font-semibold border transition"><i class="fa-solid fa-key mr-1"></i>Request My Code</button>
                 </div>
 
-                <label for="fbMessage" class="block mt-5 text-xs font-semibold text-slate-600 dark:text-slate-300">Your Message</label>
+                <div id="fbCodeFields" class="hidden mt-5 space-y-3">
+                    <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">Tell us which document you submitted. We will check it and send your code to My Replies on this phone.</p>
+                    <div>
+                        <label for="fbReqName" class="block text-xs font-semibold text-slate-600 dark:text-slate-300">Your Name</label>
+                        <input id="fbReqName" type="text" maxlength="80" autocomplete="off" placeholder="Full name, for example Juan Dela Cruz" class="mt-1.5 w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-transparent focus:border-slate-300 dark:focus:border-slate-600 focus:bg-white dark:focus:bg-slate-800 outline-none text-sm text-slate-800 dark:text-slate-100 placeholder:text-slate-400 transition">
+                    </div>
+                    <div>
+                        <label for="fbReqDoc" class="block text-xs font-semibold text-slate-600 dark:text-slate-300">Document Submitted</label>
+                        <input id="fbReqDoc" type="text" maxlength="120" autocomplete="off" placeholder="For example Monthly Report" class="mt-1.5 w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-transparent focus:border-slate-300 dark:focus:border-slate-600 focus:bg-white dark:focus:bg-slate-800 outline-none text-sm text-slate-800 dark:text-slate-100 placeholder:text-slate-400 transition">
+                    </div>
+                    <div>
+                        <label for="fbReqDate" class="block text-xs font-semibold text-slate-600 dark:text-slate-300">Date Submitted <span class="font-normal text-slate-500 dark:text-slate-400">(Optional)</span></label>
+                        <input id="fbReqDate" type="text" maxlength="40" autocomplete="off" placeholder="For example Nov 3" class="mt-1.5 w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-transparent focus:border-slate-300 dark:focus:border-slate-600 focus:bg-white dark:focus:bg-slate-800 outline-none text-sm text-slate-800 dark:text-slate-100 placeholder:text-slate-400 transition">
+                    </div>
+                </div>
+
+                <label id="fbMsgLabel" for="fbMessage" class="block mt-5 text-xs font-semibold text-slate-600 dark:text-slate-300">Your Message</label>
                 <textarea id="fbMessage" rows="5" maxlength="1000" placeholder="What would you like to tell us?" class="mt-1.5 w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-transparent focus:border-slate-300 dark:focus:border-slate-600 focus:bg-white dark:focus:bg-slate-800 text-base text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none resize-none transition"></textarea>
                 <div class="flex justify-between mt-1.5 px-1 text-[11px] text-slate-500 dark:text-slate-400">
                     <span id="fbError" class="text-red-600 dark:text-red-400 font-semibold"></span>
@@ -1591,16 +1609,28 @@
         function fbPick(cat) {
             document.getElementById("fbCategory").value = cat;
             document.querySelectorAll(".fb-pill").forEach(b => b.classList.toggle("fb-on", b.dataset.cat === cat));
+            const code = cat === "Code Request";
+            document.getElementById("fbCodeFields").classList.toggle("hidden", !code);
+            document.getElementById("fbMsgLabel").innerHTML = code ? 'Other Details <span class="font-normal text-slate-500 dark:text-slate-400">(Optional)</span>' : "Your Message";
+            const m = document.getElementById("fbMessage");
+            m.placeholder = code ? "Anything that helps us find your document" : "What would you like to tell us?";
+            m.rows = code ? 3 : 5;
+            const sb = document.getElementById("fbSendBtn");
+            if (sb && !sb.disabled) sb.textContent = code ? "Send Request" : "Send Feedback";
         }
-        function openFeedbackModal() {
-            fbPick("Suggestion");
+        document.addEventListener("input", function (e) {
+            if (e.target && e.target.closest && e.target.closest("#feedbackFormView")) { const er = document.getElementById("fbError"); if (er) er.textContent = ""; }
+        });
+        function openFeedbackModal(cat) {
+            ["fbReqName", "fbReqDoc", "fbReqDate"].forEach(id => { const el = document.getElementById(id); if (el) el.value = ""; });
+            fbPick(cat || "Suggestion");
             document.getElementById("fbMessage").value = "";
             document.getElementById("fbContact").value = "";
             document.getElementById("fbWebsite").value = "";
             document.getElementById("fbError").textContent = "";
             document.getElementById("fbCount").textContent = "0";
             document.getElementById("fbSendBtn").disabled = false;
-            document.getElementById("fbSendBtn").textContent = "Send Feedback";
+            document.getElementById("fbSendBtn").textContent = document.getElementById("fbCategory").value === "Code Request" ? "Send Request" : "Send Feedback";
             document.getElementById("feedbackFormView").classList.remove("hidden");
             document.getElementById("feedbackDoneView").classList.add("hidden");
             const modal = document.getElementById("feedbackModal");
@@ -1618,9 +1648,17 @@
         });
 
         async function submitFeedback() {
-            const message = document.getElementById("fbMessage").value.trim();
+            let message = document.getElementById("fbMessage").value.trim();
             const err = document.getElementById("fbError");
-            if (message.length < 5) { err.textContent = "Please write a short message first (at least 5 characters)."; return; }
+            const isCodeReq = document.getElementById("fbCategory").value === "Code Request";
+            if (isCodeReq) {
+                const nm = document.getElementById("fbReqName").value.trim();
+                const dc = document.getElementById("fbReqDoc").value.trim();
+                const dt = document.getElementById("fbReqDate").value.trim();
+                if (nm.length < 2) { err.textContent = "Please type your name."; return; }
+                if (dc.length < 3) { err.textContent = "Please type the document you submitted."; return; }
+                message = "Name: " + nm + "\nDocument: " + dc + "\nDate submitted: " + (dt || "not given") + (message ? "\nNotes: " + message : "");
+            } else if (message.length < 5) { err.textContent = "Please write a short message first (at least 5 characters)."; return; }
             err.textContent = "";
             // trap field filled in = a bot; pretend success and send nothing
             const isBot = document.getElementById("fbWebsite").value !== "";
@@ -1652,8 +1690,8 @@
             const icon = document.getElementById("fbDoneIcon");
             if (sent) {
                 icon.innerHTML = '<i class="fa-solid fa-check"></i>';
-                document.getElementById("fbDoneTitle").textContent = "Thank you!";
-                document.getElementById("fbDoneText").textContent = "Your feedback was sent to the school. If we reply, you will find it under My Replies.";
+                document.getElementById("fbDoneTitle").textContent = isCodeReq ? "Request sent" : "Thank you!";
+                document.getElementById("fbDoneText").textContent = isCodeReq ? "We will check your document and send your code to My Replies on this phone. Please check again later." : "Your feedback was sent to the school. If we reply, you will find it under My Replies.";
             } else {
                 icon.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i>';
                 document.getElementById("fbDoneTitle").textContent = "Saved";
@@ -2429,7 +2467,7 @@
                 <p class="mt-1 text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto">${noMatch
                     ? "We couldn\u2019t match that code. Check all 6 digits, or ask the office if you do not have a code yet."
                     : "Records are not listed for browsing. Your document code keeps your information private."}</p>
-                ${noMatch ? `<button type="button" onclick="focusSearch()" class="mt-4 px-5 py-2.5 rounded-xl bg-[#6B1111] hover:bg-[#4A0B0B] text-white text-sm font-semibold transition active:scale-95">Search Again</button>` : ""}`;
+                ${noMatch ? `<div class="mt-4 flex flex-wrap justify-center gap-2"><button type="button" onclick="focusSearch()" class="px-5 py-2.5 rounded-xl bg-[#6B1111] hover:bg-[#4A0B0B] text-white text-sm font-semibold transition active:scale-95">Search Again</button><button type="button" onclick="openFeedbackModal('Code Request')" class="px-5 py-2.5 rounded-xl border border-[#6B1111] dark:border-amber-400 text-[#6B1111] dark:text-amber-400 text-sm font-semibold hover:bg-[#6B1111] hover:text-white dark:hover:bg-amber-400 dark:hover:text-slate-900 transition active:scale-95">Request My Code</button></div>` : ""}`;
         }
 
         // ===== Shared row (desktop) and card (mobile). Used by the search results and by the admin view =====
