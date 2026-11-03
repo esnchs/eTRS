@@ -526,18 +526,21 @@
                     </div>
                     <button type="button" id="adminRefresh" onclick="loadAdminAll()" class="text-xs font-semibold bg-white/15 hover:bg-white/25 disabled:opacity-60 rounded-lg px-3 py-1.5 transition"><i class="fa-solid fa-rotate mr-1"></i> Refresh</button>
                 </div>
-                <p id="adminMsg" class="hidden px-4 py-6 text-center text-sm text-slate-600 dark:text-slate-300"></p>
+                <div id="adminMsg" class="hidden p-4"></div>
                 <div id="adminTools" class="hidden p-3 sm:p-4 space-y-3">
-                    <div class="flex flex-col sm:flex-row gap-2">
-                        <input id="adminFilter" type="text" autocomplete="off" oninput="adminFilterChanged()" placeholder="Filter by name, document, TRF, code or barcode..."
-                            class="flex-1 min-w-0 px-4 py-2.5 text-base sm:text-sm bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 placeholder-slate-400 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500">
-                        <select id="adminStatus" onchange="adminFilterChanged()" aria-label="Filter by status"
-                            class="px-3 py-2.5 text-base sm:text-sm bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500">
+                    <div class="flex flex-col sm:flex-row sm:items-end gap-2">
+                        <div class="flex-1 min-w-0"><label for="adminFilter" class="block text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-1">Filter Documents</label>
+                        <input id="adminFilter" type="text" autocomplete="off" oninput="adminFilterChanged()" placeholder="Name, document, TRF, code or barcode"
+                            class="w-full px-4 py-2.5 text-base sm:text-sm bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 placeholder-slate-400 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        </div>
+                        <div><label for="adminStatus" class="block text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-1">Status</label>
+                        <select id="adminStatus" onchange="adminFilterChanged()"
+                            class="w-full px-3 py-2.5 text-base sm:text-sm bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500">
                             <option value="ALL">All Statuses</option>
                             <option value="pending">Pending</option>
                             <option value="released">Released</option>
                             <option value="returned">Returned</option>
-                        </select>
+                        </select></div>
                     </div>
                     <!-- Same layout as the original table: desktop table, mobile cards -->
                     <div class="hidden md:block overflow-x-auto">
@@ -814,6 +817,9 @@
                 <button type="button" onclick="openFeedbackModal()" class="w-full sm:w-auto px-6 py-3 border-2 border-amber-500 hover:bg-amber-500 text-amber-300 hover:text-slate-950 font-bold text-xs sm:text-sm rounded-xl transition active:scale-95 flex items-center justify-center gap-2">
                     <i class="fa-solid fa-comment-dots text-base"></i> Send Feedback
                 </button>
+                <button type="button" onclick="openRepliesModal()" class="w-full sm:w-auto px-6 py-3 border-2 border-amber-500 hover:bg-amber-500 text-amber-300 hover:text-slate-950 font-bold text-xs sm:text-sm rounded-xl transition active:scale-95 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-inbox text-base"></i> My Replies <span class="replies-dot hidden w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+                </button>
             </div>
         </div>
     </section>
@@ -1005,6 +1011,7 @@
                 <input id="fbWebsite" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;">
 
                 <button type="button" id="fbSendBtn" onclick="submitFeedback()" class="mt-5 w-full py-3 bg-[#6B1111] text-white rounded-2xl text-sm font-semibold hover:bg-[#4A0B0B] transition disabled:opacity-60">Send Feedback</button>
+                <button type="button" onclick="closeFeedbackModal(); openRepliesModal()" class="mt-2 w-full py-2.5 text-xs font-semibold text-[#6B1111] dark:text-amber-400 hover:underline">View Replies From the School <span class="replies-dot hidden inline-block w-2 h-2 rounded-full bg-rose-500 align-middle"></span></button>
             </div>
 
             <div id="feedbackDoneView" class="hidden p-8 text-center">
@@ -1013,6 +1020,20 @@
                 <p id="fbDoneText" class="text-sm text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">Your feedback was sent.</p>
                 <button type="button" onclick="closeFeedbackModal()" class="mt-6 w-full py-3 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-2xl text-sm font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition">Done</button>
             </div>
+        </div>
+    </div>
+    <!-- REPLIES MODAL: replies the school wrote to feedback sent from this device -->
+    <div id="repliesModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4 z-50">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl max-h-[92vh] overflow-y-auto transition-colors p-6 sm:p-7">
+            <div class="flex items-start justify-between">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">My Replies</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Replies from the school to feedback sent from this device.</p>
+                </div>
+                <button type="button" onclick="closeRepliesModal()" aria-label="Close replies window" class="-mr-2 -mt-1 w-9 h-9 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 text-xl leading-none">&times;</button>
+            </div>
+            <div id="repliesBody" class="mt-5 space-y-3"></div>
+            <button type="button" id="repliesCheckBtn" onclick="loadReplies()" class="mt-5 w-full py-3 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-2xl text-sm font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition disabled:opacity-60">Check Again</button>
         </div>
     </div>
     <style>
@@ -1063,7 +1084,7 @@
         let adminKey = "";            // the admin password, kept in memory only (never saved); sent to the server to unlock the full list
         let adminData = [];           // every document, newest first (admin only)
         let adminState = "idle";      // idle | loading | ok | error
-        let adminErr = "";
+        let adminErr = null;
         let adminPage = 1;
         const ADMIN_PAGE_SIZE = 10;
 
@@ -1458,6 +1479,99 @@
         window.addEventListener("online", fbFlushQueue);
         window.addEventListener("load", () => setTimeout(fbFlushQueue, 3000));
 
+        // ===== REPLIES FROM THE SCHOOL =====
+        // Staff type the reply in the "Reply" column of the feedback sheet. This device asks the feedback
+        // script for replies that belong to its own random device id (no names or accounts involved).
+        const REPLIES_SEEN_KEY = "etrs_replies_seen";
+        const REPLIES_FLAG_KEY = "etrs_fb_sent";
+        const REPLIES_CHECK_KEY = "etrs_replies_checked";
+        function replyKey(r) { const t = String(r.reply || ""); return String(r.at || "") + "|" + t.length + "|" + t.slice(0, 12); }
+        function repliesSeenGet() { try { return JSON.parse(localStorage.getItem(REPLIES_SEEN_KEY) || "[]"); } catch (e) { return []; } }
+        function repliesSeenSet(list) { try { localStorage.setItem(REPLIES_SEEN_KEY, JSON.stringify(list.slice(-100))); } catch (e) {} }
+        function repliesUnseen(list) { const seen = repliesSeenGet(); return list.filter(r => seen.indexOf(replyKey(r)) === -1); }
+        function repliesDot(show) { document.querySelectorAll(".replies-dot").forEach(el => el.classList.toggle("hidden", !show)); }
+        function fmtReplyDate(v) {
+            const d = new Date(v);
+            if (!v || isNaN(d.getTime())) return String(v || "");
+            return d.toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" });
+        }
+        async function fetchReplies() {
+            const dev = fbDevice();
+            if (!dev) throw new Error("nodevice");
+            const ctl = new AbortController();
+            const timer = setTimeout(() => ctl.abort(), 12000);
+            try {
+                const r = await fetch(FEEDBACK_URL + "?action=replies&device=" + encodeURIComponent(dev), { signal: ctl.signal });
+                const j = await r.json();
+                if (!j || !Array.isArray(j.replies)) throw new Error("bad");
+                return j.replies;
+            } finally { clearTimeout(timer); }
+        }
+        function repliesState(icon, tone, title, text, action) {
+            const box = document.getElementById("repliesBody");
+            const col = tone === "calm"
+                ? "border-amber-200 dark:border-amber-900/50 bg-amber-50 dark:bg-amber-950/30"
+                : tone === "plain" ? "border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60"
+                : "border-rose-200 dark:border-rose-900/50 bg-rose-50 dark:bg-rose-950/30";
+            const chip = tone === "calm" ? "bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300"
+                : tone === "plain" ? "bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300"
+                : "bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-300";
+            box.innerHTML = '<div class="rounded-2xl border p-4 ' + col + '"><div class="flex items-start gap-3">'
+                + '<span class="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center ' + chip + '"><i class="fa-solid ' + icon + '"></i></span>'
+                + '<div class="flex-1 min-w-0"><p class="text-sm font-bold text-slate-900 dark:text-slate-100">' + esc(title) + '</p>'
+                + '<p class="mt-0.5 text-xs text-slate-600 dark:text-slate-300 leading-relaxed">' + esc(text) + '</p>'
+                + (action ? '<button type="button" onclick="loadReplies()" class="mt-2.5 px-4 py-2 rounded-xl bg-[#6B1111] hover:bg-[#4A0B0B] text-white text-xs font-semibold transition active:scale-95">' + esc(action) + '</button>' : '')
+                + '</div></div></div>';
+        }
+        async function loadReplies() {
+            const btn = document.getElementById("repliesCheckBtn");
+            btn.disabled = true;
+            repliesState("fa-spinner fa-spin", "plain", "Checking for replies", "This can take a few seconds.", "");
+            try {
+                if (navigator.onLine === false) { const e = new TypeError("offline"); throw e; }
+                const list = await fetchReplies();
+                if (!list.length) {
+                    repliesState("fa-inbox", "plain", "No replies yet", "When the school replies to your feedback, it will show up here. Check again later.", "");
+                } else {
+                    document.getElementById("repliesBody").innerHTML = list.slice().reverse().map(r =>
+                        '<div class="rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">'
+                        + '<div class="px-4 pt-3 pb-2 bg-slate-50 dark:bg-slate-800/60"><p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">Your Message' + (r.at ? ' &middot; ' + esc(fmtReplyDate(r.at)) : '') + '</p>'
+                        + '<p class="mt-1 text-sm text-slate-700 dark:text-slate-200 whitespace-pre-wrap break-words">' + esc(String(r.message || "").slice(0, 300)) + '</p></div>'
+                        + '<div class="px-4 py-3 bg-emerald-50 dark:bg-emerald-950/30"><p class="text-[11px] font-semibold text-emerald-700 dark:text-emerald-400"><i class="fa-solid fa-reply mr-1"></i>Reply From the School</p>'
+                        + '<p class="mt-1 text-sm text-slate-800 dark:text-slate-100 whitespace-pre-wrap break-words">' + esc(String(r.reply || "")) + '</p></div></div>').join("");
+                    repliesSeenSet(repliesSeenGet().concat(list.map(replyKey)));
+                }
+                repliesDot(false);
+            } catch (err) {
+                if ((err instanceof TypeError) || navigator.onLine === false) repliesState("fa-wifi", "calm", "You\u2019re offline", "Connect to the internet, then check again.", "Try Again");
+                else if (err && err.name === "AbortError") repliesState("fa-signal", "calm", "The connection is slow", "We could not check in time. Try again when your signal is better.", "Try Again");
+                else repliesState("fa-triangle-exclamation", "error", "We couldn\u2019t check for replies", "Something went wrong on our side. Please try again in a moment.", "Try Again");
+            } finally { btn.disabled = false; }
+        }
+        function openRepliesModal() {
+            try { localStorage.setItem(REPLIES_FLAG_KEY, "1"); } catch (e) {}
+            const m = document.getElementById("repliesModal");
+            m.classList.remove("hidden"); m.classList.add("flex");
+            loadReplies();
+        }
+        function closeRepliesModal() {
+            const m = document.getElementById("repliesModal");
+            m.classList.add("hidden"); m.classList.remove("flex");
+        }
+        // Quiet check after the page loads (at most once an hour, only on devices that sent feedback)
+        async function repliesBackgroundCheck() {
+            try {
+                if (!localStorage.getItem(REPLIES_FLAG_KEY) || navigator.onLine === false) return;
+                const last = Number(localStorage.getItem(REPLIES_CHECK_KEY) || 0);
+                if (Date.now() - last < 3600000) { return; }
+                localStorage.setItem(REPLIES_CHECK_KEY, String(Date.now()));
+                const list = await fetchReplies();
+                const fresh = repliesUnseen(list);
+                if (fresh.length) { repliesDot(true); showToast("You have a reply from the school. Open My Replies."); }
+            } catch (e) {}
+        }
+        window.addEventListener("load", () => setTimeout(repliesBackgroundCheck, 6000));
+
         function fbPick(cat) {
             document.getElementById("fbCategory").value = cat;
             document.querySelectorAll(".fb-pill").forEach(b => b.classList.toggle("fb-on", b.dataset.cat === cat));
@@ -1516,13 +1630,14 @@
                 if (!sent) { const q = fbQueueGet(); q.push(item); fbQueueSet(q); }
             } else { sent = true; }
 
+            try { localStorage.setItem(REPLIES_FLAG_KEY, "1"); } catch (e) {}
             document.getElementById("feedbackFormView").classList.add("hidden");
             document.getElementById("feedbackDoneView").classList.remove("hidden");
             const icon = document.getElementById("fbDoneIcon");
             if (sent) {
                 icon.innerHTML = '<i class="fa-solid fa-check"></i>';
                 document.getElementById("fbDoneTitle").textContent = "Thank you!";
-                document.getElementById("fbDoneText").textContent = "Your feedback was sent to the school. We read every message.";
+                document.getElementById("fbDoneText").textContent = "Your feedback was sent to the school. If we reply, you will find it under My Replies.";
             } else {
                 icon.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i>';
                 document.getElementById("fbDoneTitle").textContent = "Saved";
@@ -1591,7 +1706,7 @@
 
         function handleLogout() {
             isAdminLoggedIn = false;
-            adminKey = ""; adminData = []; adminState = "idle"; adminErr = ""; adminPage = 1;
+            adminKey = ""; adminData = []; adminState = "idle"; adminErr = null; adminPage = 1;
             renderAdminPanel(); renderData();
             showToast("Admin logged out safely.");
             
@@ -2188,16 +2303,16 @@
         // ===== ADMIN VIEW: all documents (only after admin login) =====
         function adminErrorText(err) {
             const c = err && err.code;
-            if (c === "nokey") return "The server has no admin key yet. In Apps Script, add the script property ETRS_ADMIN_KEY with your admin password.";
-            if (c === "denied") return "The server did not accept the admin password. Make sure ETRS_ADMIN_KEY is the same password you log in with.";
-            if (c === "locked") return "Too many wrong attempts. Please wait 10 minutes, then press Refresh.";
-            if (err && err.code === "stale") return "The server has not been updated for the admin view yet. Add AdminView.gs, update the line in Code.gs, and deploy a New version.";
-            if ((err instanceof TypeError) || navigator.onLine === false) return "You appear to be offline. Press Refresh when you are back online.";
-            return "Could not load all documents. Press Refresh to try again.";
+            if (c === "nokey") return { title: "Admin key not set up", text: "In Apps Script, add the script property ETRS_ADMIN_KEY with your admin password, then try again." };
+            if (c === "denied") return { title: "Admin password not accepted", text: "Make sure ETRS_ADMIN_KEY in Apps Script is the same password you log in with." };
+            if (c === "locked") return { title: "Too many wrong attempts", text: "Please wait 10 minutes, then try again." };
+            if (c === "stale") return { title: "The server needs an update", text: "Add AdminView.gs, update the line in Code.gs, then deploy a New version." };
+            if ((err instanceof TypeError) || navigator.onLine === false) return { title: "You\u2019re offline", text: "Connect to the internet, then try again." };
+            return { title: "We couldn\u2019t load all documents", text: "Something went wrong. Please try again in a moment." };
         }
         async function loadAdminAll() {
             if (!isAdminLoggedIn || !adminKey) return;
-            adminState = "loading"; adminErr = "";
+            adminState = "loading"; adminErr = null;
             renderAdminPanel(); renderData();
             try {
                 const j = await apiGet({ action: "all", key: adminKey });
@@ -2220,6 +2335,11 @@
             });
         }
         function adminFilterChanged() { adminPage = 1; renderAdminPanel(); }
+        function clearAdminFilters() {
+            document.getElementById("adminFilter").value = "";
+            document.getElementById("adminStatus").value = "ALL";
+            adminFilterChanged();
+        }
         function adminChangePage(d) { adminPage += d; renderAdminPanel(); }
         function renderAdminPanel() {
             const panel = document.getElementById("adminPanel");
@@ -2232,7 +2352,17 @@
             if (adminState !== "ok") {
                 tools.classList.add("hidden");
                 msg.classList.remove("hidden");
-                msg.textContent = adminState === "loading" ? "Loading all documents..." : adminErr;
+                if (adminState === "loading") {
+                    msg.innerHTML = '<div class="flex items-center justify-center gap-3 py-6 text-sm text-slate-600 dark:text-slate-300"><i class="fa-solid fa-spinner fa-spin"></i><span>Loading all documents</span></div>';
+                } else {
+                    const e = adminErr || { title: "We couldn\u2019t load all documents", text: "Please try again." };
+                    msg.innerHTML = '<div class="rounded-2xl border border-rose-200 dark:border-rose-900/50 bg-rose-50 dark:bg-rose-950/30 p-3.5"><div class="flex items-start gap-3">'
+                        + '<span class="shrink-0 w-9 h-9 rounded-xl bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-300 flex items-center justify-center"><i class="fa-solid fa-triangle-exclamation"></i></span>'
+                        + '<div class="flex-1 min-w-0"><p class="text-sm font-bold text-slate-900 dark:text-slate-100">' + esc(e.title) + '</p>'
+                        + '<p class="mt-0.5 text-xs text-slate-600 dark:text-slate-300 leading-relaxed">' + esc(e.text) + '</p>'
+                        + '<button type="button" onclick="loadAdminAll()" class="mt-2.5 px-4 py-2 rounded-xl bg-[#6B1111] hover:bg-[#4A0B0B] text-white text-xs font-semibold transition active:scale-95">Try Again</button>'
+                        + '</div></div></div>';
+                }
                 document.getElementById("adminCount").textContent = "";
                 return;
             }
@@ -2250,9 +2380,11 @@
             body.innerHTML = "";
             cards.innerHTML = "";
             if (!pageRows.length) {
-                const none = "No documents match the filter.";
-                body.innerHTML = '<tr><td colspan="7" class="text-center py-6 text-xs text-slate-500 dark:text-slate-400">' + none + '</td></tr>';
-                cards.innerHTML = '<p class="text-center text-xs text-slate-500 dark:text-slate-400 py-6">' + none + '</p>';
+                const none = '<div class="text-center py-8 px-4"><p class="text-sm font-bold text-slate-800 dark:text-slate-100">No documents match</p>'
+                    + '<p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Try a different word, or choose All Statuses.</p>'
+                    + '<button type="button" onclick="clearAdminFilters()" class="mt-3 px-4 py-2 rounded-xl bg-[#6B1111] hover:bg-[#4A0B0B] text-white text-xs font-semibold transition active:scale-95">Clear Filters</button></div>';
+                body.innerHTML = '<tr><td colspan="7">' + none + '</td></tr>';
+                cards.innerHTML = none;
             }
             pageRows.forEach(it => {
                 body.appendChild(buildTableRow(it, true));
