@@ -524,44 +524,38 @@
                         <span>Admin View: All Documents</span>
                         <span id="adminCount" class="font-semibold text-amber-300 text-xs"></span>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <button type="button" id="adminRefresh" onclick="loadAdminAll()" class="text-xs font-semibold bg-white/15 hover:bg-white/25 disabled:opacity-60 rounded-lg px-3 py-1.5 transition"><i class="fa-solid fa-rotate mr-1"></i> Refresh</button>
-                        <select id="adminStatus" aria-label="Filter by status" onchange="adminFilterChanged()"
-                            class="hidden text-xs font-semibold bg-white/15 hover:bg-white/25 text-white border border-white/20 rounded-lg px-2.5 py-1.5 transition focus:outline-none focus:ring-2 focus:ring-amber-400 cursor-pointer">
-                            <option value="ALL" style="color:#0f172a">All Statuses</option>
-                            <option value="pending" style="color:#0f172a">Pending</option>
-                            <option value="released" style="color:#0f172a">Released</option>
-                            <option value="returned" style="color:#0f172a">Returned</option>
-                        </select>
+                    <!-- TRF code legend, in the maroon header -->
+                    <div class="flex flex-wrap items-center gap-x-3 gap-y-1.5" aria-label="TRF code legend">
+                        <span class="flex items-center gap-1.5 text-[11px] font-semibold text-white/80"><i class="fa-solid fa-circle-info"></i> TRF Code Legend</span>
+                        <span class="flex items-center gap-1.5 bg-white/10 border border-white/15 rounded-lg px-2.5 py-1 text-[11px] font-medium">
+                            <span class="font-mono font-bold text-amber-300 bg-black/25 px-1.5 py-0.5 rounded whitespace-nowrap">d-001</span>
+                            <span><strong class="text-amber-300">Starts with 'd'</strong> = District Office</span>
+                        </span>
+                        <span class="flex items-center gap-1.5 bg-white/10 border border-white/15 rounded-lg px-2.5 py-1 text-[11px] font-medium">
+                            <span class="font-mono font-bold text-sky-300 bg-black/25 px-1.5 py-0.5 rounded whitespace-nowrap">0001</span>
+                            <span><strong class="text-sky-300">Numbers Only</strong> = Division Office</span>
+                        </span>
                     </div>
                 </div>
                 <div id="adminMsg" class="hidden p-4"></div>
                 <div id="adminTools" class="hidden p-3 sm:p-4 space-y-3">
-                    <div class="flex flex-col lg:flex-row lg:items-start gap-3 lg:gap-6">
-                        <div class="w-full lg:flex-1 min-w-0">
-                            <label for="adminFilter" class="block text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-1">Search by Document Code or Barcode</label>
-                            <div class="flex gap-2">
-                                <div class="relative flex-1 min-w-0">
-                                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 text-sm"></i>
-                                    <input id="adminFilter" type="text" autocomplete="off" oninput="adminFilterChanged()" onkeydown="if(event.key==='Enter'){adminFilterChanged();}" placeholder="Name, document, TRF, code or barcode"
-                                        class="w-full pl-10 pr-4 py-2.5 text-base sm:text-sm bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 placeholder-slate-400 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500">
-                                </div>
-                                <button type="button" id="adminSearchBtn" onclick="adminFilterChanged()" class="px-5 py-2.5 bg-[#6B1111] hover:bg-[#4A0B0B] text-white text-sm sm:text-base font-bold rounded-xl transition shrink-0 flex items-center justify-center gap-2"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+                    <div>
+                        <label for="adminFilter" class="block text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-1">Search by Document Code or Barcode</label>
+                        <div class="flex flex-wrap sm:flex-nowrap gap-2">
+                            <div class="relative flex-1 min-w-[12rem]">
+                                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 text-sm"></i>
+                                <input id="adminFilter" type="text" autocomplete="off" oninput="adminFilterChanged()" onkeydown="if(event.key==='Enter'){adminFilterChanged();}" placeholder="Name, document, TRF, code or barcode"
+                                    class="w-full pl-10 pr-4 py-2.5 text-base sm:text-sm bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 placeholder-slate-400 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500">
                             </div>
-                        </div>
-                        <!-- TRF code legend, beside the search bar -->
-                        <div class="hidden lg:block w-full lg:flex-1 min-w-0" aria-label="TRF code legend">
-                            <p class="flex items-center gap-1.5 text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-1"><i class="fa-solid fa-circle-info text-slate-400"></i> TRF Code Legend</p>
-                            <div class="flex flex-col sm:flex-row sm:flex-wrap gap-1.5">
-                                <div class="flex items-center gap-1.5 sm:flex-1 sm:min-w-[15rem] bg-white dark:bg-slate-800 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 shadow-xs">
-                                    <span class="font-mono font-bold text-amber-700 dark:text-amber-400 bg-amber-100 dark:bg-amber-950/60 px-1.5 py-0.5 rounded text-[11px] whitespace-nowrap shrink-0">d-001</span>
-                                    <span class="text-[11px] font-medium text-slate-700 dark:text-slate-200"><strong class="text-amber-700 dark:text-amber-400">Starts with 'd'</strong> = District Office Submission</span>
-                                </div>
-                                <div class="flex items-center gap-1.5 sm:flex-1 sm:min-w-[15rem] bg-white dark:bg-slate-800 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 shadow-xs">
-                                    <span class="font-mono font-bold text-blue-700 dark:text-blue-400 bg-blue-100 dark:bg-blue-950/60 px-1.5 py-0.5 rounded text-[11px] whitespace-nowrap shrink-0">0001</span>
-                                    <span class="text-[11px] font-medium text-slate-700 dark:text-slate-200"><strong class="text-blue-700 dark:text-blue-400">Numbers Only</strong> = Division Office Submission</span>
-                                </div>
-                            </div>
+                            <button type="button" id="adminSearchBtn" onclick="adminFilterChanged()" class="px-5 py-2.5 bg-[#6B1111] hover:bg-[#4A0B0B] text-white text-sm sm:text-base font-bold rounded-xl transition shrink-0 flex items-center justify-center gap-2"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+                            <select id="adminStatus" aria-label="Filter by status" onchange="adminFilterChanged()"
+                                class="px-3 py-2.5 text-base sm:text-sm bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer shrink-0">
+                                <option value="ALL">All Statuses</option>
+                                <option value="pending">Pending</option>
+                                <option value="released">Released</option>
+                                <option value="returned">Returned</option>
+                            </select>
+                            <button type="button" id="adminRefresh" onclick="loadAdminAll()" class="px-4 py-2.5 text-sm font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 disabled:opacity-60 rounded-xl transition shrink-0 flex items-center justify-center gap-2"><i class="fa-solid fa-rotate"></i> Refresh</button>
                         </div>
                     </div>
                     <!-- Same layout as the original table: desktop table, mobile cards -->
@@ -2373,7 +2367,6 @@
             const msg = document.getElementById("adminMsg"), tools = document.getElementById("adminTools");
             const topSearch = document.getElementById("searchRow"), stSel = document.getElementById("adminStatus");
             if (topSearch) topSearch.classList.toggle("hidden", adminState === "ok");   // the table's own search bar replaces it
-            if (stSel) stSel.classList.toggle("hidden", adminState !== "ok");
             document.getElementById("adminRefresh").disabled = adminState === "loading";
             if (adminState !== "ok") {
                 tools.classList.add("hidden");
