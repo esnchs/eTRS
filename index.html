@@ -505,11 +505,11 @@
                     <p class="flex items-center gap-1.5 text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-1"><i class="fa-solid fa-circle-info text-slate-400"></i> TRF Code Legend</p>
                     <div class="flex flex-col sm:flex-row sm:flex-wrap gap-1.5">
                         <div class="flex items-center gap-1.5 sm:flex-1 sm:min-w-[15rem] bg-white dark:bg-slate-800 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 shadow-xs">
-                            <span class="font-mono font-bold text-amber-700 dark:text-amber-400 bg-amber-100 dark:bg-amber-950/60 px-1.5 py-0.5 rounded text-[11px]">d-001</span>
+                            <span class="font-mono font-bold text-amber-700 dark:text-amber-400 bg-amber-100 dark:bg-amber-950/60 px-1.5 py-0.5 rounded text-[11px] whitespace-nowrap shrink-0">d-001</span>
                             <span class="text-[11px] font-medium text-slate-700 dark:text-slate-200"><strong class="text-amber-700 dark:text-amber-400">Starts with 'd'</strong> = District Office Submission</span>
                         </div>
                         <div class="flex items-center gap-1.5 sm:flex-1 sm:min-w-[15rem] bg-white dark:bg-slate-800 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 shadow-xs">
-                            <span class="font-mono font-bold text-blue-700 dark:text-blue-400 bg-blue-100 dark:bg-blue-950/60 px-1.5 py-0.5 rounded text-[11px]">0001</span>
+                            <span class="font-mono font-bold text-blue-700 dark:text-blue-400 bg-blue-100 dark:bg-blue-950/60 px-1.5 py-0.5 rounded text-[11px] whitespace-nowrap shrink-0">0001</span>
                             <span class="text-[11px] font-medium text-slate-700 dark:text-slate-200"><strong class="text-blue-700 dark:text-blue-400">Numbers Only</strong> = Division Office Submission</span>
                         </div>
                     </div>
@@ -525,6 +525,7 @@
                         <span id="adminCount" class="font-semibold text-amber-300 text-xs"></span>
                     </div>
                     <div class="flex items-center gap-2">
+                        <button type="button" id="adminRefresh" onclick="loadAdminAll()" class="text-xs font-semibold bg-white/15 hover:bg-white/25 disabled:opacity-60 rounded-lg px-3 py-1.5 transition"><i class="fa-solid fa-rotate mr-1"></i> Refresh</button>
                         <select id="adminStatus" aria-label="Filter by status" onchange="adminFilterChanged()"
                             class="hidden text-xs font-semibold bg-white/15 hover:bg-white/25 text-white border border-white/20 rounded-lg px-2.5 py-1.5 transition focus:outline-none focus:ring-2 focus:ring-amber-400 cursor-pointer">
                             <option value="ALL" style="color:#0f172a">All Statuses</option>
@@ -532,7 +533,6 @@
                             <option value="released" style="color:#0f172a">Released</option>
                             <option value="returned" style="color:#0f172a">Returned</option>
                         </select>
-                        <button type="button" id="adminRefresh" onclick="loadAdminAll()" class="text-xs font-semibold bg-white/15 hover:bg-white/25 disabled:opacity-60 rounded-lg px-3 py-1.5 transition"><i class="fa-solid fa-rotate mr-1"></i> Refresh</button>
                     </div>
                 </div>
                 <div id="adminMsg" class="hidden p-4"></div>
@@ -554,11 +554,11 @@
                             <p class="flex items-center gap-1.5 text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-1"><i class="fa-solid fa-circle-info text-slate-400"></i> TRF Code Legend</p>
                             <div class="flex flex-col sm:flex-row sm:flex-wrap gap-1.5">
                                 <div class="flex items-center gap-1.5 sm:flex-1 sm:min-w-[15rem] bg-white dark:bg-slate-800 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 shadow-xs">
-                                    <span class="font-mono font-bold text-amber-700 dark:text-amber-400 bg-amber-100 dark:bg-amber-950/60 px-1.5 py-0.5 rounded text-[11px]">d-001</span>
+                                    <span class="font-mono font-bold text-amber-700 dark:text-amber-400 bg-amber-100 dark:bg-amber-950/60 px-1.5 py-0.5 rounded text-[11px] whitespace-nowrap shrink-0">d-001</span>
                                     <span class="text-[11px] font-medium text-slate-700 dark:text-slate-200"><strong class="text-amber-700 dark:text-amber-400">Starts with 'd'</strong> = District Office Submission</span>
                                 </div>
                                 <div class="flex items-center gap-1.5 sm:flex-1 sm:min-w-[15rem] bg-white dark:bg-slate-800 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 shadow-xs">
-                                    <span class="font-mono font-bold text-blue-700 dark:text-blue-400 bg-blue-100 dark:bg-blue-950/60 px-1.5 py-0.5 rounded text-[11px]">0001</span>
+                                    <span class="font-mono font-bold text-blue-700 dark:text-blue-400 bg-blue-100 dark:bg-blue-950/60 px-1.5 py-0.5 rounded text-[11px] whitespace-nowrap shrink-0">0001</span>
                                     <span class="text-[11px] font-medium text-slate-700 dark:text-slate-200"><strong class="text-blue-700 dark:text-blue-400">Numbers Only</strong> = Division Office Submission</span>
                                 </div>
                             </div>
@@ -626,11 +626,11 @@
                         <p class="flex items-center gap-1.5 text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-1"><i class="fa-solid fa-circle-info text-slate-400"></i> TRF Code Legend</p>
                         <div class="flex flex-col gap-1.5">
                             <div class="flex items-center gap-1.5 bg-white dark:bg-slate-800 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700">
-                                <span class="font-mono font-bold text-amber-700 dark:text-amber-400 bg-amber-100 dark:bg-amber-950/60 px-1.5 py-0.5 rounded text-[11px]">d-001</span>
+                                <span class="font-mono font-bold text-amber-700 dark:text-amber-400 bg-amber-100 dark:bg-amber-950/60 px-1.5 py-0.5 rounded text-[11px] whitespace-nowrap shrink-0">d-001</span>
                                 <span class="text-[11px] font-medium text-slate-700 dark:text-slate-200"><strong class="text-amber-700 dark:text-amber-400">Starts with 'd'</strong> = District Office Submission</span>
                             </div>
                             <div class="flex items-center gap-1.5 bg-white dark:bg-slate-800 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700">
-                                <span class="font-mono font-bold text-blue-700 dark:text-blue-400 bg-blue-100 dark:bg-blue-950/60 px-1.5 py-0.5 rounded text-[11px]">0001</span>
+                                <span class="font-mono font-bold text-blue-700 dark:text-blue-400 bg-blue-100 dark:bg-blue-950/60 px-1.5 py-0.5 rounded text-[11px] whitespace-nowrap shrink-0">0001</span>
                                 <span class="text-[11px] font-medium text-slate-700 dark:text-slate-200"><strong class="text-blue-700 dark:text-blue-400">Numbers Only</strong> = Division Office Submission</span>
                             </div>
                         </div>
